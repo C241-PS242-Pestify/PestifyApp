@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.learning.pestifyapp"
-        minSdk = 24
+        minSdk = 21
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
@@ -67,4 +67,17 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("androidx.compose.ui:ui-tooling:1.6.7")
+
+    implementation("com.airbnb.android:lottie-compose:6.4.0")
+
+    implementation("androidx.compose.foundation:foundation:1.6.7")
+
+    implementation("com.google.accompanist:accompanist-pager:0.35.1-alpha")
+    implementation("com.google.accompanist:accompanist-pager-indicators:0.35.1-alpha")
+
+
 }
