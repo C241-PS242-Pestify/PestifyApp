@@ -1,0 +1,33 @@
+package com.learning.pestifyapp.ui.screen
+
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import com.learning.pestifyapp.data.UserRepository
+import com.learning.pestifyapp.ui.screen.authentication.login.LoginScreenViewModel
+import com.learning.pestifyapp.ui.screen.authentication.register.RegisterScreenViewModel
+import com.learning.pestifyapp.ui.screen.authentication.username.UsernameScreenViewModel
+import com.learning.pestifyapp.ui.screen.dashboard.home.HomeScreenViewModel
+
+@Suppress("UNCHECKED_CAST")
+class ViewModelFactory(
+    private val userRepository: UserRepository
+) : ViewModelProvider.Factory {
+
+    override fun <T : ViewModel> create(modelClass: Class<T>): T {
+        return when {
+            modelClass.isAssignableFrom(HomeScreenViewModel::class.java) -> {
+                HomeScreenViewModel(userRepository) as T
+            }
+            modelClass.isAssignableFrom(LoginScreenViewModel::class.java) -> {
+                LoginScreenViewModel(userRepository) as T
+            }
+            modelClass.isAssignableFrom(RegisterScreenViewModel::class.java) -> {
+                RegisterScreenViewModel(userRepository) as T
+            }
+            modelClass.isAssignableFrom(UsernameScreenViewModel::class.java) -> {
+                UsernameScreenViewModel(userRepository) as T
+            }
+            else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")
+        }
+    }
+}

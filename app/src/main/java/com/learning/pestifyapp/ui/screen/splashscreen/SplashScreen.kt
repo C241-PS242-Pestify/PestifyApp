@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.R
+import com.learning.pestifyapp.data.UserRepository
 import com.learning.pestifyapp.ui.screen.navigation.Graph
 import kotlinx.coroutines.delay
 
@@ -25,21 +26,21 @@ import kotlinx.coroutines.delay
 fun SplashScreen(
     navController: NavHostController,
     context: MainActivity,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
 
     LaunchedEffect(key1 = true) {
         delay(700)
-
-        if (onBoardingIsFinished(context = context)) {
+        val userRepository = UserRepository(context)
+        if (userRepository.isLoggedIn()) {
             navController.popBackStack()
             navController.navigate(Graph.DASHBOARD)
         } else {
             navController.popBackStack()
             navController.navigate(Graph.ONBOARDING)
+
         }
     }
-
     Column(
         modifier = modifier
             .fillMaxSize()
