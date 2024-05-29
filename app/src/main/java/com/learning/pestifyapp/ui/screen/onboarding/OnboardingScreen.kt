@@ -177,7 +177,7 @@ fun ButtonSection(
                     onClick = {
                         onBoardingFinished(context = context)
                         navController.popBackStack()
-                        navController.navigate(Graph.DASHBOARD)
+                        navController.navigate(Graph.LOGIN)
                     },
                     modifier = Modifier
                         .align(Alignment.Center)
