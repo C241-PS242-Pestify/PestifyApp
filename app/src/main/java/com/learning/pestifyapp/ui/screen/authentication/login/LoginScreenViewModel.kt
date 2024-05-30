@@ -15,13 +15,6 @@ import kotlinx.coroutines.launch
 class LoginScreenViewModel(private val userRepository: UserRepository): ViewModel() {
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> = _loading
-
-    private val _user = MutableLiveData<UserData?>()
-    val user: LiveData<UserData?> = _user
-
-    private val _errorMessage = MutableLiveData<String?>()
-    val errorMessage: LiveData<String?> = _errorMessage
-
     private val _isValid = MutableLiveData(false)
     val isValid: LiveData<Boolean> = _isValid
 
