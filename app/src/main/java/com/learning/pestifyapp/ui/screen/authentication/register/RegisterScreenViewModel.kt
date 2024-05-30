@@ -53,27 +53,6 @@ class RegisterScreenViewModel(private val userRepository: UserRepository) : View
         confirmPasswordValue = value
     }
 
-    fun register(onSuccess: () -> Unit, onError: (String) -> Unit) {
-        if (validateEmail() && validatePassword() && validateConfirmPassword()) {
-            _loading.value = true
-            viewModelScope.launch {
-                try {
-                    val user = userRepository.register(emailValue, passwordValue).getOrElse { exception ->
-                        throw exception
-                    }
-                    _user.value = user
-                    _isValid.value = true
-                    onSuccess()
-                } catch (e: Exception) {
-                    _errorMessage.value = e.message ?: "Registration failed"
-                    onError(_errorMessage.value ?: "Registration failed")
-                } finally {
-                    _loading.value = false
-                }
-            }
-        }
-    }
-
     private fun validateEmail(): Boolean {
         val email = emailValue.trim()
         return if (email.isBlank()) {
@@ -110,6 +89,28 @@ class RegisterScreenViewModel(private val userRepository: UserRepository) : View
             false
         } else {
             true
+        }
+    }
+
+    fun register(onSuccess: () -> Unit, onError: (String) -> Unit) {
+        if (validateEmail() && validatePassword() && validateConfirmPassword()) {
+            _loading.value = true
+            viewModelScope.launch {
+                val result = userRepository.register(emailValue, passwordValue)
+                result.onSuccess { user ->
+                    _isValid.value = true
+                    _user.value = user
+                    onSuccess()
+                }
+                result.onFailure { error ->
+                    _errorMessage.value = error.message
+                    onError(error.message ?: "An error occurred")
+                }
+                _loading.value = false
+            }
+        }else{
+            _isValid.value = false
+            onError("Invalid email or password")
         }
     }
 }

@@ -1,7 +1,10 @@
 package com.learning.pestifyapp.ui.screen.navigation
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
+
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -13,6 +16,8 @@ import androidx.navigation.compose.composable
 import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.data.UserRepository
 import com.learning.pestifyapp.ui.screen.ViewModelFactory
+import com.learning.pestifyapp.ui.screen.authentication.forgotpassword.ForgotPasswordScreen
+import com.learning.pestifyapp.ui.screen.authentication.forgotpassword.ForgotPasswordScreenViewModel
 import com.learning.pestifyapp.ui.screen.authentication.login.LoginScreenViewModel
 import com.learning.pestifyapp.ui.screen.authentication.login.LoginScreen
 import com.learning.pestifyapp.ui.screen.authentication.register.RegisterScreen
@@ -35,10 +40,18 @@ fun NavigationGraph(
         navController = navController,
         startDestination = Graph.SPLASH,
         modifier = Modifier.padding(innerPadding),
-        enterTransition = { EnterTransition.None },
-        exitTransition = { ExitTransition.None },
-        popEnterTransition = { EnterTransition.None },
-        popExitTransition = { ExitTransition.None }
+        enterTransition = {
+            slideInHorizontally(initialOffsetX = { it }) + fadeIn()
+        },
+        exitTransition = {
+            slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
+        },
+        popEnterTransition = {
+            slideInHorizontally(initialOffsetX = { -it }) + fadeIn()
+        },
+        popExitTransition = {
+            slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
+        }
     ) {
 
         composable(route = Graph.SPLASH) {
@@ -78,6 +91,14 @@ fun NavigationGraph(
                 navController = navController,
                 context = context,
                 viewModel = usernameViewModel
+            )
+        }
+        composable(route = Graph.FORGOT_PASSWORD) {
+            val forgotPasswordScreenViewModel: ForgotPasswordScreenViewModel = viewModel(factory = ViewModelFactory(userRepository))
+            ForgotPasswordScreen(
+                navController = navController,
+                context = context,
+                viewModel = forgotPasswordScreenViewModel
             )
         }
 

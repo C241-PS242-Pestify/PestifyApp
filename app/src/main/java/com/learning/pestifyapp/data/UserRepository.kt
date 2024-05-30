@@ -12,6 +12,9 @@ class UserRepository(context: Context) {
         context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
+    fun isLoggedIn(): Boolean {
+        return sharedPreferences.getBoolean("isLoggedIn", false)
+    }
     suspend fun login(email: String, password: String): Result<UserData> {
         return try {
             val authResult = auth.signInWithEmailAndPassword(email, password).await()
@@ -42,24 +45,23 @@ class UserRepository(context: Context) {
             Result.failure(e)
         }
     }
-
-    suspend fun setUsername(username: String) {
+    suspend fun setUsername(username: String):Result<UserData> {
         val firebaseUser = auth.currentUser
-        if (firebaseUser != null) {
-            val profileUpdates = UserProfileChangeRequest.Builder()
-                .setDisplayName(username)
-                .build()
-            firebaseUser.updateProfile(profileUpdates).await()
-        } else {
-            throw Exception("User not found")
+        return try {
+            if (firebaseUser != null) {
+                val profileUpdates = UserProfileChangeRequest.Builder()
+                    .setDisplayName(username)
+                    .build()
+                firebaseUser.updateProfile(profileUpdates).await()
+                val user = createUserData(firebaseUser)
+                Result.success(user)
+            } else {
+                Result.failure(Exception("User not found"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
-
-
-    fun isLoggedIn(): Boolean {
-        return sharedPreferences.getBoolean("isLoggedIn", false)
-    }
-
     fun getUserSession(): UserData? {
         return if (isLoggedIn()) {
             val firebaseUser = auth.currentUser
@@ -68,7 +70,14 @@ class UserRepository(context: Context) {
             null
         }
     }
-
+    suspend fun resetPassword(email: String): Result<Unit> {
+        return try {
+            auth.sendPasswordResetEmail(email).await()
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
     fun logout() {
         auth.signOut()
         sharedPreferences.edit().clear().apply()
@@ -81,7 +90,6 @@ class UserRepository(context: Context) {
             apply()
         }
     }
-
      fun createUserData(firebaseUser: FirebaseUser): UserData {
         return UserData(
             userId = firebaseUser.uid,

@@ -17,6 +17,8 @@ class UsernameScreenViewModel(private val userRepository: UserRepository) : View
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> = _errorMessage
 
+    private val _isValid = MutableLiveData(false)
+    val isValid: LiveData<Boolean> = _isValid
     var usernameValue by mutableStateOf("")
         private set
     var usernameError by mutableStateOf("")
@@ -53,6 +55,25 @@ class UsernameScreenViewModel(private val userRepository: UserRepository) : View
             } finally {
                 _loading.value = false
             }
+        }
+    }
+
+    fun saveUsername(onSuccess: () -> Unit, onError: (String) -> Unit) {
+        if (validateUsername()) {
+            _loading.value = true
+            viewModelScope.launch {
+                val result = userRepository.setUsername(usernameValue)
+                result.onSuccess {
+                    _isValid.value = true
+                    onSuccess.invoke()
+                }.onFailure {
+                    onError.invoke(it.message ?: "Unknown error occurred")
+                }
+                _loading.value = false
+            }
+        } else {
+            _isValid.value = false
+            onError.invoke("Invalid username")
         }
     }
 }

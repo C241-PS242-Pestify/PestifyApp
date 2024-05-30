@@ -15,6 +15,8 @@ object Graph {
     const val LOGIN = "login"
     const val REGISTER = "register"
     const val USERNAME = "username"
+    const val FORGOT_PASSWORD = "forgot-password"
+
 
 
 }
