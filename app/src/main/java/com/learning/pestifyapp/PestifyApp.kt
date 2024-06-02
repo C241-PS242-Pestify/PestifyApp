@@ -1,6 +1,7 @@
 package com.learning.pestifyapp
 
 import android.content.Context
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -9,6 +10,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -25,6 +28,7 @@ fun PestifyApp(
     context: MainActivity,
     modifier: Modifier = Modifier,
 ) {
+
     Scaffold (
         bottomBar = {
             BottomBar(navController = navController, context = context)
@@ -49,7 +53,12 @@ fun BottomBar(
     var shouldShowBottomBar by remember { mutableStateOf(true) }
 
     LaunchedEffect(currentDestination?.destination?.route) {
-        shouldShowBottomBar = currentDestination?.destination?.route in getNavigationRoute()
+        shouldShowBottomBar = when(currentDestination?.destination?.route) {
+            null -> false
+            "splash" -> false
+            "home", "pespedia", "pescan", "history", "profile" -> true
+            else -> false
+        }
     }
 
     if (shouldShowBottomBar) {

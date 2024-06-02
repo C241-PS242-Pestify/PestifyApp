@@ -9,18 +9,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.airbnb.lottie.compose.LottieAnimation
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.LottieConstants
-import com.airbnb.lottie.compose.rememberLottieComposition
+import com.airbnb.lottie.LottieComposition
+import com.airbnb.lottie.compose.*
 import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.R
 import com.learning.pestifyapp.ui.screen.navigation.Graph
@@ -32,34 +27,39 @@ fun SplashScreen(
     context: MainActivity,
     modifier: Modifier = Modifier,
 ) {
-
     val alpha = remember {
         Animatable(0f)
     }
 
-    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.ss_logo))
-    val isAnimationLoaded = composition != null
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.ss_logo))
+    var isAnimationFinished by remember { mutableStateOf(false) }
 
-    LaunchedEffect(isAnimationLoaded) {
-        if (isAnimationLoaded) {
+    LaunchedEffect(composition) {
+        if (composition != null) {
             alpha.animateTo(
                 1f,
                 animationSpec = tween(2500)
             )
             delay(1000)
+            isAnimationFinished = true
+        }
+    }
+
+    LaunchedEffect(isAnimationFinished) {
+        if (isAnimationFinished) {
             navController.popBackStack()
             navController.navigate(Graph.DASHBOARD)
-
-            // Uncomment and adjust this section if you have user login logic
-            // val userRepository = UserRepository(context)
-            // if (userRepository.isLoggedIn()) {
-            //     navController.popBackStack()
-            //     navController.navigate(Graph.DASHBOARD)
-            // } else {
-            //     navController.popBackStack()
-            //     navController.navigate(Graph.ONBOARDING)
-            // }
         }
+
+        // Uncomment and adjust this section if you have user login logic
+        // val userRepository = UserRepository(context)
+        // if (userRepository.isLoggedIn()) {
+        //     navController.popBackStack()
+        //     navController.navigate(Graph.DASHBOARD)
+        // } else {
+        //     navController.popBackStack()
+        //     navController.navigate(Graph.ONBOARDING)
+        // }
     }
 
     Column(
@@ -69,7 +69,7 @@ fun SplashScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        if (isAnimationLoaded) {
+        if (composition != null) {
             LoaderAnimation(
                 modifier = Modifier.size(250.dp), anim = R.raw.ss_logo
             )
@@ -79,10 +79,12 @@ fun SplashScreen(
 
 @Composable
 fun LoaderAnimation(modifier: Modifier, anim: Int) {
-    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(anim))
+    val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(anim))
+    val progress by animateLottieCompositionAsState(composition, iterations = LottieConstants.IterateForever)
 
     LottieAnimation(
-        composition = composition, iterations = LottieConstants.IterateForever,
+        composition = composition,
+        progress = progress,
         modifier = modifier
     )
 }

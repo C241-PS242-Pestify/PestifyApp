@@ -2,6 +2,7 @@ package com.learning.pestifyapp.ui.screen.dashboard.home
 
 import android.app.Activity
 import android.content.Context
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -26,6 +28,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,10 +50,12 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.R
+import com.learning.pestifyapp.ui.components.AnimatedStatusBarColorOnScroll
 import com.learning.pestifyapp.ui.components.ItemSection
 import com.learning.pestifyapp.ui.components.PlantCategory
 import com.learning.pestifyapp.ui.screen.navigation.Graph
 import com.learning.pestifyapp.ui.theme.PestifyAppTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
@@ -56,46 +65,36 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
 
-    DisposableEffect(Unit) {
-        val window = (context as Activity).window
-        val originalStatusBarColor = window.statusBarColor
+    val defaultStatusBarColor = Color(0xFFB2DFDB)
+    val scrolledStatusBarColor = Color(0xFF006d5b)
 
-        window.statusBarColor = Color(0xFFB2DFDB).toArgb()
-
-        onDispose {
-            window.statusBarColor = originalStatusBarColor
-        }
-    }
-
-    Box(
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.onPrimary)
-    ) {
-        LazyColumn {
-            item {
-                TopSection(context = context)
-            }
-            item {
-                ItemSection(
-                    title = context.getString(R.string.menu_home),
-                    content = { PlantCategory() }
-                )
+    AnimatedStatusBarColorOnScroll(
+        context = context,
+        defaultStatusBarColor = defaultStatusBarColor,
+        scrolledStatusBarColor = scrolledStatusBarColor
+    ) {listState ->
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.onPrimary)
+        ) {
+            LazyColumn(state = listState) {
+                item {
+                    TopSection(context = context)
+                }
+                item {
+                    ItemSection(
+                        title = context.getString(R.string.menu_home),
+                        content = { PlantCategory() }
+                    )
+                }
+                items(100) { index ->
+                    Text(text = "Item $index", modifier = Modifier.padding(8.dp))
+                }
             }
         }
     }
 }
-
-//            Button(
-//                onClick = {
-//                    viewModel.logout()
-//                    navController.navigate(Graph.LOGIN) {
-//                        popUpTo(Graph.LOGIN) { inclusive = true }
-//                    }
-//                },
-//                modifier = Modifier.padding(top = 16.dp)
-//            ) {
-//                Text(text = "Logout")
-//            }
-
 
 @Composable
 fun TopSection(
@@ -176,7 +175,7 @@ fun TopSection(
                             shape = RoundedCornerShape(10.dp)
                         )
                 ) {
-                    Column (
+                    Column(
                         modifier = Modifier
                             .width(200.dp)
                             .align(Alignment.CenterStart),
@@ -193,7 +192,7 @@ fun TopSection(
                                 bottom = 4.dp,
                                 top = 12.dp,
                                 end = 12.dp
-                                )
+                            )
                         )
 
                         Button(
@@ -205,7 +204,7 @@ fun TopSection(
                                 .padding(start = 12.dp)
                                 .align(Alignment.Start),
 
-                        ) {
+                            ) {
                             Text(
                                 text = "Read More",
                                 fontSize = 16.sp,
@@ -225,5 +224,4 @@ private fun TopSectionPreview() {
     PestifyAppTheme {
         TopSection(context = MainActivity.CONTEXT)
     }
-
 }
