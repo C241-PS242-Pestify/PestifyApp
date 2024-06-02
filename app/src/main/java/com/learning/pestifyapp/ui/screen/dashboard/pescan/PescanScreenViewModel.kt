@@ -1,6 +1,5 @@
 package com.learning.pestifyapp.ui.screen.dashboard.pescan
 
-import ImagePagingSource
 import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
@@ -22,7 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 class PescanScreenViewModel(private val userRepository: UserRepository) : ViewModel() {
     private val _imageUri = MutableStateFlow<Uri?>(null)
     val imageUri: StateFlow<Uri?> get() = _imageUri
-    
+
     fun updateImageUri(uri: Uri) {
         _imageUri.value = uri
     }
