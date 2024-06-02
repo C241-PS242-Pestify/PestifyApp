@@ -1,6 +1,8 @@
 package com.learning.pestifyapp.ui.screen.navigation
 
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
@@ -41,18 +43,10 @@ fun NavigationGraph(
         navController = navController,
         startDestination = Graph.SPLASH,
         modifier = Modifier.padding(innerPadding),
-//        enterTransition = {
-//            slideInHorizontally(initialOffsetX = { it }) + fadeIn()
-//        },
-//        exitTransition = {
-//            slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
-//        },
-//        popEnterTransition = {
-//            slideInHorizontally(initialOffsetX = { -it }) + fadeIn()
-//        },
-//        popExitTransition = {
-//            slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
-//        }
+        enterTransition = { EnterTransition.None},
+        exitTransition = { ExitTransition.None },
+        popEnterTransition = { EnterTransition.None },
+        popExitTransition = { ExitTransition.None }
     ) {
 
         composable(route = Graph.SPLASH) {

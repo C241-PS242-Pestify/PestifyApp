@@ -10,6 +10,16 @@ data class NavigationItem(
     val screen: Screen
 )
 
+fun getNavigationRoute(): List<String> {
+    return listOf(
+        Screen.Home.route,
+        Screen.Ensiklopedia.route,
+        Screen.Pescan.route,
+        Screen.History.route,
+        Screen.Profile.route
+    )
+}
+
 fun getNavigationItems(context: Context): List<NavigationItem> {
     return listOf(
         NavigationItem(

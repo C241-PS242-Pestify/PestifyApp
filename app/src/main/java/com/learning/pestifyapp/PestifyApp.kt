@@ -3,7 +3,11 @@ package com.learning.pestifyapp
 import android.content.Context
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
@@ -12,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import com.learning.pestifyapp.ui.components.BottomNavBar
 import com.learning.pestifyapp.ui.screen.navigation.NavigationGraph
 import com.learning.pestifyapp.ui.screen.navigation.getNavigationItems
+import com.learning.pestifyapp.ui.screen.navigation.getNavigationRoute
 import com.learning.pestifyapp.ui.theme.PestifyAppTheme
 
 @Composable
@@ -40,11 +45,14 @@ fun BottomBar(
     context: Context,
     modifier: Modifier = Modifier
 ) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentRoute = navBackStackEntry?.destination?.route
+    val currentDestination by navController.currentBackStackEntryAsState()
+    var shouldShowBottomBar by remember { mutableStateOf(true) }
 
-    val bottomNavigation = getNavigationItems(context = context).any { it.screen.route == currentRoute }
-    if (bottomNavigation) {
+    LaunchedEffect(currentDestination?.destination?.route) {
+        shouldShowBottomBar = currentDestination?.destination?.route in getNavigationRoute()
+    }
+
+    if (shouldShowBottomBar) {
         BottomNavBar(
             modifier = modifier,
             context = context,

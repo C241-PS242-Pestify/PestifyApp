@@ -21,6 +21,7 @@ class LoginScreenViewModel(private val userRepository: UserRepository) : ViewMod
         private set
     var emailError by mutableStateOf("")
         private set
+
     fun setEmail(value: String) {
         emailValue = value
     }
@@ -29,6 +30,7 @@ class LoginScreenViewModel(private val userRepository: UserRepository) : ViewMod
         private set
     var passwordError by mutableStateOf("")
         private set
+
     fun setPassword(value: String) {
         passwordValue = value
     }

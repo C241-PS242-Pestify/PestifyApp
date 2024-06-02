@@ -14,16 +14,22 @@ class MainActivity : ComponentActivity() {
     private lateinit var userRepository: UserRepository
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        CONTEXT = this
         userRepository = UserRepository(context = this)
         setContent {
             PestifyAppTheme(dynamicColor = false) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = MaterialTheme.colorScheme.onPrimary
                 ) {
                     PestifyApp(context = this)
                 }
             }
         }
     }
+
+    companion object {
+        lateinit var CONTEXT : MainActivity
+    }
 }
+

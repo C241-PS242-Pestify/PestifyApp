@@ -46,7 +46,14 @@ class ViewModelFactory(
     }
 
     companion object {
-        fun getInstance(context: Context) = ViewModelFactory(Injection.provideRepository(context))
+        @Volatile
+        private var INSTANCE: ViewModelFactory? = null
+
+        @JvmStatic
+        fun getInstance(context: Context): ViewModelFactory =
+            INSTANCE ?: synchronized(this) {
+                INSTANCE ?: ViewModelFactory(Injection.provideRepository(context))
+            }.also { INSTANCE = it }
     }
 }
 

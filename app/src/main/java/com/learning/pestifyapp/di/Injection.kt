@@ -5,6 +5,6 @@ import com.learning.pestifyapp.data.repository.UserRepository
 
 object Injection {
     fun provideRepository(context: Context): UserRepository {
-        return UserRepository(context)
+        return UserRepository.getInstance(context)
     }
 }

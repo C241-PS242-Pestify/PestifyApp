@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
 import com.learning.pestifyapp.data.model.UserData
+import com.learning.pestifyapp.di.Injection
 import kotlinx.coroutines.tasks.await
 
 class UserRepository(context: Context) {
@@ -98,5 +99,18 @@ class UserRepository(context: Context) {
             email = firebaseUser.email ?: "",
             name = firebaseUser.displayName ?: ""
         )
+    }
+
+    companion object {
+        @Volatile
+        private var INSTANCE: UserRepository? = null
+
+        @JvmStatic
+        fun getInstance(context : Context): UserRepository =
+            INSTANCE ?: synchronized(this) {
+                UserRepository(context).apply {
+                    INSTANCE = this
+                }
+            }
     }
 }

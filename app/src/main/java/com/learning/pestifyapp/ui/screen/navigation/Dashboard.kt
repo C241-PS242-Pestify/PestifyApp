@@ -34,6 +34,7 @@ fun NavGraphBuilder.dashBoard(
         composable(Screen.Home.route) {
             HomeScreen(
                 navController = navController,
+                context = context,
                 viewModel = HomeScreenViewModel(userRepository = UserRepository(context = LocalContext.current))
             )
         }

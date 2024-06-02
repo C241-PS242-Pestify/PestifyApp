@@ -3,11 +3,9 @@ package com.learning.pestifyapp.ui.screen.splashscreen
 import android.content.Context
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
@@ -17,8 +15,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.airbnb.lottie.compose.LottieAnimation
@@ -27,7 +23,6 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.R
-import com.learning.pestifyapp.data.repository.UserRepository
 import com.learning.pestifyapp.ui.screen.navigation.Graph
 import kotlinx.coroutines.delay
 
@@ -42,20 +37,28 @@ fun SplashScreen(
         Animatable(0f)
     }
 
-    LaunchedEffect(key1 = true) {
-        alpha.animateTo(
-            1f,
-            animationSpec = tween(2500)
-        )
-        delay(1000)
-        val userRepository = UserRepository(context)
-        if (userRepository.isLoggedIn()) {
+    val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.ss_logo))
+    val isAnimationLoaded = composition != null
+
+    LaunchedEffect(isAnimationLoaded) {
+        if (isAnimationLoaded) {
+            alpha.animateTo(
+                1f,
+                animationSpec = tween(2500)
+            )
+            delay(1000)
             navController.popBackStack()
             navController.navigate(Graph.DASHBOARD)
-        } else {
-            navController.popBackStack()
-            navController.navigate(Graph.ONBOARDING)
 
+            // Uncomment and adjust this section if you have user login logic
+            // val userRepository = UserRepository(context)
+            // if (userRepository.isLoggedIn()) {
+            //     navController.popBackStack()
+            //     navController.navigate(Graph.DASHBOARD)
+            // } else {
+            //     navController.popBackStack()
+            //     navController.navigate(Graph.ONBOARDING)
+            // }
         }
     }
 
@@ -66,9 +69,11 @@ fun SplashScreen(
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        LoaderAnimation(
-            modifier = Modifier.size(250.dp), anim = R.raw.ss_logo
-        )
+        if (isAnimationLoaded) {
+            LoaderAnimation(
+                modifier = Modifier.size(250.dp), anim = R.raw.ss_logo
+            )
+        }
     }
 }
 
