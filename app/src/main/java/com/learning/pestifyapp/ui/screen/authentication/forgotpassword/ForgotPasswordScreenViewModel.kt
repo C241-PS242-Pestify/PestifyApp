@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.*
-import com.learning.pestifyapp.data.UserRepository
+import com.learning.pestifyapp.data.repository.UserRepository
 import kotlinx.coroutines.launch
 
 class ForgotPasswordScreenViewModel(private val userRepository: UserRepository) : ViewModel() {

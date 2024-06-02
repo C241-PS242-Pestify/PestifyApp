@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
-import com.learning.pestifyapp.data.UserRepository
+import com.learning.pestifyapp.data.repository.UserRepository
 import com.learning.pestifyapp.ui.theme.PestifyAppTheme
 
 class MainActivity : ComponentActivity() {

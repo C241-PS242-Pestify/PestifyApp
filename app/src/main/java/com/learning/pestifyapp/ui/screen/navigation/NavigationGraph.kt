@@ -14,8 +14,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.learning.pestifyapp.MainActivity
-import com.learning.pestifyapp.data.UserRepository
-import com.learning.pestifyapp.ui.screen.ViewModelFactory
+import com.learning.pestifyapp.data.repository.UserRepository
+import com.learning.pestifyapp.di.ViewModelFactory
 import com.learning.pestifyapp.ui.screen.authentication.forgotpassword.ForgotPasswordScreen
 import com.learning.pestifyapp.ui.screen.authentication.forgotpassword.ForgotPasswordScreenViewModel
 import com.learning.pestifyapp.ui.screen.authentication.login.LoginScreenViewModel
@@ -24,6 +24,8 @@ import com.learning.pestifyapp.ui.screen.authentication.register.RegisterScreen
 import com.learning.pestifyapp.ui.screen.authentication.register.RegisterScreenViewModel
 import com.learning.pestifyapp.ui.screen.authentication.username.UsernameScreen
 import com.learning.pestifyapp.ui.screen.authentication.username.UsernameScreenViewModel
+import com.learning.pestifyapp.ui.screen.dashboard.pescan.CameraScreen
+import com.learning.pestifyapp.ui.screen.dashboard.pescan.PescanScreenViewModel
 import com.learning.pestifyapp.ui.screen.onboarding.OnboardingScreen
 import com.learning.pestifyapp.ui.screen.splashscreen.SplashScreen
 
@@ -32,7 +34,6 @@ fun NavigationGraph(
     navController: NavHostController,
     innerPadding: PaddingValues,
     context: MainActivity,
-    modifier: Modifier = Modifier,
 ) {
     val userRepository = UserRepository(context)
 
@@ -101,9 +102,19 @@ fun NavigationGraph(
                 viewModel = forgotPasswordScreenViewModel
             )
         }
+        composable(route = Graph.CAMERA) {
+            val pescanScreenViewModel: PescanScreenViewModel = viewModel(factory = ViewModelFactory(userRepository))
+            CameraScreen(
+                navController = navController,
+                context = context,
+                viewModel = pescanScreenViewModel
+            )
+        }
 
         dashBoard(
             navController = navController,
+            context = context,
+
         )
 
     }

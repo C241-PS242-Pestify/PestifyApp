@@ -87,11 +87,24 @@ dependencies {
 
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
-
     implementation("com.google.firebase:firebase-analytics")
-
     implementation("com.google.firebase:firebase-auth-ktx")
 
+    val cameraxVersion = "1.3.3"
+    implementation ("androidx.camera:camera-core:${cameraxVersion}")
+    implementation ("androidx.camera:camera-camera2:${cameraxVersion}")
+    implementation ("androidx.camera:camera-view:${cameraxVersion}")
+    implementation ("androidx.camera:camera-lifecycle:$cameraxVersion")
+
+
+    implementation("io.coil-kt:coil-compose:2.1.0")
+
+    //paging
+    implementation("androidx.paging:paging-compose:3.3.0")
+
+    //retrofit
+    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
 
 
 

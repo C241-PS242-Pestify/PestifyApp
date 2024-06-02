@@ -1,16 +1,18 @@
-package com.learning.pestifyapp.data
+package com.learning.pestifyapp.data.repository
 
 import android.content.Context
 import android.content.SharedPreferences
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.UserProfileChangeRequest
+import com.learning.pestifyapp.data.model.UserData
 import kotlinx.coroutines.tasks.await
 
 class UserRepository(context: Context) {
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+
 
     fun isLoggedIn(): Boolean {
         return sharedPreferences.getBoolean("isLoggedIn", false)

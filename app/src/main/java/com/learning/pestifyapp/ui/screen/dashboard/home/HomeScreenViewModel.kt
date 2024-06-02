@@ -4,8 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.learning.pestifyapp.data.UserData
-import com.learning.pestifyapp.data.UserRepository
+import com.learning.pestifyapp.data.model.UserData
+import com.learning.pestifyapp.data.repository.UserRepository
 import kotlinx.coroutines.launch
 
 class HomeScreenViewModel(private val userRepository: UserRepository) : ViewModel() {
