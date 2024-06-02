@@ -1,5 +1,6 @@
 package com.learning.pestifyapp.ui.components
 
+import android.content.Context
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -29,13 +30,14 @@ import androidx.navigation.NavHostController
 import com.learning.pestifyapp.R
 import com.learning.pestifyapp.ui.screen.navigation.NavigationItem
 import com.learning.pestifyapp.ui.screen.navigation.Screen
-import com.learning.pestifyapp.ui.screen.navigation.navigationItems
+import com.learning.pestifyapp.ui.screen.navigation.getNavigationItems
 import com.learning.pestifyapp.ui.theme.iconLight
 
 @Composable
 fun BottomNavBar(
+    context : Context,
+    navController: NavHostController,
     modifier: Modifier = Modifier,
-    navController: NavHostController
 ) {
     Box(
         modifier = Modifier
@@ -57,7 +59,7 @@ fun BottomNavBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            navigationItems.forEach { item ->
+            getNavigationItems(context = context).forEach { item ->
                 BottomNavBarItem(
 
                     item = item,
@@ -104,13 +106,13 @@ fun BottomNavBarItem(
                 imageVector = ImageVector.vectorResource(id = icon),
                 contentDescription = item.title,
                 tint = if (isSelected) MaterialTheme.colorScheme.primary else iconLight,
-                modifier = Modifier.size(30.dp)
+                modifier = Modifier.size(24.dp)
             )
 
             Text(
                 text = item.title,
-                fontSize = 13.sp,
-                fontWeight = if (isSelected) FontWeight.ExtraBold else FontWeight.Bold,
+                fontSize = 12.sp,
+                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                 color = if (isSelected) MaterialTheme.colorScheme.primary else iconLight
             )
         }

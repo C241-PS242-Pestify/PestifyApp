@@ -41,18 +41,18 @@ fun NavigationGraph(
         navController = navController,
         startDestination = Graph.SPLASH,
         modifier = Modifier.padding(innerPadding),
-        enterTransition = {
-            slideInHorizontally(initialOffsetX = { it }) + fadeIn()
-        },
-        exitTransition = {
-            slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
-        },
-        popEnterTransition = {
-            slideInHorizontally(initialOffsetX = { -it }) + fadeIn()
-        },
-        popExitTransition = {
-            slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
-        }
+//        enterTransition = {
+//            slideInHorizontally(initialOffsetX = { it }) + fadeIn()
+//        },
+//        exitTransition = {
+//            slideOutHorizontally(targetOffsetX = { -it }) + fadeOut()
+//        },
+//        popEnterTransition = {
+//            slideInHorizontally(initialOffsetX = { -it }) + fadeIn()
+//        },
+//        popExitTransition = {
+//            slideOutHorizontally(targetOffsetX = { it }) + fadeOut()
+//        }
     ) {
 
         composable(route = Graph.SPLASH) {

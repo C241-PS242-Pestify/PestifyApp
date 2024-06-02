@@ -115,7 +115,7 @@ fun ButtonSection(
     fun navigateToNextPage() {
         coroutineScope.launch {
             pagerState.animateScrollToPage(
-                page = pagerState.currentPage + 1,
+                page = pagerState.pageCount,
                 animationSpec = tween(durationMillis = 600)
             )
         }
@@ -159,25 +159,15 @@ fun ButtonSection(
                     fontWeight = FontWeight.ExtraBold,
                     color = MaterialTheme.colorScheme.primary
                 )
-
-                Text(
-                    text = stringResource(R.string.back_page),
-                    modifier = Modifier
-                        .padding(start = 16.dp)
-                        .align(Alignment.CenterStart)
-                        .clickable(onClick = ::navigateToPreviousPage),
-                    fontSize = MaterialTheme.typography.titleMedium.fontSize,
-                    fontWeight = FontWeight.ExtraBold,
-                    color = MaterialTheme.colorScheme.primary
-                )
             }
             else -> {
                 CustomButton(
                     text = "Get Started",
                     onClick = {
-                        onBoardingFinished(context = context)
+//                        onBoardingFinished(context = context)
                         navController.popBackStack()
-                        navController.navigate(Graph.LOGIN)
+                        navController.navigate(Graph.DASHBOARD)
+//                        navController.navigate(Graph.LOGIN)
                     },
                     modifier = Modifier
                         .align(Alignment.Center)

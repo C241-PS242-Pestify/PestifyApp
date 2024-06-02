@@ -1,11 +1,11 @@
 package com.learning.pestifyapp.ui.screen.navigation
 
 sealed class Screen(val route: String) {
-    object Home : Screen("Home")
-    object Ensiklopedia : Screen("Ensiklopedia")
-    object Pescan : Screen("Pescan")
-    object History : Screen("History")
-    object Profile : Screen("Profile")
+    object Home : Screen("home")
+    object Ensiklopedia : Screen("esiklopedia")
+    object Pescan : Screen("pescan")
+    object History : Screen("history")
+    object Profile : Screen("profile")
 }
 
 object Graph {
