@@ -1,6 +1,6 @@
 package com.learning.pestifyapp.ui.screen.authentication.username
 
-import com.learning.pestifyapp.data.UserRepository
+import com.learning.pestifyapp.data.repository.UserRepository
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -28,7 +28,7 @@ class UsernameScreenViewModel(private val userRepository: UserRepository) : View
         usernameValue = value
     }
 
-    fun validateUsername(): Boolean {
+    private fun validateUsername(): Boolean {
         val username = usernameValue.trim()
         return if (username.isBlank()) {
             usernameError = "Please fill username field"
@@ -41,20 +41,6 @@ class UsernameScreenViewModel(private val userRepository: UserRepository) : View
             false
         } else {
             true
-        }
-    }
-
-    fun saveUsername() {
-        _loading.value = true
-        viewModelScope.launch {
-            try {
-                userRepository.setUsername(usernameValue)
-                _errorMessage.value = null
-            } catch (e: Exception) {
-                _errorMessage.value = e.message ?: "Failed to save username"
-            } finally {
-                _loading.value = false
-            }
         }
     }
 

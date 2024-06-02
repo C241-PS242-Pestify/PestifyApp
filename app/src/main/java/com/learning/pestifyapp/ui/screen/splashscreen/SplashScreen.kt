@@ -18,7 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.R
-import com.learning.pestifyapp.data.UserRepository
+import com.learning.pestifyapp.data.repository.UserRepository
 import com.learning.pestifyapp.ui.screen.navigation.Graph
 import kotlinx.coroutines.delay
 

@@ -1,7 +1,7 @@
 package com.learning.pestifyapp.ui.screen.authentication.register
 
 
-import com.learning.pestifyapp.data.UserRepository
+import com.learning.pestifyapp.data.repository.UserRepository
 import android.util.Patterns
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -10,7 +10,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.learning.pestifyapp.data.UserData
+import com.learning.pestifyapp.data.model.UserData
 import kotlinx.coroutines.launch
 
 class RegisterScreenViewModel(private val userRepository: UserRepository) : ViewModel() {

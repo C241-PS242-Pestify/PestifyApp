@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
+import androidx.camera.video.VideoRecordEvent.Start
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Email
 import androidx.compose.material.icons.rounded.Lock
@@ -56,7 +56,8 @@ fun LoginScreen(
         withStyle(style = SpanStyle(color = Color(0xFFFFC107))) {
             append("Welcome back!")
         }
-        append(" Glad to see you")
+        append("\nGlad to see you")
+
     }
     val text = "Don't Have Account? Register"
     val annotatedString = buildAnnotatedString {
@@ -77,12 +78,12 @@ fun LoginScreen(
         ) {
             Text(
                 text = title,
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Start,
                 fontSize = MaterialTheme.typography.headlineMedium.fontSize,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
                 lineHeight = 38.sp,
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(start = 24.dp)
             )
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -152,7 +153,6 @@ fun LoginScreen(
                             navController.navigate(Graph.REGISTER)
                         },
                     color = MaterialTheme.colorScheme.primary,
-
                 )
             }
         }
@@ -167,19 +167,8 @@ fun LoginScreen(
             }
         }
     }
-
-
 }
 
 private fun handleLoginError(context: Context, errorMessage: String) {
     Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-    Handler(Looper.getMainLooper()).postDelayed({
-    }, 2000)
-}
-
-private fun loginFinished(context: MainActivity) {
-    val sharedPreferences = context.getSharedPreferences("login", Context.MODE_PRIVATE)
-    val editor = sharedPreferences.edit()
-    editor.putBoolean("Finished", true)
-    editor.apply()
 }

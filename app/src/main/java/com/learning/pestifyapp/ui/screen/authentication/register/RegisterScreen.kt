@@ -5,6 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.icons.Icons
@@ -67,12 +68,12 @@ fun RegisterScreen(
         ) {
             Text(
                 text = title,
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Start,
                 fontSize = MaterialTheme.typography.headlineMedium.fontSize,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
                 lineHeight = 38.sp,
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(start = 24.dp)
             )
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -130,20 +131,23 @@ fun RegisterScreen(
                 },
                 modifier = Modifier.padding(bottom = 8.dp)
             )
-            ClickableText(
-                text = annotatedString,
-                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.primary),
-                onClick = { offset ->
-                    annotatedString.getStringAnnotations(
-                        tag = "LOGIN",
-                        start = offset,
-                        end = offset
-                    )
-                        .firstOrNull()?.let {
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Text(
+                    text = "Already have an account?",
+                )
+                Text(
+                    text = " Login!",
+                    modifier = Modifier
+                        .clickable {
                             navController.navigate(Graph.LOGIN)
-                        }
-                }
-            )
+                        },
+                    color = MaterialTheme.colorScheme.primary,
+
+                    )
+            }
         }
         if (isLoading) {
             Box(

@@ -1,5 +1,7 @@
 package com.learning.pestifyapp.ui.screen.authentication.username
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -54,12 +56,12 @@ fun UsernameScreen(
         ) {
             Text(
                 text = title,
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Start,
                 fontSize = MaterialTheme.typography.headlineMedium.fontSize,
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold,
                 lineHeight = 38.sp,
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(start = 24.dp)
             )
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -80,10 +82,13 @@ fun UsernameScreen(
                 text = "Done",
                 onClick = {
                     focusManager.clearFocus()
-                    if (viewModel.validateUsername()) {
-                        viewModel.saveUsername()
-                        navController.navigate(Graph.LOGIN)
-                    }
+                    viewModel.saveUsername(
+                        onSuccess = {
+                            navController.navigate(Graph.LOGIN)
+                        }, onError = {errorMessage ->
+                            handleLoginError(context, errorMessage)
+                        }
+                    )
                 },
                 modifier = Modifier.padding(bottom = 8.dp)
             )
@@ -99,4 +104,7 @@ fun UsernameScreen(
             }
         }
     }
+}
+private fun handleLoginError(context: Context, errorMessage: String) {
+    Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
 }
