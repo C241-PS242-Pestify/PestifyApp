@@ -10,27 +10,30 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import kotlinx.coroutines.launch
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsControllerCompat
 
 @Composable
 fun AnimatedStatusBarColorOnScroll(
     context: Context,
     defaultStatusBarColor: Color,
     scrolledStatusBarColor: Color,
+    isDefaultStatusBarIconsDark: Boolean,
+    isScrolledStatusBarIconsDark: Boolean,
     content: @Composable (LazyListState) -> Unit
 ) {
     val listState = rememberLazyListState()
 
-    // Remember the initial status bar color
     DisposableEffect(Unit) {
         val window = (context as Activity).window
         val originalStatusBarColor = window.statusBarColor
+        val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
 
         window.statusBarColor = defaultStatusBarColor.toArgb()
+        windowInsetsController.isAppearanceLightStatusBars = isDefaultStatusBarIconsDark
 
         onDispose {
             window.statusBarColor = originalStatusBarColor
@@ -48,11 +51,13 @@ fun AnimatedStatusBarColorOnScroll(
         label = ""
     )
 
-    LaunchedEffect(animatedStatusBarColor) {
+    LaunchedEffect(animatedStatusBarColor, scrollOffset) {
         val window = (context as Activity).window
+        val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+
         window.statusBarColor = animatedStatusBarColor.toArgb()
+        windowInsetsController?.isAppearanceLightStatusBars = if (scrollOffset > 0) isScrolledStatusBarIconsDark else isDefaultStatusBarIconsDark
     }
 
-    // Pass the listState to the content
     content(listState)
 }

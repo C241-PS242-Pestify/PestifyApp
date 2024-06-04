@@ -66,12 +66,14 @@ fun HomeScreen(
 ) {
 
     val defaultStatusBarColor = Color(0xFFB2DFDB)
-    val scrolledStatusBarColor = Color(0xFF006d5b)
+    val scrolledStatusBarColor = Color(0xFFFFFFFF)
 
     AnimatedStatusBarColorOnScroll(
         context = context,
         defaultStatusBarColor = defaultStatusBarColor,
-        scrolledStatusBarColor = scrolledStatusBarColor
+        scrolledStatusBarColor = scrolledStatusBarColor,
+        isDefaultStatusBarIconsDark = true,
+        isScrolledStatusBarIconsDark = true
     ) {listState ->
         Box(
             modifier = Modifier
