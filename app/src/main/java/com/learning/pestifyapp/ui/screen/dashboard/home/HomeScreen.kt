@@ -27,8 +27,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -47,24 +49,48 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.R
+import com.learning.pestifyapp.data.model.plant.PlantData
+import com.learning.pestifyapp.ui.common.UiState
 import com.learning.pestifyapp.ui.components.AnimatedStatusBarColorOnScroll
 import com.learning.pestifyapp.ui.components.ItemSection
 import com.learning.pestifyapp.ui.components.PlantCategory
 import com.learning.pestifyapp.ui.screen.navigation.Graph
+import com.learning.pestifyapp.ui.screen.navigation.Screen
 import com.learning.pestifyapp.ui.theme.PestifyAppTheme
-import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
     context: Context,
-    viewModel: HomeScreenViewModel,
+    viewModel: HomeViewModel,
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
 
+    val uiState =
+        viewModel.uiState.collectAsStateWithLifecycle(lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current).value
+    HomeContent(
+        context = context,
+        uiState = uiState,
+        navController = navController,
+        viewModel = viewModel,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun HomeContent(
+    context: Context,
+    uiState: UiState<List<PlantData>>,
+    viewModel: HomeViewModel,
+    navController: NavHostController,
+    modifier: Modifier = Modifier,
+) {
     val defaultStatusBarColor = Color(0xFFB2DFDB)
     val scrolledStatusBarColor = Color(0xFFFFFFFF)
 
@@ -74,7 +100,7 @@ fun HomeScreen(
         scrolledStatusBarColor = scrolledStatusBarColor,
         isDefaultStatusBarIconsDark = true,
         isScrolledStatusBarIconsDark = true
-    ) {listState ->
+    ) { listState ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -85,10 +111,30 @@ fun HomeScreen(
                     TopSection(context = context)
                 }
                 item {
-                    ItemSection(
-                        title = context.getString(R.string.menu_home),
-                        content = { PlantCategory() }
-                    )
+                    when (uiState) {
+                        is UiState.Loading -> {
+                            viewModel.getAllPlants()
+                        }
+
+                        is UiState.Success -> {
+                            val plantList = uiState.data
+                            ItemSection(
+                                title = context.getString(R.string.plants),
+                                content = {
+                                    PlantCategory(
+                                        plantList,
+                                        navigateToDetail = { plantId ->
+                                            navController.navigate(Screen.DetailPlant.createRoute(plantId))
+                                        }
+                                    )
+                                }
+                            )
+                        }
+
+                        is UiState.Error -> {
+                            // Show error message
+                        }
+                    }
                 }
                 items(100) { index ->
                     Text(text = "Item $index", modifier = Modifier.padding(8.dp))

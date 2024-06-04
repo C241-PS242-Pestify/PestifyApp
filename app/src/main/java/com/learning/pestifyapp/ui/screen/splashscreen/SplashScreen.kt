@@ -19,6 +19,7 @@ import com.airbnb.lottie.compose.*
 import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.R
 import com.learning.pestifyapp.ui.screen.navigation.Graph
+import com.learning.pestifyapp.ui.screen.navigation.Screen
 import kotlinx.coroutines.delay
 
 @Composable
@@ -48,7 +49,7 @@ fun SplashScreen(
     LaunchedEffect(isAnimationFinished) {
         if (isAnimationFinished) {
             navController.popBackStack()
-            navController.navigate(Graph.DASHBOARD)
+            navController.navigate(Screen.Home.route)
         }
 
         // Uncomment and adjust this section if you have user login logic

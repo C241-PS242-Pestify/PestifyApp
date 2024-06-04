@@ -1,6 +1,7 @@
 package com.learning.pestifyapp.ui.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -33,7 +34,7 @@ import com.learning.pestifyapp.ui.theme.PestifyAppTheme
 
 @Composable
 fun PlantItem(
-    item : PlantData,
+    item: PlantData,
     modifier: Modifier = Modifier
 ) {
     Card(
@@ -44,9 +45,9 @@ fun PlantItem(
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.onPrimary,
         ),
-    ){
+    ) {
         Column {
-            Image (
+            Image(
                 painter = painterResource(item.image),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
@@ -76,6 +77,8 @@ fun PlantItem(
 
 @Composable
 fun PlantCategory(
+    plantList: List<PlantData>,
+    navigateToDetail: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyRow(
@@ -83,8 +86,13 @@ fun PlantCategory(
         modifier = modifier
     )
     {
-        items(FakePlantData.dummyPlants, key = { it.id }) { plant ->
-            PlantItem(plant)
+        items(plantList, key = { it.id }) { plant ->
+            PlantItem(
+                plant,
+                modifier = Modifier.clickable {
+                    navigateToDetail(plant.id)
+                }
+            )
         }
     }
 }
@@ -92,7 +100,7 @@ fun PlantCategory(
 @Composable
 fun ItemSection(
     title: String,
-    content :@Composable () -> Unit,
+    content: @Composable () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -121,13 +129,13 @@ fun SectionText(
 
 @Preview(showBackground = true)
 @Composable
-fun SectionTextPreview () {
+fun SectionTextPreview() {
     PestifyAppTheme {
         SectionText("Section Title")
     }
 }
 
-@Preview (showBackground = true)
+@Preview(showBackground = true)
 @Composable
 private fun PlantItemPreview() {
     PestifyAppTheme {

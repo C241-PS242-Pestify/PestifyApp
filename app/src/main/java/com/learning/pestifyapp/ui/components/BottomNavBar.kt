@@ -16,7 +16,11 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
@@ -42,6 +46,9 @@ fun BottomNavBar(
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
+
+    var selectedItem by rememberSaveable { mutableStateOf(Screen.Home.route) }
+
     Box(
         modifier = Modifier
             .drawWithContent {
@@ -54,7 +61,9 @@ fun BottomNavBar(
                 )
             }
             .fillMaxWidth()
-            .height(80.dp)
+            .height(70.dp)
+            .background(MaterialTheme.colorScheme.onPrimary),
+        contentAlignment = Alignment.Center
     ) {
         Row(
             modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.onPrimary),
@@ -64,10 +73,10 @@ fun BottomNavBar(
 
             getNavigationItems(context = context).forEach { item ->
                 BottomNavBarItem(
-
                     item = item,
-                    isSelected = navController.currentDestination?.route == item.screen.route,
+                    isSelected = selectedItem == item.screen.route,
                     onClick = {
+                        selectedItem = item.screen.route
                         navController.navigate(item.screen.route) {
                             popUpTo(Screen.Home.route) {
                                 saveState = true
