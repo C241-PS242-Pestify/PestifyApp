@@ -69,6 +69,9 @@ fun BottomBar(
         )
     }
 
+    //BottomNavBar(navController = navController)
+//    daojdasjdj
+
 }
 
 //@Preview(showBackground = true)
