@@ -2,7 +2,6 @@ package com.learning.pestifyapp.ui.screen.navigation
 
 
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
@@ -10,11 +9,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.data.repository.UserRepository
-import com.learning.pestifyapp.di.ViewModelFactory
+import com.learning.pestifyapp.di.factory.HomeFactory
+import com.learning.pestifyapp.di.factory.ViewModelFactory
 import com.learning.pestifyapp.ui.screen.dashboard.ensiklopedia.EnsiklopediaScreen
 import com.learning.pestifyapp.ui.screen.dashboard.history.HistoryScreen
 import com.learning.pestifyapp.ui.screen.dashboard.home.HomeScreen
-import com.learning.pestifyapp.ui.screen.dashboard.home.HomeScreenViewModel
 import com.learning.pestifyapp.ui.screen.dashboard.pescan.PescanScreen
 import com.learning.pestifyapp.ui.screen.dashboard.pescan.PescanScreenViewModel
 import com.learning.pestifyapp.ui.screen.dashboard.profile.ProfileScreen
@@ -35,7 +34,7 @@ fun NavGraphBuilder.dashBoard(
             HomeScreen(
                 navController = navController,
                 context = context,
-                viewModel = HomeScreenViewModel(userRepository = UserRepository(context = LocalContext.current))
+                viewModel = viewModel(factory = HomeFactory.getInstance())
             )
         }
 

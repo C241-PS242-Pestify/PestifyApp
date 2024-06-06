@@ -6,6 +6,10 @@ sealed class Screen(val route: String) {
     object Pescan : Screen("pescan")
     object History : Screen("history")
     object Profile : Screen("profile")
+
+    object DetailPlant : Screen("detail/{plantId}") {
+        fun createRoute(plantId: Long) = "detail/$plantId"
+    }
 }
 
 object Graph {

@@ -1,9 +1,10 @@
-package com.learning.pestifyapp.di
+package com.learning.pestifyapp.di.factory
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.learning.pestifyapp.data.repository.UserRepository
+import com.learning.pestifyapp.di.Injection
 import com.learning.pestifyapp.ui.screen.authentication.forgotpassword.ForgotPasswordScreenViewModel
 import com.learning.pestifyapp.ui.screen.authentication.login.LoginScreenViewModel
 import com.learning.pestifyapp.ui.screen.authentication.register.RegisterScreenViewModel
