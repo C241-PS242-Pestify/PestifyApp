@@ -1,4 +1,4 @@
-package com.learning.pestifyapp.ui.screen.authentication.username
+package com.learning.pestifyapp.ui.screen.authentication.register
 
 import android.content.Context
 import android.widget.Toast
@@ -38,7 +38,7 @@ import com.learning.pestifyapp.ui.screen.navigation.Graph
 fun UsernameScreen(
     navController: NavHostController,
     context: MainActivity,
-    viewModel: UsernameScreenViewModel,
+    viewModel: RegisterScreenViewModel,
 ) {
     val focusManager = LocalFocusManager.current
     val isLoading by viewModel.loading.observeAsState(initial = false)
@@ -84,8 +84,11 @@ fun UsernameScreen(
                     focusManager.clearFocus()
                     viewModel.saveUsername(
                         onSuccess = {
+                            navController.popBackStack()
                             navController.navigate(Graph.LOGIN)
-                        }, onError = {errorMessage ->
+                            Toast.makeText(context, "Account Created!", Toast.LENGTH_SHORT).show()
+                        },
+                        onError = { errorMessage ->
                             handleLoginError(context, errorMessage)
                         }
                     )
@@ -105,6 +108,7 @@ fun UsernameScreen(
         }
     }
 }
+
 private fun handleLoginError(context: Context, errorMessage: String) {
     Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
 }

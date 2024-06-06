@@ -8,9 +8,9 @@ import com.learning.pestifyapp.di.Injection
 import com.learning.pestifyapp.ui.screen.authentication.forgotpassword.ForgotPasswordScreenViewModel
 import com.learning.pestifyapp.ui.screen.authentication.login.LoginScreenViewModel
 import com.learning.pestifyapp.ui.screen.authentication.register.RegisterScreenViewModel
-import com.learning.pestifyapp.ui.screen.authentication.username.UsernameScreenViewModel
 import com.learning.pestifyapp.ui.screen.dashboard.home.HomeScreenViewModel
 import com.learning.pestifyapp.ui.screen.dashboard.pescan.PescanScreenViewModel
+import com.learning.pestifyapp.ui.screen.dashboard.profile.ProfileScreenViewModel
 
 class ViewModelFactory(
     private val userRepository: UserRepository
@@ -30,16 +30,15 @@ class ViewModelFactory(
                 RegisterScreenViewModel(userRepository) as T
             }
 
-            modelClass.isAssignableFrom(UsernameScreenViewModel::class.java) -> {
-                UsernameScreenViewModel(userRepository) as T
-            }
-
             modelClass.isAssignableFrom(ForgotPasswordScreenViewModel::class.java) -> {
                 ForgotPasswordScreenViewModel(userRepository) as T
             }
 
             modelClass.isAssignableFrom(PescanScreenViewModel::class.java) -> {
                 PescanScreenViewModel(userRepository) as T
+            }
+            modelClass.isAssignableFrom(ProfileScreenViewModel::class.java) -> {
+                ProfileScreenViewModel(userRepository) as T
             }
 
             else -> throw IllegalArgumentException("Unknown ViewModel class: ${modelClass.name}")

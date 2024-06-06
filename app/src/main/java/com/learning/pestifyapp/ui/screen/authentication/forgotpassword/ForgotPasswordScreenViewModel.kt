@@ -36,19 +36,19 @@ class ForgotPasswordScreenViewModel(private val userRepository: UserRepository) 
     }
 
     fun resetPassword(onSuccess: () -> Unit, onError: (String) -> Unit) {
-        if (validateEmail()) {
-            _loading.value = true
-            viewModelScope.launch {
-                val result = userRepository.resetPassword(emailValue)
-                result.onSuccess {
-                    onSuccess.invoke()
-                    _loading.value = false
-                }
-                result.onFailure {
-                    onError(it.message ?: "An error occurred")
-                    _loading.value = false
-                }
-            }
-        }
+//        if (validateEmail()) {
+//            _loading.value = true
+//            viewModelScope.launch {
+//                val result = userRepository.resetPassword(emailValue)
+//                result.onSuccess {
+//                    onSuccess.invoke()
+//                    _loading.value = false
+//                }
+//                result.onFailure {
+//                    onError(it.message ?: "An error occurred")
+//                    _loading.value = false
+//                }
+//            }
+//        }
     }
 }

@@ -9,7 +9,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.learning.pestifyapp.data.model.user.UserData
+import com.learning.pestifyapp.data.response.ResultResponse
 import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class LoginScreenViewModel(private val userRepository: UserRepository) : ViewModel() {
     private val _loading = MutableLiveData(false)
@@ -55,30 +58,43 @@ class LoginScreenViewModel(private val userRepository: UserRepository) : ViewMod
             passwordError = "Please fill password field"
             isValid = false
         } else if (password.length < 6) {
-            passwordError = "Password must more than 8 character"
+            passwordError = "Password must be at least 6 characters"
             isValid = false
         }
         return isValid
     }
+
 
     fun login(onSuccess: () -> Unit, onError: (String) -> Unit) {
         if (validateEmail() && validatePassword()) {
             _loading.value = true
             viewModelScope.launch {
                 val result = userRepository.login(emailValue, passwordValue)
-                result.onSuccess { user ->
-                    _isValid.value = true
-                    userRepository.saveUserSession(user)
-                    onSuccess.invoke()
-                }.onFailure { exception ->
-                    _isValid.value = false
-                    onError.invoke(exception.message ?: "Unknown error occurred")
-                }
                 _loading.value = false
+                when (result) {
+                    is ResultResponse.Success -> {
+                        _isValid.value = true
+                        userRepository.saveToken(result.data.token!!)
+                        userRepository.saveLoginStatus(true)
+                        userRepository.saveEmail(emailValue)
+                        val userSession = UserData(result.data.token, emailValue, "", isLogin = true)
+                        userRepository.saveUserSession(userSession)
+                        onSuccess()
+                    }
+
+                    is ResultResponse.Error -> {
+                        _isValid.value = false
+                        val errorMessage = result.error ?: "Unknown error occurred"
+                        onError(errorMessage)
+                    }
+
+                    ResultResponse.Loading -> TODO()
+                }
             }
         } else {
             _isValid.value = false
-            onError.invoke("Invalid email or password")
+            onError("Invalid email or password")
         }
     }
+
 }

@@ -59,6 +59,9 @@ fun NavGraphBuilder.dashBoard(
 
         composable(Screen.Profile.route) {
             ProfileScreen(
+                navController = navController,
+                context = context,
+                viewModel = viewModel(factory = ViewModelFactory(userRepository))
             )
         }
     }

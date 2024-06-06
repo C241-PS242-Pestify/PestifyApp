@@ -164,10 +164,9 @@ fun ButtonSection(
                 CustomButton(
                     text = "Get Started",
                     onClick = {
-//                        onBoardingFinished(context = context)
+                        onBoardingFinished(context = context)
                         navController.popBackStack()
-                        navController.navigate(Graph.DASHBOARD)
-//                        navController.navigate(Graph.LOGIN)
+                        navController.navigate(Graph.LOGIN)
                     },
                     modifier = Modifier
                         .align(Alignment.Center)

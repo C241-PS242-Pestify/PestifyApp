@@ -42,6 +42,7 @@ import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.ui.components.CustomButton
 import com.learning.pestifyapp.ui.components.TextFieldValidation
 import com.learning.pestifyapp.ui.screen.navigation.Graph
+import com.learning.pestifyapp.ui.screen.navigation.Screen
 
 
 @Composable
@@ -129,7 +130,8 @@ fun LoginScreen(
                     focusManager.clearFocus()
                     viewModel.login(
                         onSuccess = {
-                            navController.navigate(Graph.DASHBOARD)
+                            navController.popBackStack()
+                            navController.navigate(Screen.Home.route)
                         },
                         onError = { errorMessage ->
                             handleLoginError(context, errorMessage)
@@ -150,6 +152,7 @@ fun LoginScreen(
                     text = " Register!",
                     modifier = Modifier
                         .clickable {
+                            navController.popBackStack()
                             navController.navigate(Graph.REGISTER)
                         },
                     color = MaterialTheme.colorScheme.primary,

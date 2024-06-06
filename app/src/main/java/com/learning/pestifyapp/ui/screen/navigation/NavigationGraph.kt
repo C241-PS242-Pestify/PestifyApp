@@ -3,9 +3,8 @@ package com.learning.pestifyapp.ui.screen.navigation
 
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -23,8 +22,7 @@ import com.learning.pestifyapp.ui.screen.authentication.login.LoginScreenViewMod
 import com.learning.pestifyapp.ui.screen.authentication.login.LoginScreen
 import com.learning.pestifyapp.ui.screen.authentication.register.RegisterScreen
 import com.learning.pestifyapp.ui.screen.authentication.register.RegisterScreenViewModel
-import com.learning.pestifyapp.ui.screen.authentication.username.UsernameScreen
-import com.learning.pestifyapp.ui.screen.authentication.username.UsernameScreenViewModel
+import com.learning.pestifyapp.ui.screen.authentication.register.UsernameScreen
 import com.learning.pestifyapp.ui.screen.dashboard.detail.DetailScreen
 import com.learning.pestifyapp.ui.screen.dashboard.ensiklopedia.EnsiklopediaScreen
 import com.learning.pestifyapp.ui.screen.dashboard.history.HistoryScreen
@@ -80,22 +78,13 @@ fun NavigationGraph(
             )
         }
         composable(route = Graph.REGISTER) {
-            val registerScreenViewModel: RegisterScreenViewModel =
-                viewModel(factory = ViewModelFactory(userRepository))
-
+            val registerViewModel: RegisterScreenViewModel = viewModel(
+                factory = ViewModelFactory(userRepository)
+            )
             RegisterScreen(
                 navController = navController,
                 context = context,
-                viewModel = registerScreenViewModel
-            )
-        }
-        composable(route = Graph.USERNAME) {
-            val usernameViewModel: UsernameScreenViewModel =
-                viewModel(factory = ViewModelFactory(userRepository))
-            UsernameScreen(
-                navController = navController,
-                context = context,
-                viewModel = usernameViewModel
+                viewModel = registerViewModel
             )
         }
         composable(route = Graph.FORGOT_PASSWORD) {
@@ -152,6 +141,9 @@ fun NavigationGraph(
 
         composable(route = Screen.Profile.route) {
             ProfileScreen(
+                navController = navController,
+                context = context,
+                viewModel = viewModel(factory = ViewModelFactory(userRepository))
             )
         }
 
