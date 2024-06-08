@@ -16,6 +16,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,15 +26,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
 import com.learning.pestifyapp.R
 import com.learning.pestifyapp.ui.screen.navigation.NavigationItem
 import com.learning.pestifyapp.ui.screen.navigation.Screen
@@ -44,10 +44,26 @@ import com.learning.pestifyapp.ui.theme.iconLight
 fun BottomNavBar(
     context : Context,
     navController: NavHostController,
-    modifier: Modifier = Modifier,
 ) {
 
+    val listRoute = getNavigationItems(context).map { it.screen.route }
+
     var selectedItem by rememberSaveable { mutableStateOf(Screen.Home.route) }
+
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route
+
+    val showBottomBar = remember(currentRoute) {
+        currentRoute in listRoute
+    }
+
+    LaunchedEffect(currentRoute) {
+        currentRoute?.let { route ->
+            if (showBottomBar) {
+                selectedItem = route
+            }
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -83,7 +99,6 @@ fun BottomNavBar(
                             }
                             restoreState = true
                             launchSingleTop = true
-
                         }
                     }
                 )
@@ -91,7 +106,6 @@ fun BottomNavBar(
 
         }
     }
-
 }
 
 @Composable

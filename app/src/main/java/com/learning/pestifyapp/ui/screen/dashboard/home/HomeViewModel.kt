@@ -29,13 +29,14 @@ class HomeViewModel(
     val user: LiveData<UserData?> = _user
 
     private val _isLoggedIn = MutableLiveData<Boolean>()
-    val isLoggedIn: LiveData<Boolean> = _isLoggedIn
 
     init {
         viewModelScope.launch {
             _isLoggedIn.value = userRepository.getLoginStatus()
             if (_isLoggedIn.value == true) {
                 _user.value = userRepository.getUserSession()
+            } else {
+                _user.value = null
             }
         }
 
