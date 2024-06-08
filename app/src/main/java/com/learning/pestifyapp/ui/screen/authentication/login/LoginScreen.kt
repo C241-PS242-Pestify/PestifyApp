@@ -1,10 +1,7 @@
 package com.learning.pestifyapp.ui.screen.authentication.login
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.widget.Toast
-import androidx.camera.video.VideoRecordEvent.Start
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

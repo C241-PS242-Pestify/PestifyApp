@@ -26,5 +26,8 @@ object ApiConfig {
     fun getAuthService(): AuthService {
         return retrofit.create(AuthService::class.java)
     }
+    fun getPageService(): AccountService {
+        return retrofit.create(AccountService::class.java)
+    }
 
 }
