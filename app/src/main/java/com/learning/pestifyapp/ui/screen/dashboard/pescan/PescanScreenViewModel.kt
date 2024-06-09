@@ -9,11 +9,8 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.cachedIn
+
 import com.learning.pestifyapp.data.repository.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,12 +22,13 @@ class PescanScreenViewModel(private val userRepository: UserRepository) : ViewMo
     fun updateImageUri(uri: Uri) {
         _imageUri.value = uri
     }
+
     fun captureImage(
         imageCapture: ImageCapture,
         context: Context,
         navController: NavHostController,
     ) {
-        val name = "CameraxImage.jpeg"
+        val name = "CameraxImage_${System.currentTimeMillis()}.jpeg"
         val contentValues = ContentValues().apply {
             put(MediaStore.MediaColumns.DISPLAY_NAME, name)
             put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
@@ -54,11 +52,15 @@ class PescanScreenViewModel(private val userRepository: UserRepository) : ViewMo
                     val savedUri = outputFileResults.savedUri
                     if (savedUri != null) {
                         updateImageUri(savedUri)
+                        navController.previousBackStackEntry
+                            ?.savedStateHandle
+                            ?.set("imageUri", savedUri)
                         navController.popBackStack()
                     } else {
                         // Handle error
                     }
                 }
+
                 override fun onError(exception: ImageCaptureException) {
                     // Handle error
                 }

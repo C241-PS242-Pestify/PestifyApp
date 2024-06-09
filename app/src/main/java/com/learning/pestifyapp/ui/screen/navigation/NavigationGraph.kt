@@ -1,8 +1,12 @@
 package com.learning.pestifyapp.ui.screen.navigation
 
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
+import CameraScreen
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -25,7 +29,6 @@ import com.learning.pestifyapp.ui.screen.dashboard.detail.DetailScreen
 import com.learning.pestifyapp.ui.screen.dashboard.ensiklopedia.EnsiklopediaScreen
 import com.learning.pestifyapp.ui.screen.dashboard.history.HistoryScreen
 import com.learning.pestifyapp.ui.screen.dashboard.home.HomeScreen
-import com.learning.pestifyapp.ui.screen.dashboard.pescan.CameraScreen
 import com.learning.pestifyapp.ui.screen.dashboard.pescan.PescanScreen
 import com.learning.pestifyapp.ui.screen.dashboard.pescan.PescanScreenViewModel
 import com.learning.pestifyapp.ui.screen.dashboard.profile.PrivacyScreen
@@ -39,15 +42,34 @@ fun NavigationGraph(
     context: MainActivity,
 ) {
     val userRepository = UserRepository(context)
+    val enterTransition = slideInHorizontally(
+        initialOffsetX = { fullWidth -> fullWidth },
+        animationSpec = tween(700)
+    ) + fadeIn(animationSpec = tween(700))
+
+    val exitTransition = slideOutHorizontally(
+        targetOffsetX = { fullWidth -> -fullWidth },
+        animationSpec = tween(700)
+    ) + fadeOut(animationSpec = tween(700))
+
+    val popEnterTransition = slideInHorizontally(
+        initialOffsetX = { fullWidth -> -fullWidth },
+        animationSpec = tween(700)
+    ) + fadeIn(animationSpec = tween(700))
+
+    val popExitTransition = slideOutHorizontally(
+        targetOffsetX = { fullWidth -> fullWidth },
+        animationSpec = tween(700)
+    ) + fadeOut(animationSpec = tween(700))
 
     NavHost(
         navController = navController,
         startDestination = Graph.SPLASH,
         modifier = Modifier,
-        enterTransition = { EnterTransition.None },
-        exitTransition = { ExitTransition.None },
-        popEnterTransition = { EnterTransition.None },
-        popExitTransition = { ExitTransition.None }
+        enterTransition = { enterTransition },
+        exitTransition = { exitTransition },
+        popEnterTransition = { popEnterTransition },
+        popExitTransition = { popExitTransition }
     ) {
 
         composable(route = Graph.SPLASH) {

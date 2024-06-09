@@ -74,15 +74,20 @@ fun LoginScreen(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = title,
-                textAlign = TextAlign.Start,
-                fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold,
-                lineHeight = 38.sp,
-                modifier = Modifier.padding(start = 24.dp)
-            )
+            Column(
+                horizontalAlignment = Alignment.Start,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = title,
+                    textAlign = TextAlign.Start,
+                    fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 38.sp,
+                    modifier = Modifier.padding(start = 24.dp)
+                )
+            }
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally

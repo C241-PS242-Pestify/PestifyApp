@@ -23,21 +23,18 @@ class ProfileScreenViewModel(private val userRepository: UserRepository) : ViewM
     private val _isLoading = MutableLiveData<Boolean>()
     val isLoading: LiveData<Boolean> get() = _isLoading
 
-    private val _isDataLoaded = MutableLiveData<Boolean>(false)
+    private val _isDataLoaded = MutableLiveData(false)
     val isDataLoaded: LiveData<Boolean> get() = _isDataLoaded
 
-    var usernameValue by mutableStateOf("")
-        private set
+    private var usernameValue by mutableStateOf("")
     var usernameError by mutableStateOf("")
         private set
 
-    var emailValue by mutableStateOf("")
-        private set
+    private var emailValue by mutableStateOf("")
     var emailError by mutableStateOf("")
         private set
 
-    var passwordValue by mutableStateOf("")
-        private set
+    private var passwordValue by mutableStateOf("")
     var passwordError by mutableStateOf("")
         private set
 

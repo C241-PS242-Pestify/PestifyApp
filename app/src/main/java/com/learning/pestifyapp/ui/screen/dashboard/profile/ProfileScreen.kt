@@ -21,11 +21,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Divider
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -92,6 +94,7 @@ fun ProfileScreen(
             message = "Are you sure you want to log out?",
             onYesClick = {
                 showDialog = false
+                navController.popBackStack()
                 viewModel.logout()
                 Toast
                     .makeText(context, "Logout", Toast.LENGTH_SHORT)
@@ -105,14 +108,14 @@ fun ProfileScreen(
 
     if (isLoading || !isDataLoaded!!) {
         Box(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()),
             contentAlignment = Alignment.Center
         ) {
             CircularProgressIndicator()
         }
     } else {
         Column(
-            modifier = modifier.fillMaxSize(),
+            modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -225,14 +228,14 @@ fun AccountSection(
                         color = Color.Black
                     )
                     Icon(
-                        imageVector = Icons.Default.KeyboardArrowRight,
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                         contentDescription = "Arrow Icon",
                         tint = Color.Black
                     )
                 }
 
 
-                Divider(color = Color.Gray, thickness = 1.dp)
+                HorizontalDivider(thickness = 1.dp, color = Color.Gray)
                 Row(
                     modifier = Modifier
                         .padding(bottom = 4.dp, top = 16.dp)
@@ -251,12 +254,12 @@ fun AccountSection(
                     )
                     Icon(
                         modifier = Modifier,
-                        imageVector = Icons.Default.KeyboardArrowRight,
+                        imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                         contentDescription = "Arrow Icon",
                         tint = Color.Black
                     )
                 }
-                Divider(color = Color.Gray, thickness = 1.dp)
+                HorizontalDivider(thickness = 1.dp, color = Color.Gray)
             }
 
             Spacer(modifier = Modifier.height(19.dp))
@@ -283,12 +286,12 @@ fun AccountSection(
                     color = Color.Black
                 )
                 Icon(
-                    imageVector = Icons.Default.KeyboardArrowRight,
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "Arrow Icon",
                     tint = Color.Black
                 )
             }
-            Divider(color = Color.Gray, thickness = 1.dp)
+            HorizontalDivider(thickness = 1.dp, color = Color.Gray)
             Row(
                 modifier = Modifier
                     .padding(bottom = 4.dp, top = 16.dp)
@@ -307,12 +310,12 @@ fun AccountSection(
                 )
                 Icon(
                     modifier = Modifier,
-                    imageVector = Icons.Default.KeyboardArrowRight,
+                    imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                     contentDescription = "Arrow Icon",
                     tint = Color.Black
                 )
             }
-            Divider(color = Color.Gray, thickness = 1.dp)
+            HorizontalDivider(thickness = 1.dp, color = Color.Gray)
         }
     }
 }
