@@ -55,7 +55,9 @@ fun PrivacyScreen(
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
-            modifier = Modifier.fillMaxSize().padding(16.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(16.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -77,7 +79,7 @@ fun PrivacyScreen(
                         textAlign = TextAlign.Center
                     )
                 }
-                Spacer(modifier = Modifier.width(48.dp)) // Tambahkan ruang kosong di sebelah kanan
+                Spacer(modifier = Modifier.width(48.dp))
             }
 
             Column(
@@ -89,10 +91,12 @@ fun PrivacyScreen(
                     value = username,
                     onChange = { username = it },
                     placeholder = userData?.username ?: "Username",
-                    isError = false,
+                    isError = viewModel.usernameError.isNotEmpty(),
                     icon = Icons.Default.Person,
-                    errorMessage = "",
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                    errorMessage = viewModel.usernameError,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
                 )
 
                 Text(text = "Email", style = MaterialTheme.typography.bodyMedium)
@@ -100,10 +104,12 @@ fun PrivacyScreen(
                     value = email,
                     onChange = { email = it },
                     placeholder = userData?.email ?: "Email",
-                    isError = false,
+                    isError = viewModel.emailError.isNotEmpty(),
                     icon = Icons.Default.Email,
-                    errorMessage = "",
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                    errorMessage = viewModel.emailError,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
                 )
 
                 Text(text = "Password", style = MaterialTheme.typography.bodyMedium)
@@ -111,11 +117,13 @@ fun PrivacyScreen(
                     value = password,
                     onChange = { password = it },
                     placeholder = "Enter new password",
-                    isError = false,
+                    isError = viewModel.passwordError.isNotEmpty(),
                     icon = Icons.Default.Lock,
-                    errorMessage = "",
+                    errorMessage = viewModel.passwordError,
                     isPassword = true,
-                    modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp)
                 )
             }
 

@@ -74,7 +74,7 @@ class RegisterScreenViewModel(private val userRepository: UserRepository) : View
             usernameError = "Please fill username field"
             false
         } else if (username.length < 6) {
-            usernameError = "Username must be at least 6 characters long"
+            usernameError = "Username must be at least 5 characters long"
             false
         } else if (username.contains(" ")) {
             usernameError = "Username should not contain spaces"
@@ -97,34 +97,60 @@ class RegisterScreenViewModel(private val userRepository: UserRepository) : View
         }
     }
 
-    private fun validatePassword(): Boolean {
-        val password = passwordValue.trim()
-        return if (password.isBlank()) {
+private fun validatePassword(): Boolean {
+    val password = passwordValue.trim()
+    val containsLetter = password.any { it.isLetter() }
+    val containsDigit = password.any { it.isDigit() }
+
+    return when {
+        password.isBlank() -> {
             passwordError = "Please fill password field"
             false
-        } else if (password.length < 6) {
+        }
+        password.length < 6 -> {
             passwordError = "Password must be at least 6 characters long"
             false
-        } else {
-            true
         }
+        !containsLetter -> {
+            passwordError = "Password must contain at least one letter"
+            false
+        }
+        !containsDigit -> {
+            passwordError = "Password must contain at least one digit"
+            false
+        }
+        else -> true
     }
+}
 
-    private fun validateConfirmPassword(): Boolean {
-        val confirmPassword = confirmPasswordValue.trim()
-        return if (confirmPassword.isBlank()) {
-            confirmPasswordError = "Please fill confirm password field"
+private fun validateConfirmPassword(): Boolean {
+    val password = passwordValue.trim()
+    val containsLetter = password.any { it.isLetter() }
+    val containsDigit = password.any { it.isDigit() }
+
+    return when {
+        password.isBlank() -> {
+            passwordError = "Please fill password field"
             false
-        } else if (confirmPassword != passwordValue) {
-            confirmPasswordError = "Passwords do not match"
-            false
-        } else {
-            true
         }
+        password.length < 6 -> {
+            passwordError = "Password must be at least 6 characters long"
+            false
+        }
+        !containsLetter -> {
+            passwordError = "Password must contain at least one letter"
+            false
+        }
+        !containsDigit -> {
+            passwordError = "Password must contain at least one digit"
+            false
+        }
+        else -> true
     }
+}
 
     fun register(onSuccess: () -> Unit, onError: (String) -> Unit) {
-        if (validateEmail() && validatePassword()) {
+        if (validateEmail() && validatePassword() && validateConfirmPassword()) {
             email = emailValue
             password = passwordValue
             onSuccess()

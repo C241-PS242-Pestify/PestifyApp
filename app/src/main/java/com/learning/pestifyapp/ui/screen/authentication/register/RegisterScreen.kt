@@ -45,7 +45,6 @@ fun RegisterScreen(
     viewModel: RegisterScreenViewModel,
 ) {
     val isLoading by viewModel.loading.observeAsState(initial = false)
-    val focusManager = LocalFocusManager.current
 
     var isEmailAndPasswordVisible by remember { mutableStateOf(true) }
     var isUsernameVisible by remember { mutableStateOf(false) }
@@ -63,7 +62,6 @@ fun RegisterScreen(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Bagian Email dan Kata Sandi
             if (isEmailAndPasswordVisible) {
                 Text(
                     text = title,
@@ -150,7 +148,6 @@ fun RegisterScreen(
                 }
             }
 
-            // Bagian Masukkan Nama Pengguna
             if (isUsernameVisible) {
                 UsernameScreen(
                     navController = navController,
@@ -159,7 +156,6 @@ fun RegisterScreen(
                 )
             }
 
-            // Tampilkan loading spinner jika sedang memuat
             if (isLoading) {
                 Box(
                     contentAlignment = Alignment.Center,
