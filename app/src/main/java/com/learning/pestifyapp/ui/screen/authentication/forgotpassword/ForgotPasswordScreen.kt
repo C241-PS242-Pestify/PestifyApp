@@ -140,6 +140,7 @@ fun ForgotPasswordScreen(
                 Button(
                     onClick = {
                         showDialog = false
+                        navController.popBackStack()
                         navController.navigate(Graph.LOGIN)
                     }
                 ) {

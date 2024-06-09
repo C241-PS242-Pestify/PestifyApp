@@ -1,10 +1,12 @@
 package com.learning.pestifyapp.ui.screen.navigation
 
 
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.padding
+import CameraScreen
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,15 +25,13 @@ import com.learning.pestifyapp.ui.screen.authentication.login.LoginScreenViewMod
 import com.learning.pestifyapp.ui.screen.authentication.login.LoginScreen
 import com.learning.pestifyapp.ui.screen.authentication.register.RegisterScreen
 import com.learning.pestifyapp.ui.screen.authentication.register.RegisterScreenViewModel
-import com.learning.pestifyapp.ui.screen.authentication.username.UsernameScreen
-import com.learning.pestifyapp.ui.screen.authentication.username.UsernameScreenViewModel
 import com.learning.pestifyapp.ui.screen.dashboard.detail.DetailScreen
 import com.learning.pestifyapp.ui.screen.dashboard.ensiklopedia.EnsiklopediaScreen
 import com.learning.pestifyapp.ui.screen.dashboard.history.HistoryScreen
 import com.learning.pestifyapp.ui.screen.dashboard.home.HomeScreen
-import com.learning.pestifyapp.ui.screen.dashboard.pescan.CameraScreen
 import com.learning.pestifyapp.ui.screen.dashboard.pescan.PescanScreen
 import com.learning.pestifyapp.ui.screen.dashboard.pescan.PescanScreenViewModel
+import com.learning.pestifyapp.ui.screen.dashboard.profile.PrivacyScreen
 import com.learning.pestifyapp.ui.screen.dashboard.profile.ProfileScreen
 import com.learning.pestifyapp.ui.screen.onboarding.OnboardingScreen
 import com.learning.pestifyapp.ui.screen.splashscreen.SplashScreen
@@ -42,15 +42,34 @@ fun NavigationGraph(
     context: MainActivity,
 ) {
     val userRepository = UserRepository(context)
+    val enterTransition = slideInHorizontally(
+        initialOffsetX = { fullWidth -> fullWidth },
+        animationSpec = tween(700)
+    ) + fadeIn(animationSpec = tween(700))
+
+    val exitTransition = slideOutHorizontally(
+        targetOffsetX = { fullWidth -> -fullWidth },
+        animationSpec = tween(700)
+    ) + fadeOut(animationSpec = tween(700))
+
+    val popEnterTransition = slideInHorizontally(
+        initialOffsetX = { fullWidth -> -fullWidth },
+        animationSpec = tween(700)
+    ) + fadeIn(animationSpec = tween(700))
+
+    val popExitTransition = slideOutHorizontally(
+        targetOffsetX = { fullWidth -> fullWidth },
+        animationSpec = tween(700)
+    ) + fadeOut(animationSpec = tween(700))
 
     NavHost(
         navController = navController,
         startDestination = Graph.SPLASH,
         modifier = Modifier,
-        enterTransition = { EnterTransition.None },
-        exitTransition = { ExitTransition.None },
-        popEnterTransition = { EnterTransition.None },
-        popExitTransition = { ExitTransition.None }
+        enterTransition = { enterTransition },
+        exitTransition = { exitTransition },
+        popEnterTransition = { popEnterTransition },
+        popExitTransition = { popExitTransition }
     ) {
 
         composable(route = Graph.SPLASH) {
@@ -80,22 +99,13 @@ fun NavigationGraph(
             )
         }
         composable(route = Graph.REGISTER) {
-            val registerScreenViewModel: RegisterScreenViewModel =
-                viewModel(factory = ViewModelFactory(userRepository))
-
+            val registerViewModel: RegisterScreenViewModel = viewModel(
+                factory = ViewModelFactory(userRepository)
+            )
             RegisterScreen(
                 navController = navController,
                 context = context,
-                viewModel = registerScreenViewModel
-            )
-        }
-        composable(route = Graph.USERNAME) {
-            val usernameViewModel: UsernameScreenViewModel =
-                viewModel(factory = ViewModelFactory(userRepository))
-            UsernameScreen(
-                navController = navController,
-                context = context,
-                viewModel = usernameViewModel
+                viewModel = registerViewModel
             )
         }
         composable(route = Graph.FORGOT_PASSWORD) {
@@ -152,6 +162,9 @@ fun NavigationGraph(
 
         composable(route = Screen.Profile.route) {
             ProfileScreen(
+                navController = navController,
+                context = context,
+                viewModel = viewModel(factory = ViewModelFactory(userRepository))
             )
         }
 
@@ -171,6 +184,15 @@ fun NavigationGraph(
                 navigateBack = {
                     navController.navigateUp()
                 }
+            )
+        }
+
+        composable(route = Graph.PRIVACY) {
+            PrivacyScreen(
+                navController = navController,
+                context = context,
+                viewModel = viewModel(factory = ViewModelFactory(userRepository))
+
             )
         }
 

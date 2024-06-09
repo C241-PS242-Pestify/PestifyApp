@@ -2,111 +2,191 @@ package com.learning.pestifyapp.data.repository
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.UserProfileChangeRequest
-import com.learning.pestifyapp.data.model.UserData
-import com.learning.pestifyapp.di.Injection
-import kotlinx.coroutines.tasks.await
+import android.util.Log
+import com.learning.pestifyapp.data.model.user.UserData
+import com.learning.pestifyapp.data.response.AccountUpdateResponse
+import com.learning.pestifyapp.data.response.LoginResponse
+import com.learning.pestifyapp.data.response.RegisterResponse
+import com.learning.pestifyapp.data.response.ResultResponse
+import com.learning.pestifyapp.data.retrofit.ApiConfig
+import com.learning.pestifyapp.data.retrofit.AuthService
+import com.learning.pestifyapp.data.retrofit.LoginRequest
+import com.learning.pestifyapp.data.retrofit.AccountService
+import com.learning.pestifyapp.data.retrofit.RegisterRequest
+import com.learning.pestifyapp.data.retrofit.UpdateAccountRequest
+import retrofit2.Response
 
 class UserRepository(context: Context) {
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+    private val authService: AuthService = ApiConfig.getAuthService()
+    private val accountService: AccountService = ApiConfig.getPageService()
 
 
-    fun isLoggedIn(): Boolean {
-        return sharedPreferences.getBoolean("isLoggedIn", false)
-    }
-    suspend fun login(email: String, password: String): Result<UserData> {
+    suspend fun register(
+        name: String,
+        email: String,
+        password: String,
+    ): ResultResponse<RegisterResponse> {
         return try {
-            val authResult = auth.signInWithEmailAndPassword(email, password).await()
-            val firebaseUser = authResult.user
-            if (firebaseUser != null) {
-                val user = createUserData(firebaseUser)
-                saveUserSession(user)
-                Result.success(user)
-            } else {
-                Result.failure(Exception("Login failed"))
-            }
+            val request = RegisterRequest(name, email, password)
+            val response = authService.register(request)
+            ResultResponse.Success(response)
         } catch (e: Exception) {
-            Result.failure(e)
+            Log.e("AuthRepository", "register: ${e.message}", e)
+            ResultResponse.Error(e.message.toString())
         }
     }
 
-    suspend fun register(email: String, password: String): Result<UserData> {
+    suspend fun login(email: String, password: String): ResultResponse<LoginResponse> {
         return try {
-            val authResult = auth.createUserWithEmailAndPassword(email, password).await()
-            val firebaseUser = authResult.user
-            if (firebaseUser != null) {
-                val user = createUserData(firebaseUser)
-                Result.success(user)
-            } else {
-                Result.failure(Exception("Registration failed"))
-            }
+            val request = LoginRequest(email, password)
+            val response = authService.login(request)
+            ResultResponse.Success(response)
         } catch (e: Exception) {
-            Result.failure(e)
+            Log.e("AuthRepository", "login: ${e.message}", e)
+            ResultResponse.Error(e.message.toString())
         }
     }
-    suspend fun setUsername(username: String):Result<UserData> {
-        val firebaseUser = auth.currentUser
+
+    suspend fun logout(): ResultResponse<String> {
+        val token = getToken() ?: return ResultResponse.Error("User is not logged in")
         return try {
-            if (firebaseUser != null) {
-                val profileUpdates = UserProfileChangeRequest.Builder()
-                    .setDisplayName(username)
-                    .build()
-                firebaseUser.updateProfile(profileUpdates).await()
-                val user = createUserData(firebaseUser)
-                Result.success(user)
+            val response = authService.logout("Bearer $token")
+            if (response.isSuccessful && response.body() != null) {
+                clearSession()
+                ResultResponse.Success(response.body()!!.message ?: "Logout successful")
             } else {
-                Result.failure(Exception("User not found"))
+                ResultResponse.Error("Logout failed: ${response.message()}")
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            Log.e("AuthRepository", "logout: ${e.message}", e)
+            ResultResponse.Error(e.message.toString())
         }
     }
+
+    suspend fun fetchUserData(): ResultResponse<UserData> {
+        val token = getToken() ?: return ResultResponse.Error("User is not logged in")
+        return try {
+            val response = accountService.fetchUserData("Bearer $token")
+            if (response.isSuccessful && response.body() != null) {
+                val user = response.body()!!.user
+                val userData = UserData(token, user?.email, user?.username, true)
+                saveUserSession(userData)
+                ResultResponse.Success(userData)
+            } else {
+                ResultResponse.Error("Fetch user data failed: ${response.message()}")
+            }
+        } catch (e: Exception) {
+            Log.e("AuthRepository", "fetchUserData: ${e.message}", e)
+            ResultResponse.Error(e.message.toString())
+        }
+    }
+
+    suspend fun updateAccount(
+        name: String?,
+        email: String?,
+        password: String?,
+    ): ResultResponse<UserData> {
+        val token = getToken() ?: return ResultResponse.Error("User is not logged in")
+        return try {
+            Log.d("AuthRepository", "updateAccount request with name: $name, email: $email, password: $password")
+            val request = UpdateAccountRequest(name, email, password)
+            val response: Response<AccountUpdateResponse> =
+                authService.updateAccount("Bearer $token", request)
+            if (response.isSuccessful && response.body() != null) {
+                val user = response.body()!!.updatedUser
+                if (user != null) {
+                    val userData = UserData(token, user.email, user.username, true)
+                    saveUserSession(userData)
+                    Log.d("AuthRepository", "updateAccount success: $userData")
+                    ResultResponse.Success(userData)
+                } else {
+                    ResultResponse.Error("Update account failed: user data is null")
+                }
+            } else {
+                ResultResponse.Error(
+                    "Update account failed: ${
+                        response.errorBody()?.string() ?: "Unknown error"
+                    }"
+                )
+            }
+        } catch (e: Exception) {
+            Log.e("AuthRepository", "updateAccount: ${e.message}", e)
+            ResultResponse.Error(e.message.toString())
+        }
+    }
+
+        suspend fun isSessionValid(): Boolean {
+            val token = getToken() ?: return false
+            return try {
+                val response = authService.logout("Bearer $token")
+                response.isSuccessful
+            } catch (e: Exception) {
+                Log.e("AuthRepository", "isSessionValid: ${e.message}", e)
+                false
+            }
+        }
+
+    fun saveToken(token: String) {
+        val editor = sharedPreferences.edit()
+        editor.putString("token", token)
+        editor.apply()
+    }
+
+    private fun getToken(): String? {
+        return sharedPreferences.getString("token", null)
+    }
+
+    fun saveLoginStatus(isLogin: Boolean) {
+        val editor = sharedPreferences.edit()
+        editor.putBoolean("isLogin", isLogin)
+        editor.apply()
+    }
+
+    fun getLoginStatus(): Boolean {
+        return sharedPreferences.getBoolean("isLogin", false)
+    }
+
+    fun saveEmail(email: String) {
+        val editor = sharedPreferences.edit()
+        editor.putString("email", email)
+        editor.apply()
+    }
+
+    fun saveUserSession(userSession: UserData) {
+        val editor = sharedPreferences.edit()
+        editor.putString("token", userSession.token)
+        editor.putString("email", userSession.email)
+        editor.putString("username", userSession.username)
+        editor.putBoolean("isLogin", userSession.isLogin)
+        editor.apply()
+    }
+
     fun getUserSession(): UserData? {
-        return if (isLoggedIn()) {
-            val firebaseUser = auth.currentUser
-            firebaseUser?.let { createUserData(it) }
-        } else {
-            null
+        if (!getLoginStatus()) {
+            return null
         }
-    }
-    suspend fun resetPassword(email: String): Result<Unit> {
-        return try {
-            auth.sendPasswordResetEmail(email).await()
-            Result.success(Unit)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
-    fun logout() {
-        auth.signOut()
-        sharedPreferences.edit().clear().apply()
+        val token = getToken()
+        val email = sharedPreferences.getString("email", null)
+        val username = sharedPreferences.getString("username", null)
+        val isLogin = getLoginStatus()
+        return UserData(token, email, username, isLogin)
     }
 
-      fun saveUserSession(user: UserData) {
-        sharedPreferences.edit().apply {
-            putBoolean("isLoggedIn", true)
-            putString("userId", user.userId)
-            apply()
-        }
+    private fun clearSession() {
+        val editor = sharedPreferences.edit()
+        editor.clear()
+        editor.apply()
     }
-     fun createUserData(firebaseUser: FirebaseUser): UserData {
-        return UserData(
-            userId = firebaseUser.uid,
-            email = firebaseUser.email ?: "",
-            name = firebaseUser.displayName ?: ""
-        )
-    }
+
 
     companion object {
         @Volatile
         private var INSTANCE: UserRepository? = null
 
         @JvmStatic
-        fun getInstance(context : Context): UserRepository =
+        fun getInstance(context: Context): UserRepository =
             INSTANCE ?: synchronized(this) {
                 UserRepository(context).apply {
                     INSTANCE = this

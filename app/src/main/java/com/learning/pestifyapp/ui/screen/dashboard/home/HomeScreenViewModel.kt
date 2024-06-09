@@ -4,13 +4,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.learning.pestifyapp.data.model.UserData
-import com.learning.pestifyapp.data.model.plant.PlantData
+import com.learning.pestifyapp.data.model.user.UserData
 import com.learning.pestifyapp.data.repository.UserRepository
-import com.learning.pestifyapp.ui.common.UiState
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class HomeScreenViewModel(private val userRepository: UserRepository) : ViewModel() {
@@ -22,21 +17,21 @@ class HomeScreenViewModel(private val userRepository: UserRepository) : ViewMode
 
     init {
         viewModelScope.launch {
-            _isLoggedIn.value = userRepository.isLoggedIn()
+            _isLoggedIn.value = userRepository.getLoginStatus()
             if (_isLoggedIn.value == true) {
                 _user.value = userRepository.getUserSession()
             }
         }
     }
 
-    fun logout() {
-        userRepository.logout()
-        _isLoggedIn.value = false
-        _user.value = null
-    }
+//    fun logout() {
+//        userRepository.logout()
+//        _isLoggedIn.value = false
+//        _user.value = null
+//    }
 
-    fun fetchUsername(): String {
-        return _user.value?.name ?: ""
-    }
+//    fun fetchUsername(): String {
+//        return _user.value?.name ?: ""
+//    }
 
 }

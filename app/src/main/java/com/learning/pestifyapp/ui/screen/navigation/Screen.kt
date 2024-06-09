@@ -18,9 +18,10 @@ object Graph {
     const val ONBOARDING = "onboarding"
     const val LOGIN = "login"
     const val REGISTER = "register"
-    const val USERNAME = "username"
     const val FORGOT_PASSWORD = "forgot-password"
     const val CAMERA = "camera"
+    const val PRIVACY = "privacy"
+
 
 
 

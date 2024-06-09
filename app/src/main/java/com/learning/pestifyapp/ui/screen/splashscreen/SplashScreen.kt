@@ -14,10 +14,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.airbnb.lottie.LottieComposition
 import com.airbnb.lottie.compose.*
 import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.R
+import com.learning.pestifyapp.data.repository.UserRepository
 import com.learning.pestifyapp.ui.screen.navigation.Graph
 import com.learning.pestifyapp.ui.screen.navigation.Screen
 import kotlinx.coroutines.delay
@@ -46,22 +46,19 @@ fun SplashScreen(
         }
     }
 
-    LaunchedEffect(isAnimationFinished) {
-        if (isAnimationFinished) {
+LaunchedEffect(isAnimationFinished) {
+    if (isAnimationFinished) {
+        val userRepository = UserRepository(context)
+        val isSessionValid = userRepository.isSessionValid()
+        if (isSessionValid && userRepository.getLoginStatus()) {
             navController.popBackStack()
             navController.navigate(Screen.Home.route)
+        } else {
+            navController.popBackStack()
+            navController.navigate(Graph.ONBOARDING)
         }
-
-        // Uncomment and adjust this section if you have user login logic
-        // val userRepository = UserRepository(context)
-        // if (userRepository.isLoggedIn()) {
-        //     navController.popBackStack()
-        //     navController.navigate(Graph.DASHBOARD)
-        // } else {
-        //     navController.popBackStack()
-        //     navController.navigate(Graph.ONBOARDING)
-        // }
     }
+}
 
     Column(
         modifier = Modifier
@@ -81,7 +78,10 @@ fun SplashScreen(
 @Composable
 fun LoaderAnimation(modifier: Modifier, anim: Int) {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(anim))
-    val progress by animateLottieCompositionAsState(composition, iterations = LottieConstants.IterateForever)
+    val progress by animateLottieCompositionAsState(
+        composition,
+        iterations = LottieConstants.IterateForever
+    )
 
     LottieAnimation(
         composition = composition,

@@ -1,6 +1,7 @@
 package com.learning.pestifyapp.ui.screen.authentication.register
 
 
+import android.util.Log
 import com.learning.pestifyapp.data.repository.UserRepository
 import android.util.Patterns
 import androidx.compose.runtime.getValue
@@ -10,10 +11,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.learning.pestifyapp.data.model.UserData
+import com.learning.pestifyapp.data.model.user.UserData
+import com.learning.pestifyapp.data.response.ResultResponse
 import kotlinx.coroutines.launch
 
 class RegisterScreenViewModel(private val userRepository: UserRepository) : ViewModel() {
+    private var email = ""
+    private var password = ""
+
     private val _loading = MutableLiveData(false)
     val loading: LiveData<Boolean> = _loading
 
@@ -25,6 +30,11 @@ class RegisterScreenViewModel(private val userRepository: UserRepository) : View
 
     private val _isValid = MutableLiveData(false)
     val isValid: LiveData<Boolean> = _isValid
+
+    var usernameValue by mutableStateOf("")
+        private set
+    var usernameError by mutableStateOf("")
+        private set
 
     var emailValue by mutableStateOf("")
         private set
@@ -41,6 +51,11 @@ class RegisterScreenViewModel(private val userRepository: UserRepository) : View
     var confirmPasswordError by mutableStateOf("")
         private set
 
+
+    fun setUsername(value: String) {
+        usernameValue = value
+    }
+
     fun setEmail(value: String) {
         emailValue = value
     }
@@ -51,6 +66,22 @@ class RegisterScreenViewModel(private val userRepository: UserRepository) : View
 
     fun setConfirmPassword(value: String) {
         confirmPasswordValue = value
+    }
+
+    private fun validateUsername(): Boolean {
+        val username = usernameValue.trim()
+        return if (username.isBlank()) {
+            usernameError = "Please fill username field"
+            false
+        } else if (username.length < 6) {
+            usernameError = "Username must be at least 5 characters long"
+            false
+        } else if (username.contains(" ")) {
+            usernameError = "Username should not contain spaces"
+            false
+        } else {
+            true
+        }
     }
 
     private fun validateEmail(): Boolean {
@@ -66,51 +97,96 @@ class RegisterScreenViewModel(private val userRepository: UserRepository) : View
         }
     }
 
-    private fun validatePassword(): Boolean {
-        val password = passwordValue.trim()
-        return if (password.isBlank()) {
+private fun validatePassword(): Boolean {
+    val password = passwordValue.trim()
+    val containsLetter = password.any { it.isLetter() }
+    val containsDigit = password.any { it.isDigit() }
+
+    return when {
+        password.isBlank() -> {
             passwordError = "Please fill password field"
             false
-        } else if (password.length < 6) {
+        }
+        password.length < 6 -> {
             passwordError = "Password must be at least 6 characters long"
             false
-        } else {
-            true
         }
+        !containsLetter -> {
+            passwordError = "Password must contain at least one letter"
+            false
+        }
+        !containsDigit -> {
+            passwordError = "Password must contain at least one digit"
+            false
+        }
+        else -> true
     }
+}
 
-    private fun validateConfirmPassword(): Boolean {
-        val confirmPassword = confirmPasswordValue.trim()
-        return if (confirmPassword.isBlank()) {
-            confirmPasswordError = "Please fill confirm password field"
+private fun validateConfirmPassword(): Boolean {
+    val password = passwordValue.trim()
+    val containsLetter = password.any { it.isLetter() }
+    val containsDigit = password.any { it.isDigit() }
+
+    return when {
+        password.isBlank() -> {
+            passwordError = "Please fill password field"
             false
-        } else if (confirmPassword != passwordValue) {
-            confirmPasswordError = "Passwords do not match"
-            false
-        } else {
-            true
         }
+        password.length < 6 -> {
+            passwordError = "Password must be at least 6 characters long"
+            false
+        }
+        !containsLetter -> {
+            passwordError = "Password must contain at least one letter"
+            false
+        }
+        !containsDigit -> {
+            passwordError = "Password must contain at least one digit"
+            false
+        }
+        else -> true
     }
+}
 
     fun register(onSuccess: () -> Unit, onError: (String) -> Unit) {
         if (validateEmail() && validatePassword() && validateConfirmPassword()) {
-            _loading.value = true
-            viewModelScope.launch {
-                val result = userRepository.register(emailValue, passwordValue)
-                result.onSuccess { user ->
-                    _isValid.value = true
-                    _user.value = user
-                    onSuccess()
-                }
-                result.onFailure { error ->
-                    _errorMessage.value = error.message
-                    onError(error.message ?: "An error occurred")
-                }
-                _loading.value = false
-            }
-        }else{
-            _isValid.value = false
+            email = emailValue
+            password = passwordValue
+            onSuccess()
+        } else {
             onError("Invalid email or password")
         }
     }
+
+    fun saveUsername(onSuccess: () -> Unit, onError: (String) -> Unit) {
+        if (validateUsername()) {
+            _loading.value = true
+            viewModelScope.launch {
+                Log.d("RegisterScreenViewModel", "register: $emailValue, Password : $passwordValue")
+
+                val result = userRepository.register(usernameValue, email, password)
+                _loading.value = false
+                when (result) {
+                    is ResultResponse.Success -> {
+                        _isValid.value = true
+                        onSuccess()
+                    }
+
+                    is ResultResponse.Error -> {
+                        _isValid.value = false
+                        val errorMessage = result.error ?: "Unknown error occurred"
+                        onError(errorMessage)
+                    }
+
+                    ResultResponse.Loading -> TODO()
+                }
+            }
+        } else {
+            _isValid.value = false
+            onError("Invalid username")
+        }
+    }
+
+
 }

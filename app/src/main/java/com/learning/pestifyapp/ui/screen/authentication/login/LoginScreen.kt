@@ -1,10 +1,7 @@
 package com.learning.pestifyapp.ui.screen.authentication.login
 
 import android.content.Context
-import android.os.Handler
-import android.os.Looper
 import android.widget.Toast
-import androidx.camera.video.VideoRecordEvent.Start
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -42,6 +39,7 @@ import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.ui.components.CustomButton
 import com.learning.pestifyapp.ui.components.TextFieldValidation
 import com.learning.pestifyapp.ui.screen.navigation.Graph
+import com.learning.pestifyapp.ui.screen.navigation.Screen
 
 
 @Composable
@@ -76,15 +74,20 @@ fun LoginScreen(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = title,
-                textAlign = TextAlign.Start,
-                fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-                color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold,
-                lineHeight = 38.sp,
-                modifier = Modifier.padding(start = 24.dp)
-            )
+            Column(
+                horizontalAlignment = Alignment.Start,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = title,
+                    textAlign = TextAlign.Start,
+                    fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    lineHeight = 38.sp,
+                    modifier = Modifier.padding(start = 24.dp)
+                )
+            }
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -129,7 +132,8 @@ fun LoginScreen(
                     focusManager.clearFocus()
                     viewModel.login(
                         onSuccess = {
-                            navController.navigate(Graph.DASHBOARD)
+                            navController.popBackStack()
+                            navController.navigate(Screen.Home.route)
                         },
                         onError = { errorMessage ->
                             handleLoginError(context, errorMessage)
@@ -150,6 +154,7 @@ fun LoginScreen(
                     text = " Register!",
                     modifier = Modifier
                         .clickable {
+                            navController.popBackStack()
                             navController.navigate(Graph.REGISTER)
                         },
                     color = MaterialTheme.colorScheme.primary,
