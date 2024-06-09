@@ -40,11 +40,6 @@ interface AuthService {
 
     @POST("auth/logout")
     suspend fun logout(@Header("Authorization") token: String): Response<LogoutResponse>
-    @PUT("auth/update")
-        suspend fun updateAccount(
-            @Header("Authorization") token: String,
-            @Body request: UpdateAccountRequest,
-        ): Response<AccountUpdateResponse>
 
     @PUT("auth/update")
     suspend fun updateAccount(
