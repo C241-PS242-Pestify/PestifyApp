@@ -7,7 +7,7 @@ import com.learning.pestifyapp.data.model.user.UserData
 import com.learning.pestifyapp.data.response.AccountUpdateResponse
 import com.learning.pestifyapp.data.response.LoginResponse
 import com.learning.pestifyapp.data.response.RegisterResponse
-import com.learning.pestifyapp.data.response.ResultResponse
+import com.learning.pestifyapp.ui.common.ResultResponse
 import com.learning.pestifyapp.data.retrofit.ApiConfig
 import com.learning.pestifyapp.data.retrofit.AuthService
 import com.learning.pestifyapp.data.retrofit.LoginRequest

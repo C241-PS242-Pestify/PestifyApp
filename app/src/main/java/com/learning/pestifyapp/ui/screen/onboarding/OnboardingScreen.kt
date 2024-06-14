@@ -38,6 +38,7 @@ import com.learning.pestifyapp.PestifyApp
 import com.learning.pestifyapp.R
 import com.learning.pestifyapp.ui.components.CustomButton
 import com.learning.pestifyapp.ui.screen.navigation.Graph
+import com.learning.pestifyapp.ui.screen.navigation.Screen
 import com.learning.pestifyapp.ui.theme.PestifyAppTheme
 import kotlinx.coroutines.launch
 
@@ -166,7 +167,8 @@ fun ButtonSection(
                     onClick = {
                         onBoardingFinished(context = context)
                         navController.popBackStack()
-                        navController.navigate(Graph.LOGIN)
+//                        navController.navigate(Graph.LOGIN)
+                        navController.navigate(Screen.Home.route)
                     },
                     modifier = Modifier
                         .align(Alignment.Center)

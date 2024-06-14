@@ -12,7 +12,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.learning.pestifyapp.data.model.user.UserData
-import com.learning.pestifyapp.data.response.ResultResponse
+import com.learning.pestifyapp.ui.common.ResultResponse
 import kotlinx.coroutines.launch
 
 class RegisterScreenViewModel(private val userRepository: UserRepository) : ViewModel() {

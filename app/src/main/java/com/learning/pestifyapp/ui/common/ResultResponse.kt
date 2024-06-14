@@ -1,4 +1,4 @@
-package com.learning.pestifyapp.data.response
+package com.learning.pestifyapp.ui.common
 
 sealed class ResultResponse<out R> private constructor() {
     data class Success<out T>(val data: T) : ResultResponse<T>()

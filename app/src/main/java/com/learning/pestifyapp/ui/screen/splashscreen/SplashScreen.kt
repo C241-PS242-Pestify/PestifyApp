@@ -46,19 +46,21 @@ fun SplashScreen(
         }
     }
 
-LaunchedEffect(isAnimationFinished) {
-    if (isAnimationFinished) {
-        val userRepository = UserRepository(context)
-        val isSessionValid = userRepository.isSessionValid()
-        if (isSessionValid && userRepository.getLoginStatus()) {
-            navController.popBackStack()
-            navController.navigate(Screen.Home.route)
-        } else {
+    LaunchedEffect(isAnimationFinished) {
+        if (isAnimationFinished) {
+//        val userRepository = UserRepository(context)
+//        val isSessionValid = userRepository.isSessionValid()
+//        if (isSessionValid && userRepository.getLoginStatus()) {
+//            navController.popBackStack()
+//            navController.navigate(Screen.Home.route)
+//        } else {
+//            navController.popBackStack()
+//            navController.navigate(Graph.ONBOARDING)
+//        }
             navController.popBackStack()
             navController.navigate(Graph.ONBOARDING)
         }
     }
-}
 
     Column(
         modifier = Modifier
