@@ -2,12 +2,20 @@ package com.learning.pestifyapp.ui.screen.navigation
 
 
 import CameraScreen
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
+import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -42,34 +50,13 @@ fun NavigationGraph(
     context: MainActivity,
 ) {
     val userRepository = UserRepository(context)
-    val enterTransition = slideInHorizontally(
-        initialOffsetX = { fullWidth -> fullWidth },
-        animationSpec = tween(700)
-    ) + fadeIn(animationSpec = tween(700))
-
-    val exitTransition = slideOutHorizontally(
-        targetOffsetX = { fullWidth -> -fullWidth },
-        animationSpec = tween(700)
-    ) + fadeOut(animationSpec = tween(700))
-
-    val popEnterTransition = slideInHorizontally(
-        initialOffsetX = { fullWidth -> -fullWidth },
-        animationSpec = tween(700)
-    ) + fadeIn(animationSpec = tween(700))
-
-    val popExitTransition = slideOutHorizontally(
-        targetOffsetX = { fullWidth -> fullWidth },
-        animationSpec = tween(700)
-    ) + fadeOut(animationSpec = tween(700))
 
     NavHost(
         navController = navController,
         startDestination = Graph.SPLASH,
         modifier = Modifier,
-        enterTransition = { enterTransition },
-        exitTransition = { exitTransition },
-        popEnterTransition = { popEnterTransition },
-        popExitTransition = { popExitTransition }
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None },
     ) {
 
         composable(route = Graph.SPLASH) {
@@ -132,7 +119,23 @@ fun NavigationGraph(
 
         // |||||||||||||||||||||=== HOME DASHBOARD ===||||||||||||||||||||||||||||||||||
 
-        composable(route = Screen.Home.route) {
+        composable(
+            route = Screen.Home.route,
+            enterTransition = {
+                if (initialState.destination.route == Screen.Home.route && targetState.destination.route?.startsWith("detail") == true) {
+                    fadeIn(animationSpec = tween(300, easing = LinearEasing))
+                } else {
+                    null
+                }
+            },
+            exitTransition = {
+                if (initialState.destination.route == Screen.Home.route && targetState.destination.route?.startsWith("detail") == true) {
+                    fadeOut(animationSpec = tween(300, easing = LinearEasing))
+                } else {
+                    null
+                }
+            }
+            ) {
             HomeScreen(
                 navController = navController,
                 context = context,
@@ -176,7 +179,27 @@ fun NavigationGraph(
                 navArgument("plantId") {
                     type = NavType.LongType
                 }
-            )
+            ),
+            enterTransition = {
+                fadeIn(
+                    animationSpec = tween(
+                        300, easing = LinearEasing
+                    )
+                ) + slideIntoContainer(
+                    animationSpec = tween(300, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                fadeOut(
+                    animationSpec = tween(
+                        300, easing = LinearEasing
+                    )
+                ) + slideOutOfContainer(
+                    animationSpec = tween(300, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }
         ) {
             val id = it.arguments?.getLong("plantId") ?: -1L
             DetailScreen(

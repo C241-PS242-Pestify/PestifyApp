@@ -2,6 +2,7 @@ package com.learning.pestifyapp.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,6 +18,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -89,9 +91,13 @@ fun PlantCategory(
         items(plantList, key = { it.id }) { plant ->
             PlantItem(
                 plant,
-                modifier = Modifier.clickable {
-                    navigateToDetail(plant.id)
-                }
+                modifier = Modifier
+                    .clickable(
+                        onClick = { navigateToDetail(plant.id) },
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+
+                    )
             )
         }
     }
@@ -104,8 +110,7 @@ fun ItemSection(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier
-            .padding(horizontal = 16.dp)
+        modifier = modifier.padding(bottom = 8.dp)
     ) {
         SectionText(title)
         content()

@@ -12,12 +12,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.airbnb.lottie.compose.*
 import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.R
 import com.learning.pestifyapp.data.repository.UserRepository
+import com.learning.pestifyapp.ui.components.ChangeStatusBarColor
 import com.learning.pestifyapp.ui.screen.navigation.Graph
 import com.learning.pestifyapp.ui.screen.navigation.Screen
 import kotlinx.coroutines.delay

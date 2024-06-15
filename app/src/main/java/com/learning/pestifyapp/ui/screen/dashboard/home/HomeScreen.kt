@@ -55,9 +55,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.R
+import com.learning.pestifyapp.data.model.homeart.Article
 import com.learning.pestifyapp.data.model.plant.PlantData
+import com.learning.pestifyapp.ui.common.SetWindowBackground
+import com.learning.pestifyapp.ui.common.TopWithFooter
 import com.learning.pestifyapp.ui.common.UiState
 import com.learning.pestifyapp.ui.components.AnimatedStatusBarColorOnScroll
+import com.learning.pestifyapp.ui.components.ArticleCategory
 import com.learning.pestifyapp.ui.components.ItemSection
 import com.learning.pestifyapp.ui.components.PlantCategory
 import com.learning.pestifyapp.ui.screen.navigation.Graph
@@ -75,9 +79,14 @@ fun HomeScreen(
 
     val uiState =
         viewModel.uiState.collectAsStateWithLifecycle(lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current).value
+
+    val uiArticleState =
+        viewModel.uiArticleState.collectAsStateWithLifecycle(lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current).value
+
     HomeContent(
         context = context,
         uiState = uiState,
+        uiArticleState = uiArticleState,
         navController = navController,
         viewModel = viewModel,
         modifier = modifier
@@ -88,12 +97,13 @@ fun HomeScreen(
 fun HomeContent(
     context: Context,
     uiState: UiState<List<PlantData>>,
+    uiArticleState: UiState<List<Article>>,
     viewModel: HomeViewModel,
     navController: NavHostController,
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
 ) {
-    val defaultStatusBarColor = Color(0xFFB2DFDB)
-    val scrolledStatusBarColor = Color(0xFFFFFFFF)
+    val defaultStatusBarColor = Color.White
+    val scrolledStatusBarColor = Color.White
 
     AnimatedStatusBarColorOnScroll(
         context = context,
@@ -105,9 +115,12 @@ fun HomeContent(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.onPrimary)
+                .padding(horizontal = 16.dp)
         ) {
-            LazyColumn(state = listState) {
+            LazyColumn(
+                state = listState,
+                verticalArrangement = TopWithFooter,
+                ) {
                 item {
                     TopSection(context = context)
                 }
@@ -125,7 +138,11 @@ fun HomeContent(
                                     PlantCategory(
                                         plantList,
                                         navigateToDetail = { plantId ->
-                                            navController.navigate(Screen.DetailPlant.createRoute(plantId))
+                                            navController.navigate(
+                                                Screen.DetailPlant.createRoute(
+                                                    plantId
+                                                )
+                                            )
                                         }
                                     )
                                 }
@@ -137,8 +154,32 @@ fun HomeContent(
                         }
                     }
                 }
-                items(100) { index ->
-                    Text(text = "Item $index", modifier = Modifier.padding(8.dp))
+
+                item {
+                    when (uiArticleState) {
+                        is UiState.Loading -> {
+                            viewModel.getAllArticles()
+                        }
+
+                        is UiState.Success -> {
+                            val articleList = uiArticleState.data
+                            ArticleCategory(
+                                articleList = articleList,
+                                viewModel = viewModel,
+                                navigateToDetail = { articleId ->
+
+                                }
+                            )
+                        }
+
+                        is UiState.Error -> {
+                            // Show error message
+                        }
+
+                    }
+                }
+                item {
+                    Text(text = "Item ", modifier = Modifier.padding(8.dp))
                 }
             }
         }
@@ -152,22 +193,21 @@ fun TopSection(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(320.dp)
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFFB2DFDB),
-                        Color(0xFFB2DFDB),
-                        Color.Transparent
-                    )
-                )
-            )
+            .height(310.dp)
+            .padding(top = 16.dp)
+//            .background(
+//                brush = Brush.verticalGradient(
+//                    colors = listOf(
+//                        Color(0xFFB2DFDB),
+//                        Color(0xFFB2DFDB),
+//                        Color.Transparent
+//                    )
+//                )
+//            )
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-        ) {
+        Column (
+            modifier = Modifier.padding(bottom = 16.dp)
+        ){
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(top = 20.dp, bottom = 20.dp)
@@ -176,16 +216,16 @@ fun TopSection(
                     painter = painterResource(id = R.drawable.sherlock_profile),
                     contentDescription = "Profile Picture",
                     modifier = Modifier
-                        .size(50.dp)
+                        .size(60.dp)
                         .clip(CircleShape)
-                        .border(2.dp, Color.White, CircleShape)
+                        .border(2.dp, color = MaterialTheme.colorScheme.primary, CircleShape)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
                         text = "Welcome,",
                         fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.ExtraBold,
                         color = Color.Black
                     )
                     Text(
@@ -199,18 +239,20 @@ fun TopSection(
             Spacer(modifier = Modifier.height(16.dp))
             Box(
                 modifier = Modifier
+                    .fillMaxWidth()
+                    .height(160.dp) // Set the height here
                     .clip(RoundedCornerShape(10.dp))
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.aquaponics),
                     contentDescription = "Aquaponics",
-                    modifier = Modifier.height(200.dp),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.matchParentSize()
                 )
                 Box(
                     modifier = Modifier
+                        .matchParentSize()
                         .align(Alignment.CenterStart)
-                        .fillMaxHeight()
                         .width(250.dp)
                         .background(
                             Brush.horizontalGradient(

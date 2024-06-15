@@ -13,6 +13,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 
@@ -56,8 +57,28 @@ fun AnimatedStatusBarColorOnScroll(
         val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
 
         window.statusBarColor = animatedStatusBarColor.toArgb()
-        windowInsetsController?.isAppearanceLightStatusBars = if (scrollOffset > 0) isScrolledStatusBarIconsDark else isDefaultStatusBarIconsDark
+        windowInsetsController.isAppearanceLightStatusBars = if (scrollOffset > 0) isScrolledStatusBarIconsDark else isDefaultStatusBarIconsDark
     }
 
     content(listState)
+}
+
+@Composable
+fun ChangeStatusBarColor(
+    newStatusBarColor: Color,
+    isStatusBarIconsDark: Boolean
+) {
+    val context = LocalContext.current
+    DisposableEffect(Unit) {
+        val window = (context as Activity).window
+        val originalStatusBarColor = window.statusBarColor
+        val windowInsetsController = WindowCompat.getInsetsController(window, window.decorView)
+
+        window.statusBarColor = newStatusBarColor.toArgb()
+        windowInsetsController.isAppearanceLightStatusBars = isStatusBarIconsDark
+
+        onDispose {
+
+        }
+    }
 }

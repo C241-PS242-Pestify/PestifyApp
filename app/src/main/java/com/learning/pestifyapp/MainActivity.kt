@@ -20,7 +20,7 @@ class MainActivity : ComponentActivity() {
             PestifyAppTheme(dynamicColor = false) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.onPrimary
+                    color = MaterialTheme.colorScheme.background
                 ) {
                     PestifyApp(context = this)
                 }
