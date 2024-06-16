@@ -10,8 +10,6 @@ sealed class Screen(val route: String) {
     object DetailPlant : Screen("detail/{plantId}") {
         fun createRoute(plantId: Long) = "detail/$plantId"
     }
-
-    object Username : Screen("username")
 }
 
 object Graph {
@@ -19,12 +17,9 @@ object Graph {
     const val SPLASH = "splashscreen"
     const val ONBOARDING = "onboarding"
     const val LOGIN = "login"
+    const val USERNAME = "username"
     const val REGISTER = "register"
     const val FORGOT_PASSWORD = "forgot-password"
     const val CAMERA = "camera"
     const val PRIVACY = "privacy"
-
-
-
-
 }

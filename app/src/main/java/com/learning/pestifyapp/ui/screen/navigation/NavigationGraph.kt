@@ -54,7 +54,7 @@ fun NavigationGraph(
 
     NavHost(
         navController = navController,
-        startDestination = Graph.SPLASH,
+        startDestination = Graph.LOGIN,
         modifier = Modifier,
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
@@ -121,9 +121,7 @@ fun NavigationGraph(
                 fadeOut(animationSpec = tween(300, easing = LinearEasing))
             }
         ) {
-            val registerViewModel: RegisterScreenViewModel = viewModel(
-                factory = ViewModelFactory(userRepository)
-            )
+            val registerViewModel: RegisterScreenViewModel = viewModel(key = "RegisterScreenViewModel", factory = ViewModelFactory(userRepository))
             RegisterScreen(
                 navController = navController,
                 context = context,
@@ -132,7 +130,7 @@ fun NavigationGraph(
         }
 
         composable(
-            route = Screen.Username.route,
+            route = Graph.USERNAME,
             enterTransition = {
                 fadeIn(animationSpec = tween(300, easing = LinearEasing))
             },
@@ -140,13 +138,11 @@ fun NavigationGraph(
                 fadeOut(animationSpec = tween(300, easing = LinearEasing))
             }
         ) {
-            val usernameViewModel: RegisterScreenViewModel = viewModel(
-                factory = ViewModelFactory(userRepository)
-            )
+            val registerViewModel: RegisterScreenViewModel = viewModel(key = "RegisterScreenViewModel", factory = ViewModelFactory(userRepository))
             UsernameScreen(
                 navController = navController,
                 context = context,
-                viewModel = usernameViewModel
+                viewModel = registerViewModel
             )
         }
 

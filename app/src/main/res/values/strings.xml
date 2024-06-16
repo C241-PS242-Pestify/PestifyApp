@@ -10,4 +10,5 @@
     <string name="plants">Plants</string>
     <string name="read_more">Read More</string>
     <string name="image_desc">"New to Aquaponics? Create Your Own Setup Now!"</string>
+    <string name="instruction">"Please enter your nickname (one word only)"</string>
 </resources>

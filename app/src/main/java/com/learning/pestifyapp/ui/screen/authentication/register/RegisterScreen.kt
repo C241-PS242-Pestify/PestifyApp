@@ -128,17 +128,18 @@ fun RegisterScreen(
 //                            }
 //                        )
                         navController.popBackStack()
-                        navController.navigate(Screen.Username.route)
+                        navController.navigate(Graph.USERNAME)
                     },
-                    modifier = Modifier.padding(bottom = 10.dp)
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
                 Row(
                     horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier.padding(top = 15.dp)
                 ) {
                     Text(
                         text = "Already have an account?",
                         fontWeight = FontWeight.W500,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                     Text(
                         text = " Login!",
