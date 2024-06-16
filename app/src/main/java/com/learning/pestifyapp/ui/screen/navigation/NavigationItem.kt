@@ -41,9 +41,9 @@ fun getNavigationItems(context: Context): List<NavigationItem> {
             screen = Screen.Pescan
         ),
         NavigationItem(
-            title = context.getString(R.string.menu_history),
-            icon = R.drawable.history_non,
-            iconSelected = R.drawable.history_filled,
+            title = context.getString(R.string.menu_bookmark),
+            icon = R.drawable.saved_non,
+            iconSelected = R.drawable.saved_filled,
             screen = Screen.History
         ),
         NavigationItem(

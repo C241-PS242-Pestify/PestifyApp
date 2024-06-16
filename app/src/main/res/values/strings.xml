@@ -3,7 +3,7 @@
     <string name="menu_home">Home</string>
     <string name="menu_ens">Pespedia</string>
     <string name="menu_pescan">Pescan</string>
-    <string name="menu_history">History</string>
+    <string name="menu_bookmark">Bookmark</string>
     <string name="menu_profile">Profile</string>
     <string name="next_page">Skip</string>
     <string name="back_page">Back</string>

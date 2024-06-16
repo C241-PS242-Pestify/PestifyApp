@@ -54,7 +54,7 @@ fun NavigationGraph(
 
     NavHost(
         navController = navController,
-        startDestination = Graph.LOGIN,
+        startDestination = Screen.Home.route,
         modifier = Modifier,
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },

@@ -45,7 +45,7 @@ fun PestifyApp(
     }
 
     when (currentRoute) {
-        "home", "pespedia", "pescan", "history", "profile" -> {
+        "home", "pespedia", "pescan", "bookmark", "profile" -> {
             bottomAppBarState.value = true
         }
         else -> {

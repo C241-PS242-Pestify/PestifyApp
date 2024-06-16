@@ -20,6 +20,6 @@ fun HistoryScreen(
             .fillMaxSize(),
         contentAlignment = Alignment.Center,
     ) {
-        Text(stringResource(R.string.menu_history))
+        Text(stringResource(R.string.menu_bookmark))
     }
 }
