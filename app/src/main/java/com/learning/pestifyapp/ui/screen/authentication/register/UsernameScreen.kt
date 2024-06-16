@@ -81,17 +81,19 @@ fun UsernameScreen(
             CustomButton(
                 text = "Done",
                 onClick = {
-                    focusManager.clearFocus()
-                    viewModel.saveUsername(
-                        onSuccess = {
-                            navController.popBackStack()
-                            navController.navigate(Graph.LOGIN)
-                            Toast.makeText(context, "Account Created!", Toast.LENGTH_SHORT).show()
-                        },
-                        onError = { errorMessage ->
-                            handleLoginError(context, errorMessage)
-                        }
-                    )
+//                    focusManager.clearFocus()
+//                    viewModel.saveUsername(
+//                        onSuccess = {
+//                            navController.popBackStack()
+//                            navController.navigate(Graph.LOGIN)
+//                            Toast.makeText(context, "Account Created!", Toast.LENGTH_SHORT).show()
+//                        },
+//                        onError = { errorMessage ->
+//                            handleLoginError(context, errorMessage)
+//                        }
+//                    )
+                    navController.popBackStack()
+                    navController.navigate(Graph.LOGIN)
                 },
                 modifier = Modifier.padding(bottom = 8.dp)
             )

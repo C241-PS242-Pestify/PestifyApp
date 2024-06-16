@@ -33,6 +33,7 @@ import com.learning.pestifyapp.ui.screen.authentication.login.LoginScreenViewMod
 import com.learning.pestifyapp.ui.screen.authentication.login.LoginScreen
 import com.learning.pestifyapp.ui.screen.authentication.register.RegisterScreen
 import com.learning.pestifyapp.ui.screen.authentication.register.RegisterScreenViewModel
+import com.learning.pestifyapp.ui.screen.authentication.register.UsernameScreen
 import com.learning.pestifyapp.ui.screen.dashboard.detail.DetailScreen
 import com.learning.pestifyapp.ui.screen.dashboard.ensiklopedia.EnsiklopediaScreen
 import com.learning.pestifyapp.ui.screen.dashboard.history.HistoryScreen
@@ -59,14 +60,31 @@ fun NavigationGraph(
         exitTransition = { ExitTransition.None },
     ) {
 
-        composable(route = Graph.SPLASH) {
+        composable(
+            route = Graph.SPLASH,
+            enterTransition = {
+                fadeIn(animationSpec = tween(300, easing = LinearEasing))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(300, easing = LinearEasing))
+            }
+        ) {
+
             SplashScreen(
                 navController = navController,
                 context = context,
             )
         }
 
-        composable(route = Graph.ONBOARDING) {
+        composable(
+            route = Graph.ONBOARDING,
+            enterTransition = {
+                fadeIn(animationSpec = tween(300, easing = LinearEasing))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(300, easing = LinearEasing))
+            }
+        ) {
             OnboardingScreen(
                 navController = navController,
                 context = context
@@ -75,7 +93,15 @@ fun NavigationGraph(
 
         // |||||||||||||||||||||=== LOGIN/REGISTER ===||||||||||||||||||||||||||||||||||
 
-        composable(route = Graph.LOGIN) {
+        composable(
+            route = Graph.LOGIN,
+            enterTransition = {
+                fadeIn(animationSpec = tween(300, easing = LinearEasing))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(300, easing = LinearEasing))
+            }
+        ) {
             val loginScreenViewModel: LoginScreenViewModel =
                 viewModel(factory = ViewModelFactory(userRepository))
 
@@ -85,7 +111,16 @@ fun NavigationGraph(
                 viewModel = loginScreenViewModel
             )
         }
-        composable(route = Graph.REGISTER) {
+
+        composable(
+            route = Graph.REGISTER,
+            enterTransition = {
+                fadeIn(animationSpec = tween(300, easing = LinearEasing))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(300, easing = LinearEasing))
+            }
+        ) {
             val registerViewModel: RegisterScreenViewModel = viewModel(
                 factory = ViewModelFactory(userRepository)
             )
@@ -95,7 +130,37 @@ fun NavigationGraph(
                 viewModel = registerViewModel
             )
         }
-        composable(route = Graph.FORGOT_PASSWORD) {
+
+        composable(
+            route = Screen.Username.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(300, easing = LinearEasing))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(300, easing = LinearEasing))
+            }
+        ) {
+            val usernameViewModel: RegisterScreenViewModel = viewModel(
+                factory = ViewModelFactory(userRepository)
+            )
+            UsernameScreen(
+                navController = navController,
+                context = context,
+                viewModel = usernameViewModel
+            )
+        }
+
+
+
+        composable(
+            route = Graph.FORGOT_PASSWORD,
+            enterTransition = {
+                fadeIn(animationSpec = tween(300, easing = LinearEasing))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(300, easing = LinearEasing))
+            }
+        ) {
             val forgotPasswordScreenViewModel: ForgotPasswordScreenViewModel =
                 viewModel(factory = ViewModelFactory(userRepository))
             ForgotPasswordScreen(
@@ -122,20 +187,26 @@ fun NavigationGraph(
         composable(
             route = Screen.Home.route,
             enterTransition = {
-                if (initialState.destination.route == Screen.Home.route && targetState.destination.route?.startsWith("detail") == true) {
+                if (initialState.destination.route == Screen.Home.route && targetState.destination.route?.startsWith(
+                        "detail"
+                    ) == true
+                ) {
                     fadeIn(animationSpec = tween(300, easing = LinearEasing))
                 } else {
                     null
                 }
             },
             exitTransition = {
-                if (initialState.destination.route == Screen.Home.route && targetState.destination.route?.startsWith("detail") == true) {
+                if (initialState.destination.route == Screen.Home.route && targetState.destination.route?.startsWith(
+                        "detail"
+                    ) == true
+                ) {
                     fadeOut(animationSpec = tween(300, easing = LinearEasing))
                 } else {
                     null
                 }
             }
-            ) {
+        ) {
             HomeScreen(
                 navController = navController,
                 context = context,
@@ -143,12 +214,28 @@ fun NavigationGraph(
             )
         }
 
-        composable(route = Screen.Ensiklopedia.route) {
+        composable(
+            route = Screen.Ensiklopedia.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(300, easing = LinearEasing))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(300, easing = LinearEasing))
+            }
+        ) {
             EnsiklopediaScreen(
             )
         }
 
-        composable(route = Screen.Pescan.route) {
+        composable(
+            route = Screen.Pescan.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(300, easing = LinearEasing))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(300, easing = LinearEasing))
+            }
+        ) {
             val pescanScreenViewModel: PescanScreenViewModel =
                 viewModel(factory = ViewModelFactory(userRepository))
             PescanScreen(
@@ -158,12 +245,22 @@ fun NavigationGraph(
             )
         }
 
-        composable(route = Screen.History.route) {
+        composable(
+            route = Screen.History.route,
+        ) {
             HistoryScreen(
             )
         }
 
-        composable(route = Screen.Profile.route) {
+        composable(
+            route = Screen.Profile.route,
+            enterTransition = {
+                fadeIn(animationSpec = tween(300, easing = LinearEasing))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(300, easing = LinearEasing))
+            }
+        ) {
             ProfileScreen(
                 navController = navController,
                 context = context,

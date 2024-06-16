@@ -129,16 +129,18 @@ fun LoginScreen(
             CustomButton(
                 text = "Sign In",
                 onClick = {
-                    focusManager.clearFocus()
-                    viewModel.login(
-                        onSuccess = {
-                            navController.popBackStack()
-                            navController.navigate(Screen.Home.route)
-                        },
-                        onError = { errorMessage ->
-                            handleLoginError(context, errorMessage)
-                        }
-                    )
+//                    focusManager.clearFocus()
+//                    viewModel.login(
+//                        onSuccess = {
+//                            navController.popBackStack()
+//                            navController.navigate(Screen.Home.route)
+//                        },
+//                        onError = { errorMessage ->
+//                            handleLoginError(context, errorMessage)
+//                        }
+//                    )
+                    navController.popBackStack()
+                    navController.navigate(Screen.Home.route)
                 },
                 modifier = Modifier.padding(bottom = 8.dp)
             )
