@@ -26,7 +26,9 @@ import androidx.navigation.navArgument
 import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.data.repository.UserRepository
 import com.learning.pestifyapp.di.factory.HomeFactory
+import com.learning.pestifyapp.di.factory.PespediaFactory
 import com.learning.pestifyapp.di.factory.ViewModelFactory
+import com.learning.pestifyapp.ui.components.BottomBarState
 import com.learning.pestifyapp.ui.screen.authentication.forgotpassword.ForgotPasswordScreen
 import com.learning.pestifyapp.ui.screen.authentication.forgotpassword.ForgotPasswordScreenViewModel
 import com.learning.pestifyapp.ui.screen.authentication.login.LoginScreenViewModel
@@ -34,7 +36,10 @@ import com.learning.pestifyapp.ui.screen.authentication.login.LoginScreen
 import com.learning.pestifyapp.ui.screen.authentication.register.RegisterScreen
 import com.learning.pestifyapp.ui.screen.authentication.register.RegisterScreenViewModel
 import com.learning.pestifyapp.ui.screen.authentication.register.UsernameScreen
-import com.learning.pestifyapp.ui.screen.dashboard.detail.DetailScreen
+import com.learning.pestifyapp.ui.screen.dashboard.detail.DetailArticleScreen
+import com.learning.pestifyapp.ui.screen.dashboard.detail.DetailCategoriesScreen
+import com.learning.pestifyapp.ui.screen.dashboard.detail.DetailEnsScreen
+import com.learning.pestifyapp.ui.screen.dashboard.detail.DetailPlantScreen
 import com.learning.pestifyapp.ui.screen.dashboard.ensiklopedia.EnsiklopediaScreen
 import com.learning.pestifyapp.ui.screen.dashboard.history.HistoryScreen
 import com.learning.pestifyapp.ui.screen.dashboard.home.HomeScreen
@@ -49,12 +54,13 @@ import com.learning.pestifyapp.ui.screen.splashscreen.SplashScreen
 fun NavigationGraph(
     navController: NavHostController,
     context: MainActivity,
+    bottomBarState: BottomBarState
 ) {
     val userRepository = UserRepository(context)
 
     NavHost(
         navController = navController,
-        startDestination = Screen.Home.route,
+        startDestination = Graph.SPLASH,
         modifier = Modifier,
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
@@ -121,7 +127,10 @@ fun NavigationGraph(
                 fadeOut(animationSpec = tween(300, easing = LinearEasing))
             }
         ) {
-            val registerViewModel: RegisterScreenViewModel = viewModel(key = "RegisterScreenViewModel", factory = ViewModelFactory(userRepository))
+            val registerViewModel: RegisterScreenViewModel = viewModel(
+                key = "RegisterScreenViewModel",
+                factory = ViewModelFactory(userRepository)
+            )
             RegisterScreen(
                 navController = navController,
                 context = context,
@@ -138,7 +147,10 @@ fun NavigationGraph(
                 fadeOut(animationSpec = tween(300, easing = LinearEasing))
             }
         ) {
-            val registerViewModel: RegisterScreenViewModel = viewModel(key = "RegisterScreenViewModel", factory = ViewModelFactory(userRepository))
+            val registerViewModel: RegisterScreenViewModel = viewModel(
+                key = "RegisterScreenViewModel",
+                factory = ViewModelFactory(userRepository)
+            )
             UsernameScreen(
                 navController = navController,
                 context = context,
@@ -206,7 +218,8 @@ fun NavigationGraph(
             HomeScreen(
                 navController = navController,
                 context = context,
-                viewModel = viewModel(factory = HomeFactory.getInstance())
+                viewModel = viewModel(factory = HomeFactory.getInstance(MainActivity.CONTEXT)),
+                bottomBarState = bottomBarState
             )
         }
 
@@ -220,6 +233,9 @@ fun NavigationGraph(
             }
         ) {
             EnsiklopediaScreen(
+                navController = navController,
+                viewModel = viewModel(factory = PespediaFactory.getInstance()),
+                bottomBarState = bottomBarState
             )
         }
 
@@ -270,7 +286,7 @@ fun NavigationGraph(
             route = Screen.DetailPlant.route,
             arguments = listOf(
                 navArgument("plantId") {
-                    type = NavType.LongType
+                    type = NavType.StringType
                 }
             ),
             enterTransition = {
@@ -294,14 +310,134 @@ fun NavigationGraph(
                 )
             }
         ) {
-            val id = it.arguments?.getLong("plantId") ?: -1L
-            DetailScreen(
+            val id = it.arguments?.getString("plantId") ?: ""
+            DetailPlantScreen(
                 plantId = id,
                 navigateBack = {
                     navController.navigateUp()
                 }
             )
         }
+
+        composable(
+            route = Screen.DetailEns.route,
+            arguments = listOf(
+                navArgument("ensId") {
+                    type = NavType.StringType
+                }
+            ),
+            enterTransition = {
+                fadeIn(
+                    animationSpec = tween(
+                        300, easing = LinearEasing
+                    )
+                ) + slideIntoContainer(
+                    animationSpec = tween(300, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                fadeOut(
+                    animationSpec = tween(
+                        300, easing = LinearEasing
+                    )
+                ) + slideOutOfContainer(
+                    animationSpec = tween(300, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }
+        ) {
+            val id = it.arguments?.getString("ensId") ?: ""
+            DetailEnsScreen(
+                ensId = id,
+                navigateBack = {
+                    navController.navigateUp()
+                }
+            )
+        }
+
+        composable(
+            route = Screen.DetailArticle.route,
+            arguments = listOf(
+                navArgument("articleId") {
+                    type = NavType.StringType
+                }
+            ),
+            enterTransition = {
+                fadeIn(
+                    animationSpec = tween(
+                        300, easing = LinearEasing
+                    )
+                ) + slideIntoContainer(
+                    animationSpec = tween(300, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                fadeOut(
+                    animationSpec = tween(
+                        300, easing = LinearEasing
+                    )
+                ) + slideOutOfContainer(
+                    animationSpec = tween(300, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }
+        ) {
+            val id = it.arguments?.getString("articleId") ?: ""
+            DetailArticleScreen(
+                articleId = id,
+                navigateBack = {
+                    navController.navigateUp()
+                }
+            )
+        }
+
+        composable(
+            route = Screen.DetailCategories.route,
+            arguments = listOf(
+                navArgument("category") {
+                    type = NavType.StringType
+                }
+            ),
+            enterTransition = {
+                fadeIn(
+                    animationSpec = tween(
+                        300, easing = LinearEasing
+                    )
+                ) + slideIntoContainer(
+                    animationSpec = tween(300, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                fadeOut(
+                    animationSpec = tween(
+                        300, easing = LinearEasing
+                    )
+                ) + slideOutOfContainer(
+                    animationSpec = tween(300, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }
+        ) {
+            val category = it.arguments?.getString("category") ?: ""
+            DetailCategoriesScreen(
+                selectedCategory = category,
+                navigateBack = {
+                    navController.navigateUp()
+                },
+                navigateToDetail = { articleId ->
+                    navController.navigate(
+                        Screen.DetailArticle.createRoute(
+                            articleId
+                        )
+                    )
+                }
+            )
+        }
+
+
 
         composable(route = Graph.PRIVACY) {
             PrivacyScreen(

@@ -100,7 +100,7 @@ class ProfileScreenViewModel(private val userRepository: UserRepository) : ViewM
                     _isLoading.value = false
                 }
 
-                ResultResponse.Loading -> {
+                is ResultResponse.Loading -> {
                     Log.d("TAG", "updateAccount loading")
                 }
             }

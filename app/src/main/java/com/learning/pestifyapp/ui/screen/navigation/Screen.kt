@@ -7,8 +7,20 @@ sealed class Screen(val route: String) {
     object History : Screen("bookmark")
     object Profile : Screen("profile")
 
-    object DetailPlant : Screen("detail/{plantId}") {
-        fun createRoute(plantId: Long) = "detail/$plantId"
+    object DetailPlant : Screen("detailArt/{plantId}") {
+        fun createRoute(plantId: String) = "detailArt/$plantId"
+    }
+
+    object DetailEns : Screen("detailEns/{ensId}") {
+        fun createRoute(ensId: String) = "detailEns/$ensId"
+    }
+
+    object DetailArticle : Screen("detailArticle/{articleId}") {
+        fun createRoute(articleId: String) = "detailArticle/$articleId"
+    }
+
+    object DetailCategories : Screen("detailCategories/{category}") {
+        fun createRoute(category: String) = "detailCategories/$category"
     }
 }
 

@@ -1,4 +1,4 @@
-package com.learning.pestifyapp.data.retrofit
+package com.learning.pestifyapp.data.retrofit.service
 
 import com.learning.pestifyapp.data.response.ProfileResponse
 import retrofit2.Response

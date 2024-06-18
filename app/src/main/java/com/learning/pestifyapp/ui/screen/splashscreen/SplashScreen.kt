@@ -1,5 +1,6 @@
 package com.learning.pestifyapp.ui.screen.splashscreen
 
+import android.app.Activity
 import android.content.Context
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
@@ -13,7 +14,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import com.airbnb.lottie.compose.*
 import com.learning.pestifyapp.MainActivity
@@ -60,7 +64,7 @@ fun SplashScreen(
 //            navController.navigate(Graph.ONBOARDING)
 //        }
             navController.popBackStack()
-            navController.navigate(Graph.ONBOARDING)
+            navController.navigate(Screen.Home.route)
         }
     }
 

@@ -56,51 +56,64 @@ import androidx.navigation.NavHostController
 import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.R
 import com.learning.pestifyapp.data.model.homeart.Article
+import com.learning.pestifyapp.data.model.local.entity.ArticleEntity
+import com.learning.pestifyapp.data.model.local.entity.PlantEntity
 import com.learning.pestifyapp.data.model.plant.PlantData
 import com.learning.pestifyapp.ui.common.SetWindowBackground
 import com.learning.pestifyapp.ui.common.TopWithFooter
 import com.learning.pestifyapp.ui.common.UiState
 import com.learning.pestifyapp.ui.components.AnimatedStatusBarColorOnScroll
 import com.learning.pestifyapp.ui.components.ArticleCategory
+import com.learning.pestifyapp.ui.components.ArticleCategoryLoading
+import com.learning.pestifyapp.ui.components.BottomBarState
 import com.learning.pestifyapp.ui.components.ItemSection
 import com.learning.pestifyapp.ui.components.PlantCategory
+import com.learning.pestifyapp.ui.components.PlantCategoryLoading
 import com.learning.pestifyapp.ui.screen.navigation.Graph
 import com.learning.pestifyapp.ui.screen.navigation.Screen
 import com.learning.pestifyapp.ui.theme.PestifyAppTheme
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
     context: Context,
     viewModel: HomeViewModel,
+    bottomBarState: BottomBarState,
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
 
-    val uiState =
-        viewModel.uiState.collectAsStateWithLifecycle(lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current).value
+    val uiListPlantState by
+    viewModel.uiListPlantState.collectAsStateWithLifecycle(
+        lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current,
+    )
 
-    val uiArticleState =
-        viewModel.uiArticleState.collectAsStateWithLifecycle(lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current).value
+    val uiListArticleState by
+    viewModel.uiListArticleState.collectAsStateWithLifecycle(
+        lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current,
+    )
 
     HomeContent(
+        modifier = modifier,
         context = context,
-        uiState = uiState,
-        uiArticleState = uiArticleState,
+        uiListPlantState = uiListPlantState,
+        uiListArticleState = uiListArticleState,
         navController = navController,
         viewModel = viewModel,
-        modifier = modifier
+        bottomBarState = bottomBarState,
     )
 }
 
 @Composable
 fun HomeContent(
-    context: Context,
-    uiState: UiState<List<PlantData>>,
-    uiArticleState: UiState<List<Article>>,
-    viewModel: HomeViewModel,
-    navController: NavHostController,
     modifier: Modifier,
+    context: Context,
+    uiListPlantState: UiState<List<PlantEntity>>,
+    uiListArticleState: UiState<List<ArticleEntity>>,
+    viewModel: HomeViewModel,
+    bottomBarState: BottomBarState,
+    navController: NavHostController,
 ) {
     val defaultStatusBarColor = Color.White
     val scrolledStatusBarColor = Color.White
@@ -110,28 +123,37 @@ fun HomeContent(
         defaultStatusBarColor = defaultStatusBarColor,
         scrolledStatusBarColor = scrolledStatusBarColor,
         isDefaultStatusBarIconsDark = true,
-        isScrolledStatusBarIconsDark = true
+        isScrolledStatusBarIconsDark = true,
+        bottomBarState = bottomBarState,
     ) { listState ->
+        LaunchedEffect(key1 = navController.currentBackStackEntry) {
+            listState.animateScrollToItem(0)
+        }
         Box(
             modifier = Modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.onPrimary)
                 .padding(horizontal = 16.dp)
         ) {
             LazyColumn(
                 state = listState,
                 verticalArrangement = TopWithFooter,
-                ) {
+            ) {
+
                 item {
                     TopSection(context = context)
                 }
                 item {
-                    when (uiState) {
+                    when (uiListPlantState) {
                         is UiState.Loading -> {
-                            viewModel.getAllPlants()
+                            PlantCategoryLoading()
+                            LaunchedEffect(true) {
+                                viewModel.getAllPlants()
+                            }
                         }
 
                         is UiState.Success -> {
-                            val plantList = uiState.data
+                            val plantList = uiListPlantState.data
                             ItemSection(
                                 title = context.getString(R.string.plants),
                                 content = {
@@ -156,19 +178,27 @@ fun HomeContent(
                 }
 
                 item {
-                    when (uiArticleState) {
+                    when (uiListArticleState) {
                         is UiState.Loading -> {
-                            viewModel.getAllArticles()
+                            ArticleCategoryLoading()
+                            LaunchedEffect(true) {
+                                viewModel.getAllArticles()
+                            }
                         }
 
                         is UiState.Success -> {
-                            val articleList = uiArticleState.data
+                            val articleList = uiListArticleState.data
                             ArticleCategory(
                                 articleList = articleList,
                                 viewModel = viewModel,
                                 navigateToDetail = { articleId ->
-
-                                }
+                                    navController.navigate(
+                                        Screen.DetailArticle.createRoute(
+                                            articleId
+                                        )
+                                    )
+                                },
+                                navController = navController,
                             )
                         }
 
@@ -177,9 +207,6 @@ fun HomeContent(
                         }
 
                     }
-                }
-                item {
-                    Text(text = "Item ", modifier = Modifier.padding(8.dp))
                 }
             }
         }
@@ -205,9 +232,9 @@ fun TopSection(
 //                )
 //            )
     ) {
-        Column (
+        Column(
             modifier = Modifier.padding(bottom = 16.dp)
-        ){
+        ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(top = 20.dp, bottom = 20.dp)
@@ -240,7 +267,7 @@ fun TopSection(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(160.dp) // Set the height here
+                    .height(160.dp)
                     .clip(RoundedCornerShape(10.dp))
             ) {
                 Image(

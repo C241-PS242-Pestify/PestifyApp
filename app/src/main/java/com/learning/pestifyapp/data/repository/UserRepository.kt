@@ -3,24 +3,26 @@ package com.learning.pestifyapp.data.repository
 import android.content.Context
 import android.content.SharedPreferences
 import android.util.Log
+import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.data.model.user.UserData
 import com.learning.pestifyapp.data.response.AccountUpdateResponse
 import com.learning.pestifyapp.data.response.LoginResponse
 import com.learning.pestifyapp.data.response.RegisterResponse
 import com.learning.pestifyapp.ui.common.ResultResponse
-import com.learning.pestifyapp.data.retrofit.ApiConfig
-import com.learning.pestifyapp.data.retrofit.AuthService
-import com.learning.pestifyapp.data.retrofit.LoginRequest
-import com.learning.pestifyapp.data.retrofit.AccountService
-import com.learning.pestifyapp.data.retrofit.RegisterRequest
-import com.learning.pestifyapp.data.retrofit.UpdateAccountRequest
+import com.learning.pestifyapp.data.retrofit.api.ApiConfig
+import com.learning.pestifyapp.data.retrofit.service.AuthService
+import com.learning.pestifyapp.data.retrofit.service.LoginRequest
+import com.learning.pestifyapp.data.retrofit.service.AccountService
+import com.learning.pestifyapp.data.retrofit.service.RegisterRequest
+import com.learning.pestifyapp.data.retrofit.service.UpdateAccountRequest
 import retrofit2.Response
 
 class UserRepository(context: Context) {
-    private val sharedPreferences: SharedPreferences =
-        context.getSharedPreferences("auth_prefs", Context.MODE_PRIVATE)
-    private val authService: AuthService = ApiConfig.getAuthService()
-    private val accountService: AccountService = ApiConfig.getPageService()
+    private val authSharedPreferences: SharedPreferences by lazy {
+        context.getSharedPreferences(PREF_AUTH, Context.MODE_PRIVATE)
+    }
+    private val authService: AuthService = ApiConfig.getAuthService(MainActivity.CONTEXT)
+    private val accountService: AccountService = ApiConfig.getPageService(MainActivity.CONTEXT)
 
 
     suspend fun register(
@@ -42,6 +44,9 @@ class UserRepository(context: Context) {
         return try {
             val request = LoginRequest(email, password)
             val response = authService.login(request)
+            response.token?.let {
+                saveToken(it)
+            }
             ResultResponse.Success(response)
         } catch (e: Exception) {
             Log.e("AuthRepository", "login: ${e.message}", e)
@@ -129,33 +134,33 @@ class UserRepository(context: Context) {
         }
 
     fun saveToken(token: String) {
-        val editor = sharedPreferences.edit()
+        val editor = authSharedPreferences.edit()
         editor.putString("token", token)
         editor.apply()
     }
 
     private fun getToken(): String? {
-        return sharedPreferences.getString("token", null)
+        return authSharedPreferences.getString("token", null)
     }
 
     fun saveLoginStatus(isLogin: Boolean) {
-        val editor = sharedPreferences.edit()
+        val editor = authSharedPreferences.edit()
         editor.putBoolean("isLogin", isLogin)
         editor.apply()
     }
 
     fun getLoginStatus(): Boolean {
-        return sharedPreferences.getBoolean("isLogin", false)
+        return authSharedPreferences.getBoolean("isLogin", false)
     }
 
     fun saveEmail(email: String) {
-        val editor = sharedPreferences.edit()
+        val editor = authSharedPreferences.edit()
         editor.putString("email", email)
         editor.apply()
     }
 
     fun saveUserSession(userSession: UserData) {
-        val editor = sharedPreferences.edit()
+        val editor = authSharedPreferences.edit()
         editor.putString("token", userSession.token)
         editor.putString("email", userSession.email)
         editor.putString("username", userSession.username)
@@ -168,20 +173,22 @@ class UserRepository(context: Context) {
             return null
         }
         val token = getToken()
-        val email = sharedPreferences.getString("email", null)
-        val username = sharedPreferences.getString("username", null)
+        val email = authSharedPreferences.getString("email", null)
+        val username = authSharedPreferences.getString("username", null)
         val isLogin = getLoginStatus()
         return UserData(token, email, username, isLogin)
     }
 
     private fun clearSession() {
-        val editor = sharedPreferences.edit()
+        val editor = authSharedPreferences.edit()
         editor.clear()
         editor.apply()
     }
 
 
     companion object {
+        private const val PREF_AUTH = "auth_prefs"
+
         @Volatile
         private var INSTANCE: UserRepository? = null
 
