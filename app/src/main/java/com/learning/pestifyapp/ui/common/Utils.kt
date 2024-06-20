@@ -1,7 +1,11 @@
 package com.learning.pestifyapp.ui.common
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.os.Build
+import android.util.Base64
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateFloat
@@ -29,6 +33,7 @@ import androidx.compose.ui.unit.IntSize
 import com.learning.pestifyapp.ui.components.BottomBarState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.ZonedDateTime
@@ -171,5 +176,36 @@ fun formatDateToUSLongFormat(isoDate: String): String {
             ""
         }
     }
+}
+
+
+
+//BITMAPS UTILS
+fun converterBitmapToString(bitmap: Bitmap): String {
+    val baos = ByteArrayOutputStream()
+    bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos)
+    val byteArray = baos.toByteArray()
+    return Base64.encodeToString(byteArray, Base64.DEFAULT)
+}
+fun converterStringToBitmap(encodedString: String, degrees: Float): Bitmap? {
+    return try {
+        val encodeByte = Base64.decode(encodedString, Base64.DEFAULT)
+        val bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.size)
+        rotateBitmapManually(bitmap, degrees)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+fun compressBitmap(bitmap: Bitmap, quality: Int): Bitmap {
+    val stream = ByteArrayOutputStream()
+    bitmap.compress(Bitmap.CompressFormat.JPEG, quality, stream)
+    val byteArray = stream.toByteArray()
+    return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+}
+fun rotateBitmapManually(bitmap: Bitmap, degrees: Float): Bitmap {
+    val matrix = Matrix()
+    matrix.postRotate(degrees)
+    return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 }
 

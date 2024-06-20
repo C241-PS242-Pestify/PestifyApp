@@ -17,4 +17,9 @@
     <string name="detail">Details</string>
     <string name="onSearch">No results found</string>
     <string name="onSearchDesc">Please try again with another keyword</string>
+    <string name="pestscan">Pest Scan</string>
+    <string name="result">Result</string>
+
+
+
 </resources>

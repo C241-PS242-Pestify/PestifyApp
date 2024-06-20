@@ -9,7 +9,7 @@ import com.learning.pestifyapp.ui.screen.authentication.forgotpassword.ForgotPas
 import com.learning.pestifyapp.ui.screen.authentication.login.LoginScreenViewModel
 import com.learning.pestifyapp.ui.screen.authentication.register.RegisterScreenViewModel
 import com.learning.pestifyapp.ui.screen.dashboard.home.HomeScreenViewModel
-import com.learning.pestifyapp.ui.screen.dashboard.pescan.PescanScreenViewModel
+import com.learning.pestifyapp.ui.screen.dashboard.pescan.PestViewModel
 import com.learning.pestifyapp.ui.screen.dashboard.profile.ProfileScreenViewModel
 
 class ViewModelFactory(
@@ -32,10 +32,6 @@ class ViewModelFactory(
 
             modelClass.isAssignableFrom(ForgotPasswordScreenViewModel::class.java) -> {
                 ForgotPasswordScreenViewModel(userRepository) as T
-            }
-
-            modelClass.isAssignableFrom(PescanScreenViewModel::class.java) -> {
-                PescanScreenViewModel(userRepository) as T
             }
             modelClass.isAssignableFrom(ProfileScreenViewModel::class.java) -> {
                 ProfileScreenViewModel(userRepository) as T

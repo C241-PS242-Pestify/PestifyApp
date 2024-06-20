@@ -6,7 +6,9 @@ import com.learning.pestifyapp.data.model.AuthInterceptor
 import com.learning.pestifyapp.data.retrofit.service.AccountService
 import com.learning.pestifyapp.data.retrofit.service.ArticleService
 import com.learning.pestifyapp.data.retrofit.service.AuthService
+import com.learning.pestifyapp.data.retrofit.service.HistoryService
 import com.learning.pestifyapp.data.retrofit.service.PespediaService
+import com.learning.pestifyapp.data.retrofit.service.PestService
 import com.learning.pestifyapp.data.retrofit.service.PlantService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -54,6 +56,14 @@ object ApiConfig {
 
     fun getPespediaService(context: Context): PespediaService {
         return getApiClient(context).create(PespediaService::class.java)
+    }
+
+    fun getPestService(context: Context): PestService {
+        return getApiClient(context).create(PestService::class.java)
+    }
+
+    fun getHistoryServie(context: Context): HistoryService {
+        return getApiClient(context).create(HistoryService::class.java)
     }
 
 

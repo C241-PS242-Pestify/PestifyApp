@@ -1,7 +1,6 @@
 package com.learning.pestifyapp.ui.screen.navigation
 
 
-import CameraScreen
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
@@ -11,14 +10,11 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -26,9 +22,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.learning.pestifyapp.MainActivity
+import com.learning.pestifyapp.data.repository.HistoryRepository
 import com.learning.pestifyapp.data.repository.UserRepository
+import com.learning.pestifyapp.di.factory.HistoryFactory
 import com.learning.pestifyapp.di.factory.HomeFactory
 import com.learning.pestifyapp.di.factory.PespediaFactory
+import com.learning.pestifyapp.di.factory.PestFactory
 import com.learning.pestifyapp.di.factory.ViewModelFactory
 import com.learning.pestifyapp.ui.components.BottomBarState
 import com.learning.pestifyapp.ui.screen.authentication.forgotpassword.ForgotPasswordScreen
@@ -41,12 +40,16 @@ import com.learning.pestifyapp.ui.screen.authentication.register.UsernameScreen
 import com.learning.pestifyapp.ui.screen.dashboard.detail.DetailArticleScreen
 import com.learning.pestifyapp.ui.screen.dashboard.detail.DetailCategoriesScreen
 import com.learning.pestifyapp.ui.screen.dashboard.detail.DetailEnsScreen
+import com.learning.pestifyapp.ui.screen.dashboard.detail.DetailHistoryScreen
 import com.learning.pestifyapp.ui.screen.dashboard.detail.DetailPlantScreen
 import com.learning.pestifyapp.ui.screen.dashboard.ensiklopedia.EnsiklopediaScreen
 import com.learning.pestifyapp.ui.screen.dashboard.history.HistoryScreen
+import com.learning.pestifyapp.ui.screen.dashboard.history.HistoryViewModel
 import com.learning.pestifyapp.ui.screen.dashboard.home.HomeScreen
-import com.learning.pestifyapp.ui.screen.dashboard.pescan.PescanScreen
-import com.learning.pestifyapp.ui.screen.dashboard.pescan.PescanScreenViewModel
+import com.learning.pestifyapp.ui.screen.dashboard.pescan.CameraScreen
+import com.learning.pestifyapp.ui.screen.dashboard.pescan.PestResultScreen
+import com.learning.pestifyapp.ui.screen.dashboard.pescan.PestScreen
+import com.learning.pestifyapp.ui.screen.dashboard.pescan.PestViewModel
 import com.learning.pestifyapp.ui.screen.dashboard.profile.PrivacyScreen
 import com.learning.pestifyapp.ui.screen.dashboard.profile.ProfileScreen
 import com.learning.pestifyapp.ui.screen.onboarding.OnboardingScreen
@@ -56,7 +59,7 @@ import com.learning.pestifyapp.ui.screen.splashscreen.SplashScreen
 fun NavigationGraph(
     navController: NavHostController,
     context: MainActivity,
-    bottomBarState: BottomBarState
+    bottomBarState: BottomBarState,
 ) {
     val userRepository = UserRepository(context)
 
@@ -184,12 +187,12 @@ fun NavigationGraph(
         // |||||||||||||||||||||=== SCAN ===||||||||||||||||||||||||||||||||||
 
         composable(route = Graph.CAMERA) {
-            val pescanScreenViewModel: PescanScreenViewModel =
-                viewModel(factory = ViewModelFactory(userRepository))
+            val pestViewModel: PestViewModel =
+                viewModel(factory = PestFactory.getInstance(context))
             CameraScreen(
                 navController = navController,
                 context = context,
-                viewModel = pescanScreenViewModel
+                viewModel = pestViewModel
             )
         }
 
@@ -279,12 +282,8 @@ fun NavigationGraph(
                 }
             }
         ) {
-            val pescanScreenViewModel: PescanScreenViewModel =
-                viewModel(factory = ViewModelFactory(userRepository))
-            PescanScreen(
+            PestScreen(
                 navController = navController,
-                context = context,
-                viewModel = pescanScreenViewModel
             )
         }
 
@@ -312,6 +311,8 @@ fun NavigationGraph(
             }
         ) {
             HistoryScreen(
+                navController = navController,
+                viewModel = viewModel(factory = HistoryFactory.getInstance(context))
             )
         }
 
@@ -503,6 +504,33 @@ fun NavigationGraph(
                     )
                 },
                 context = context
+            )
+        }
+
+        composable(route = "detail/{historyId}") { backStackEntry ->
+            val historyId = backStackEntry.arguments?.getString("historyId")
+            if (historyId != null) {
+                val historyViewModel: HistoryViewModel = viewModel(
+                    factory = HistoryFactory.getInstance(context)
+                )
+                DetailHistoryScreen(
+                    historyId = historyId,
+                    viewModel = historyViewModel,
+                    navController = navController
+                )
+            }
+        }
+
+        composable(
+            route = "result_screen/{imageUri}",
+            arguments = listOf(navArgument("imageUri") { type = NavType.StringType })
+        ) { backStackEntry ->
+            val imageUri = backStackEntry.arguments?.getString("imageUri")?.toUri()
+            PestResultScreen(
+                viewModel(factory = PestFactory.getInstance(context)),
+                navController = navController,
+                context = context,
+                imageUri = imageUri
             )
         }
 

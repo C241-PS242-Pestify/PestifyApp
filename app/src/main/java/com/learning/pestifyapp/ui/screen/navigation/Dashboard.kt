@@ -9,13 +9,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.navigation
 import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.data.repository.UserRepository
-import com.learning.pestifyapp.di.factory.HomeFactory
 import com.learning.pestifyapp.di.factory.ViewModelFactory
-import com.learning.pestifyapp.ui.screen.dashboard.ensiklopedia.EnsiklopediaScreen
 import com.learning.pestifyapp.ui.screen.dashboard.history.HistoryScreen
-import com.learning.pestifyapp.ui.screen.dashboard.home.HomeScreen
-import com.learning.pestifyapp.ui.screen.dashboard.pescan.PescanScreen
-import com.learning.pestifyapp.ui.screen.dashboard.pescan.PescanScreenViewModel
+import com.learning.pestifyapp.ui.screen.dashboard.pescan.PestScreen
+import com.learning.pestifyapp.ui.screen.dashboard.pescan.PestViewModel
 import com.learning.pestifyapp.ui.screen.dashboard.profile.ProfileScreen
 
 fun NavGraphBuilder.dashBoard(
@@ -44,16 +41,16 @@ fun NavGraphBuilder.dashBoard(
         }
 
         composable(Screen.Pescan.route) {
-            val pescanScreenViewModel: PescanScreenViewModel = viewModel(factory = ViewModelFactory(userRepository))
-            PescanScreen(
+            val pescanScreenViewModel: PestViewModel = viewModel(factory = ViewModelFactory(userRepository))
+            PestScreen(
                 navController = navController,
-                context = context,
-                viewModel = pescanScreenViewModel
             )
         }
 
         composable(Screen.History.route) {
             HistoryScreen(
+                navController = navController,
+                viewModel = viewModel(factory = ViewModelFactory(userRepository))
             )
         }
 

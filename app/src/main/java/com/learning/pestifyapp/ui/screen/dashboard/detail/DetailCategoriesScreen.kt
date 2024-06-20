@@ -100,6 +100,7 @@ fun DetailCategoriesScreen(
             // Show error message
         }
 
+        UiState.Empty -> TODO()
     }
 }
 

@@ -175,6 +175,8 @@ fun HomeContent(
                         is UiState.Error -> {
                             // Show error message
                         }
+
+                        UiState.Empty -> TODO()
                     }
                 }
 
@@ -207,6 +209,7 @@ fun HomeContent(
                             // Show error message
                         }
 
+                        UiState.Empty -> TODO()
                     }
                 }
             }

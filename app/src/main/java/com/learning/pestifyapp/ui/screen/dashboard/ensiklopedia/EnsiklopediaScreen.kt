@@ -154,7 +154,6 @@ fun EnsiklopediaContent(
                                 fontWeight = FontWeight.Bold,
                                 modifier = Modifier.padding(top = 16.dp)
                             )
-
                             CustomSearchBar(
                                 query = query,
                                 onQueryChange = {
@@ -214,6 +213,8 @@ fun EnsiklopediaContent(
                 is UiState.Error -> {
                     // Show error message
                 }
+
+                UiState.Empty -> TODO()
             }
 
         }
