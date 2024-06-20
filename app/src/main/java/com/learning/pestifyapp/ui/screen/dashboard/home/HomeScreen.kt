@@ -55,77 +55,117 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.R
+import com.learning.pestifyapp.data.model.homeart.Article
+import com.learning.pestifyapp.data.model.local.entity.ArticleEntity
+import com.learning.pestifyapp.data.model.local.entity.PlantEntity
 import com.learning.pestifyapp.data.model.plant.PlantData
+import com.learning.pestifyapp.ui.common.SetWindowBackground
+import com.learning.pestifyapp.ui.common.TopWithFooter
 import com.learning.pestifyapp.ui.common.UiState
 import com.learning.pestifyapp.ui.components.AnimatedStatusBarColorOnScroll
+import com.learning.pestifyapp.ui.components.ArticleCategory
+import com.learning.pestifyapp.ui.components.ArticleCategoryLoading
+import com.learning.pestifyapp.ui.components.BottomBarState
 import com.learning.pestifyapp.ui.components.ItemSection
 import com.learning.pestifyapp.ui.components.PlantCategory
+import com.learning.pestifyapp.ui.components.PlantCategoryLoading
 import com.learning.pestifyapp.ui.screen.navigation.Graph
 import com.learning.pestifyapp.ui.screen.navigation.Screen
 import com.learning.pestifyapp.ui.theme.PestifyAppTheme
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
 fun HomeScreen(
     context: Context,
     viewModel: HomeViewModel,
+    bottomBarState: BottomBarState,
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
 
-    val uiState =
-        viewModel.uiState.collectAsStateWithLifecycle(lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current).value
+    val uiListPlantState by
+    viewModel.uiListPlantState.collectAsStateWithLifecycle(
+        lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current,
+    )
+
+    val uiListArticleState by
+    viewModel.uiListArticleState.collectAsStateWithLifecycle(
+        lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current,
+    )
+
     HomeContent(
+        modifier = modifier,
         context = context,
-        uiState = uiState,
+        uiListPlantState = uiListPlantState,
+        uiListArticleState = uiListArticleState,
         navController = navController,
         viewModel = viewModel,
-        modifier = modifier
+        bottomBarState = bottomBarState,
     )
 }
 
 @Composable
 fun HomeContent(
+    modifier: Modifier,
     context: Context,
-    uiState: UiState<List<PlantData>>,
+    uiListPlantState: UiState<List<PlantEntity>>,
+    uiListArticleState: UiState<List<ArticleEntity>>,
     viewModel: HomeViewModel,
+    bottomBarState: BottomBarState,
     navController: NavHostController,
-    modifier: Modifier = Modifier,
 ) {
-    val defaultStatusBarColor = Color(0xFFB2DFDB)
-    val scrolledStatusBarColor = Color(0xFFFFFFFF)
+    val defaultStatusBarColor = Color.White
+    val scrolledStatusBarColor = Color.White
 
     AnimatedStatusBarColorOnScroll(
         context = context,
         defaultStatusBarColor = defaultStatusBarColor,
         scrolledStatusBarColor = scrolledStatusBarColor,
         isDefaultStatusBarIconsDark = true,
-        isScrolledStatusBarIconsDark = true
+        isScrolledStatusBarIconsDark = true,
+        bottomBarState = bottomBarState,
     ) { listState ->
+        LaunchedEffect(true) {
+            bottomBarState.setBottomAppBarState(true)
+            listState.scrollToItem(0)
+        }
         Box(
             modifier = Modifier
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.onPrimary)
+                .padding(horizontal = 16.dp)
         ) {
-            LazyColumn(state = listState) {
+            LazyColumn(
+                state = listState,
+                verticalArrangement = TopWithFooter,
+            ) {
+
                 item {
                     TopSection(context = context)
                 }
                 item {
-                    when (uiState) {
+                    when (uiListPlantState) {
                         is UiState.Loading -> {
-                            viewModel.getAllPlants()
+                            PlantCategoryLoading()
+                            LaunchedEffect(true) {
+                                viewModel.getAllPlants()
+                            }
                         }
 
                         is UiState.Success -> {
-                            val plantList = uiState.data
+                            val plantList = uiListPlantState.data
                             ItemSection(
                                 title = context.getString(R.string.plants),
                                 content = {
                                     PlantCategory(
                                         plantList,
                                         navigateToDetail = { plantId ->
-                                            navController.navigate(Screen.DetailPlant.createRoute(plantId))
+                                            navController.navigate(
+                                                Screen.DetailPlant.createRoute(
+                                                    plantId
+                                                )
+                                            )
                                         }
                                     )
                                 }
@@ -137,8 +177,37 @@ fun HomeContent(
                         }
                     }
                 }
-                items(100) { index ->
-                    Text(text = "Item $index", modifier = Modifier.padding(8.dp))
+
+                item {
+                    when (uiListArticleState) {
+                        is UiState.Loading -> {
+                            ArticleCategoryLoading()
+                            LaunchedEffect(true) {
+                                viewModel.getAllArticles()
+                            }
+                        }
+
+                        is UiState.Success -> {
+                            val articleList = uiListArticleState.data
+                            ArticleCategory(
+                                articleList = articleList,
+                                viewModel = viewModel,
+                                navigateToDetail = { articleId ->
+                                    navController.navigate(
+                                        Screen.DetailArticle.createRoute(
+                                            articleId
+                                        )
+                                    )
+                                },
+                                navController = navController,
+                            )
+                        }
+
+                        is UiState.Error -> {
+                            // Show error message
+                        }
+
+                    }
                 }
             }
         }
@@ -152,21 +221,20 @@ fun TopSection(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(320.dp)
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFFB2DFDB),
-                        Color(0xFFB2DFDB),
-                        Color.Transparent
-                    )
-                )
-            )
+            .height(310.dp)
+            .padding(top = 16.dp)
+//            .background(
+//                brush = Brush.verticalGradient(
+//                    colors = listOf(
+//                        Color(0xFFB2DFDB),
+//                        Color(0xFFB2DFDB),
+//                        Color.Transparent
+//                    )
+//                )
+//            )
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
+            modifier = Modifier.padding(bottom = 16.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -176,16 +244,16 @@ fun TopSection(
                     painter = painterResource(id = R.drawable.sherlock_profile),
                     contentDescription = "Profile Picture",
                     modifier = Modifier
-                        .size(50.dp)
+                        .size(60.dp)
                         .clip(CircleShape)
-                        .border(2.dp, Color.White, CircleShape)
+                        .border(2.dp, color = MaterialTheme.colorScheme.primary, CircleShape)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
                     Text(
                         text = "Welcome,",
                         fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-                        fontWeight = FontWeight.Bold,
+                        fontWeight = FontWeight.ExtraBold,
                         color = Color.Black
                     )
                     Text(
@@ -199,18 +267,20 @@ fun TopSection(
             Spacer(modifier = Modifier.height(16.dp))
             Box(
                 modifier = Modifier
+                    .fillMaxWidth()
+                    .height(160.dp)
                     .clip(RoundedCornerShape(10.dp))
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.aquaponics),
                     contentDescription = "Aquaponics",
-                    modifier = Modifier.height(200.dp),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.matchParentSize()
                 )
                 Box(
                     modifier = Modifier
+                        .matchParentSize()
                         .align(Alignment.CenterStart)
-                        .fillMaxHeight()
                         .width(250.dp)
                         .background(
                             Brush.horizontalGradient(
@@ -267,10 +337,10 @@ fun TopSection(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun TopSectionPreview() {
-    PestifyAppTheme {
-        TopSection(context = MainActivity.CONTEXT)
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//private fun TopSectionPreview() {
+//    PestifyAppTheme {
+//        TopSection(context = MainActivity.CONTEXT)
+//    }
+//}

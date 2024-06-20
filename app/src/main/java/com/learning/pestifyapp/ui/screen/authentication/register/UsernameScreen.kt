@@ -30,9 +30,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.learning.pestifyapp.MainActivity
+import com.learning.pestifyapp.R
 import com.learning.pestifyapp.ui.components.CustomButton
 import com.learning.pestifyapp.ui.components.TextFieldValidation
 import com.learning.pestifyapp.ui.screen.navigation.Graph
+import com.learning.pestifyapp.ui.theme.base80
 
 @Composable
 fun UsernameScreen(
@@ -50,23 +52,35 @@ fun UsernameScreen(
     }
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = title,
                 textAlign = TextAlign.Start,
-                fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+                fontSize = 36.sp,
                 color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.Bold,
-                lineHeight = 38.sp,
-                modifier = Modifier.padding(start = 24.dp)
+                fontWeight = FontWeight.ExtraBold,
+                lineHeight = 50.sp,
+                modifier = Modifier.padding(top = 120.dp)
             )
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 30.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+                Text(
+                    text = context.getString(R.string.instruction),
+                    textAlign = TextAlign.Start,
+                    fontSize = 16.sp,
+                    color = base80,
+                    fontWeight = FontWeight.ExtraBold,
+                    lineHeight = 50.sp,
+                    modifier = Modifier.padding(bottom = 15.dp)
+                )
                 TextFieldValidation(
                     value = viewModel.usernameValue,
                     onChange = viewModel::setUsername,
@@ -74,24 +88,24 @@ fun UsernameScreen(
                     isError = viewModel.usernameError.isNotEmpty(),
                     icon = Icons.Rounded.Person,
                     errorMessage = viewModel.usernameError,
-                    modifier = Modifier
-                        .padding(horizontal = 22.dp)
                 )
             }
             CustomButton(
                 text = "Done",
                 onClick = {
-                    focusManager.clearFocus()
-                    viewModel.saveUsername(
-                        onSuccess = {
-                            navController.popBackStack()
-                            navController.navigate(Graph.LOGIN)
-                            Toast.makeText(context, "Account Created!", Toast.LENGTH_SHORT).show()
-                        },
-                        onError = { errorMessage ->
-                            handleLoginError(context, errorMessage)
-                        }
-                    )
+//                    focusManager.clearFocus()
+//                    viewModel.saveUsername(
+//                        onSuccess = {
+//                            navController.popBackStack()
+//                            navController.navigate(Graph.LOGIN)
+//                            Toast.makeText(context, "Account Created!", Toast.LENGTH_SHORT).show()
+//                        },
+//                        onError = { errorMessage ->
+//                            handleLoginError(context, errorMessage)
+//                        }
+//                    )
+                    navController.popBackStack()
+                    navController.navigate(Graph.LOGIN)
                 },
                 modifier = Modifier.padding(bottom = 8.dp)
             )

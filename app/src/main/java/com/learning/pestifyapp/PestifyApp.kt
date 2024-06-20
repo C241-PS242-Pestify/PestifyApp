@@ -6,29 +6,21 @@ import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.saveable.rememberSaveableStateHolder
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.insets.ui.Scaffold
+import com.learning.pestifyapp.ui.components.BottomBarState
 import com.learning.pestifyapp.ui.components.BottomNavBar
 import com.learning.pestifyapp.ui.screen.navigation.NavigationGraph
-import com.learning.pestifyapp.ui.screen.navigation.getNavigationItems
-import com.learning.pestifyapp.ui.screen.navigation.getNavigationRoute
-import com.learning.pestifyapp.ui.theme.PestifyAppTheme
+import kotlinx.coroutines.launch
 
 @Composable
 fun PestifyApp(
@@ -39,34 +31,44 @@ fun PestifyApp(
 
     val currentRoute = navController.currentBackStackEntryAsState().value?.destination?.route
 
+    val scope = rememberCoroutineScope()
 
-    val bottomAppBarState = rememberSaveable {
-        mutableStateOf(true)
+    val bottomBarState: BottomBarState = viewModel()
+    val isBottomBarVisible = bottomBarState.bottomAppBarState.collectAsState()
+
+    LaunchedEffect(currentRoute) {
+        when (currentRoute) {
+            "home", "pespedia", "pescan", "bookmark", "profile" -> {
+                scope.launch {
+                    bottomBarState.setBottomAppBarState(true)
+                }
+            }
+
+            else -> {
+                scope.launch {
+                    bottomBarState.setBottomAppBarState(false)
+                }
+            }
+        }
     }
 
-    when (currentRoute) {
-        "home", "pespedia", "pescan", "history", "profile" -> {
-            bottomAppBarState.value = true
-        }
-        else -> {
-            bottomAppBarState.value = false
-        }
-    }
-
-    Scaffold (
+    Scaffold(
         bottomBar = {
-            BottomBar(navController = navController, context = context, bottomAppBarState = bottomAppBarState)
+            if (currentRoute != null) {
+                BottomBar(
+                    navController = navController,
+                    context = context,
+                    bottomBarState = isBottomBarVisible,
+                    currentRoute = currentRoute
+                )
+            }
         },
-        modifier = Modifier
-    ){ innerPadding ->
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            NavigationGraph(
-                navController = navController,
-                context = context,
-            )
-        }
+    ) { innerPadding ->
+        NavigationGraph(
+            navController = navController,
+            context = context,
+            bottomBarState = bottomBarState,
+        )
     }
 }
 
@@ -74,12 +76,13 @@ fun PestifyApp(
 fun BottomBar(
     navController: NavHostController,
     context: Context,
-    bottomAppBarState: MutableState<Boolean>,
+    bottomBarState: State<Boolean>,
+    currentRoute: String,
     modifier: Modifier = Modifier
 ) {
 
     AnimatedVisibility(
-        visible = bottomAppBarState.value,
+        visible = isBottomBarVisible(currentRoute = currentRoute, bottomBarState = bottomBarState),
         enter = slideInVertically(initialOffsetY = { it }),
         exit = slideOutVertically(targetOffsetY = { it }),
     ) {
@@ -90,6 +93,11 @@ fun BottomBar(
         )
     }
 
+}
+
+fun isBottomBarVisible(currentRoute: String, bottomBarState: State<Boolean>): Boolean {
+    val routesWithBottomBar = listOf("home", "pespedia", "pescan", "bookmark", "profile")
+    return currentRoute in routesWithBottomBar && bottomBarState.value
 }
 
 //@Preview(showBackground = true)

@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -15,6 +16,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "BASE_URL", "\"http://34.50.69.207:5000/\"")
+
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -38,6 +42,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -71,7 +76,7 @@ dependencies {
 
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
-    implementation("androidx.navigation:navigation-compose:2.7.7")
+    implementation("androidx.navigation:navigation-compose:2.8.0-alpha06")
     implementation("androidx.compose.ui:ui-tooling:1.6.7")
     implementation("androidx.compose.animation:animation:1.6.7")
 
@@ -92,8 +97,6 @@ dependencies {
     implementation("androidx.camera:camera-lifecycle:$cameraxVersion")
 
 
-    implementation("io.coil-kt:coil-compose:2.1.0")
-
     //paging
     implementation("androidx.paging:paging-compose:3.3.0")
 
@@ -105,6 +108,13 @@ dependencies {
 
     implementation("com.google.accompanist:accompanist-insets:0.24.13-rc")
     implementation("com.google.accompanist:accompanist-insets-ui:0.24.13-rc")
+
+    implementation("io.coil-kt:coil-compose:2.4.0")
+
+    implementation("androidx.room:room-runtime:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+
 
 
 }

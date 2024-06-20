@@ -1,5 +1,6 @@
 package com.learning.pestifyapp.ui.screen.onboarding
 
+import android.app.Activity
 import android.content.Context
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -15,6 +16,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -23,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -30,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.times
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.airbnb.lottie.compose.*
@@ -40,6 +45,7 @@ import com.learning.pestifyapp.ui.components.CustomButton
 import com.learning.pestifyapp.ui.screen.navigation.Graph
 import com.learning.pestifyapp.ui.screen.navigation.Screen
 import com.learning.pestifyapp.ui.theme.PestifyAppTheme
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
@@ -47,6 +53,14 @@ fun OnboardingScreen(
     navController: NavHostController,
     context: MainActivity
 ) {
+
+    LaunchedEffect(Unit) {
+        delay(300)
+        val window = (context as Activity).window
+        window.statusBarColor = Color.White.toArgb()
+        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true
+    }
+
     val animations = listOf(
         R.raw.lottie_onboarding_1,
         R.raw.lottie_onboarding_1,
@@ -165,10 +179,10 @@ fun ButtonSection(
                 CustomButton(
                     text = "Get Started",
                     onClick = {
-                        onBoardingFinished(context = context)
+//                        onBoardingFinished(context = context)
                         navController.popBackStack()
-//                        navController.navigate(Graph.LOGIN)
-                        navController.navigate(Screen.Home.route)
+                        navController.navigate(Graph.REGISTER )
+//                        navController.navigate(Screen.Home.route)
                     },
                     modifier = Modifier
                         .align(Alignment.Center)

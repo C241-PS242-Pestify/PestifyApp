@@ -4,6 +4,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -70,28 +72,26 @@ fun LoginScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceEvenly,
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Column(
-                horizontalAlignment = Alignment.Start,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    text = title,
-                    textAlign = TextAlign.Start,
-                    fontSize = MaterialTheme.typography.headlineMedium.fontSize,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold,
-                    lineHeight = 38.sp,
-                    modifier = Modifier.padding(start = 24.dp)
-                )
-            }
+            Text(
+                text = title,
+                textAlign = TextAlign.Start,
+                fontSize = 36.sp,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.ExtraBold,
+                lineHeight = 50.sp,
+                modifier = Modifier.padding(top = 120.dp, bottom = 30.dp).align(Alignment.Start)
+            )
+
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
+
                 TextFieldValidation(
                     value = viewModel.emailValue,
                     onChange = viewModel::setEmail,
@@ -100,10 +100,8 @@ fun LoginScreen(
                     icon = Icons.Rounded.Email,
                     errorMessage = viewModel.emailError,
                     keyboardType = KeyboardType.Email,
-                    modifier = Modifier
-                        .padding(horizontal = 22.dp)
                 )
-                Spacer(modifier = Modifier.height(20.dp))
+                Spacer(modifier = Modifier.height(15.dp))
                 TextFieldValidation(
                     value = viewModel.passwordValue,
                     onChange = viewModel::setPassword,
@@ -112,8 +110,6 @@ fun LoginScreen(
                     icon = Icons.Rounded.Lock,
                     isPassword = true,
                     errorMessage = viewModel.passwordError,
-                    modifier = Modifier
-                        .padding(horizontal = 22.dp)
                 )
                 Text(
                     text = "Forgot Password?",
@@ -122,41 +118,50 @@ fun LoginScreen(
                             navController.navigate(Graph.FORGOT_PASSWORD)
                         }
                         .align(Alignment.End)
-                        .padding(end = 27.dp),
-                    color = MaterialTheme.colorScheme.primary
+                        .padding(bottom = 55.dp),
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 )
             }
             CustomButton(
                 text = "Sign In",
                 onClick = {
-                    focusManager.clearFocus()
-                    viewModel.login(
-                        onSuccess = {
-                            navController.popBackStack()
-                            navController.navigate(Screen.Home.route)
-                        },
-                        onError = { errorMessage ->
-                            handleLoginError(context, errorMessage)
-                        }
-                    )
+//                    focusManager.clearFocus()
+//                    viewModel.login(
+//                        onSuccess = {
+//                            navController.popBackStack()
+//                            navController.navigate(Screen.Home.route)
+//                        },
+//                        onError = { errorMessage ->
+//                            handleLoginError(context, errorMessage)
+//                        }
+//                    )
+                    navController.popBackStack()
+                    navController.navigate(Screen.Home.route)
                 },
                 modifier = Modifier.padding(bottom = 8.dp)
             )
 
             Row(
                 horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(top = 15.dp)
             ) {
                 Text(
                     text = "Don't Have Account?",
+                    fontWeight = FontWeight.W500,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer,
                 )
                 Text(
                     text = " Register!",
+                    fontWeight = FontWeight.W600,
                     modifier = Modifier
-                        .clickable {
-                            navController.popBackStack()
-                            navController.navigate(Graph.REGISTER)
-                        },
+                        .clickable(
+                            onClick = {
+                                navController.popBackStack()
+                                navController.navigate(Graph.REGISTER)
+                            },
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() }
+                        ),
                     color = MaterialTheme.colorScheme.primary,
                 )
             }

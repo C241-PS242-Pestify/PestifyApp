@@ -1,8 +1,11 @@
 package com.learning.pestifyapp.ui.components
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,6 +20,8 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -27,34 +32,56 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
+import com.learning.pestifyapp.R
+import com.learning.pestifyapp.data.model.local.entity.PlantEntity
 import com.learning.pestifyapp.data.model.plant.FakePlantData
 import com.learning.pestifyapp.data.model.plant.PlantData
+import com.learning.pestifyapp.ui.common.loadingFx
 import com.learning.pestifyapp.ui.common.truncateText
 import com.learning.pestifyapp.ui.theme.PestifyAppTheme
 
 @Composable
 fun PlantItem(
-    item: PlantData,
+    item: PlantEntity,
+    navigateToDetail: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isClickable = remember { mutableStateOf(true) }
     Card(
         modifier = modifier
-            .width(120.dp)
-            .height(160.dp),
-        shape = RoundedCornerShape(4.dp),
+            .width(110.dp)
+            .height(180.dp)
+            .clickable(
+                onClick = {
+                    if (isClickable.value) {
+                        isClickable.value = false
+                        navigateToDetail(item.id)
+                    }
+
+                },
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null
+
+            ),
+        shape = RoundedCornerShape(10.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.onPrimary,
         ),
     ) {
         Column {
             Image(
-                painter = painterResource(item.image),
+                painter = rememberAsyncImagePainter(
+                    model = item.picture,
+                    placeholder = painterResource(id = R.drawable.placeholder)
+                ),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(90.dp)
-                    .clip(RoundedCornerShape(4.dp))
+                    .height(100.dp)
+                    .clip(RoundedCornerShape(10.dp))
             )
             Column {
                 Text(
@@ -64,8 +91,9 @@ fun PlantItem(
                     modifier = Modifier.padding(vertical = 2.dp)
                 )
                 Text(
-                    text = truncateText(item.description, 60),
+                    text = truncateText(item.description, 50),
                     fontSize = 10.sp,
+                    maxLines = 3,
                     fontWeight = FontWeight.Normal,
                     lineHeight = 14.sp,
                     color = Color(0xFF555555),
@@ -76,9 +104,82 @@ fun PlantItem(
 }
 
 @Composable
+fun PlantItemLoading(
+    modifier: Modifier = Modifier,
+) {
+    Card(
+        modifier = modifier
+            .width(110.dp)
+            .height(180.dp),
+        shape = RoundedCornerShape(10.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.onPrimary,
+        ),
+    ) {
+        Column {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(100.dp)
+                    .clip(RoundedCornerShape(10.dp))
+                    .loadingFx()
+            )
+            Column {
+                Box(
+                    modifier = Modifier
+                        .padding(top = 10.dp, bottom = 2.dp)
+                        .height(10.dp)
+                        .fillMaxWidth(0.5f)
+                        .loadingFx()
+                )
+                Box(
+                    modifier = Modifier
+                        .padding(vertical = 2.dp)
+                        .height(10.dp)
+                        .fillMaxWidth(0.9f)
+                        .loadingFx()
+                )
+                Box(
+                    modifier = Modifier
+                        .padding(vertical = 2.dp)
+                        .height(10.dp)
+                        .fillMaxWidth(0.7f)
+                        .loadingFx()
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun PlantCategoryLoading(
+    modifier: Modifier = Modifier
+
+) {
+    Column() {
+        Box(
+            modifier = modifier
+                .padding(top = 4.dp, bottom = 8.dp)
+                .height(20.dp)
+                .width(50.dp)
+                .loadingFx()
+        )
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier.padding(top = 2.dp)
+        )
+        {
+            items(5) {
+                PlantItemLoading()
+            }
+        }
+    }
+}
+
+@Composable
 fun PlantCategory(
-    plantList: List<PlantData>,
-    navigateToDetail: (Long) -> Unit,
+    plantList: List<PlantEntity>,
+    navigateToDetail: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyRow(
@@ -88,10 +189,8 @@ fun PlantCategory(
     {
         items(plantList, key = { it.id }) { plant ->
             PlantItem(
-                plant,
-                modifier = Modifier.clickable {
-                    navigateToDetail(plant.id)
-                }
+                item = plant,
+                navigateToDetail = navigateToDetail,
             )
         }
     }
@@ -104,8 +203,7 @@ fun ItemSection(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier
-            .padding(horizontal = 16.dp)
+        modifier = modifier.padding(bottom = 8.dp)
     ) {
         SectionText(title)
         content()
@@ -137,11 +235,40 @@ fun SectionTextPreview() {
 
 @Preview(showBackground = true)
 @Composable
-private fun PlantItemPreview() {
+private fun LoadingPlantItemPreview() {
     PestifyAppTheme {
-        PlantItem(
-            FakePlantData.dummyPlants[0],
-            modifier = Modifier.padding(8.dp)
-        )
+        Box(
+            modifier = Modifier
+                .background(Color.Gray)
+        ) {
+            PlantItemLoading(
+                modifier = Modifier.padding(50.dp)
+            )
+        }
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+private fun PlantCategoryLoadingPreview() {
+    PestifyAppTheme {
+        Box(
+            modifier = Modifier
+                .background(Color.Gray)
+                .fillMaxWidth()
+        ) {
+            PlantCategoryLoading()
+        }
+    }
+}
+
+//@Preview(showBackground = true)
+//@Composable
+//private fun PlantItemPreview() {
+//    PestifyAppTheme {
+//        PlantItem(
+//            FakePlantData.dummyPlants[0],
+//            modifier = Modifier.padding(8.dp)
+//        )
+//    }
+//}

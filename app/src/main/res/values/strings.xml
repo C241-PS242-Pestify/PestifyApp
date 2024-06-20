@@ -3,11 +3,18 @@
     <string name="menu_home">Home</string>
     <string name="menu_ens">Pespedia</string>
     <string name="menu_pescan">Pescan</string>
-    <string name="menu_history">History</string>
+    <string name="menu_bookmark">Bookmark</string>
     <string name="menu_profile">Profile</string>
     <string name="next_page">Skip</string>
     <string name="back_page">Back</string>
     <string name="plants">Plants</string>
     <string name="read_more">Read More</string>
     <string name="image_desc">"New to Aquaponics? Create Your Own Setup Now!"</string>
+    <string name="instruction">"Please enter your nickname (one word only)"</string>
+    <string name="search">Search</string>
+    <string name="backtop">Back to Top</string>
+    <string name="ensiklopedia">Pespedia</string>
+    <string name="detail">Details</string>
+    <string name="onSearch">No results found</string>
+    <string name="onSearchDesc">Please try again with another keyword</string>
 </resources>

@@ -31,16 +31,16 @@ fun NavGraphBuilder.dashBoard(
     ) {
 
         composable(Screen.Home.route) {
-            HomeScreen(
-                navController = navController,
-                context = context,
-                viewModel = viewModel(factory = HomeFactory.getInstance())
-            )
+//            HomeScreen(
+//                navController = navController,
+//                context = context,
+//                viewModel = viewModel(factory = HomeFactory.getInstance())
+//            )
         }
 
         composable(Screen.Ensiklopedia.route) {
-            EnsiklopediaScreen(
-            )
+//            EnsiklopediaScreen(
+//            )
         }
 
         composable(Screen.Pescan.route) {

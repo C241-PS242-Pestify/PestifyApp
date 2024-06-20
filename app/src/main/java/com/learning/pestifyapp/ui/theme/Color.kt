@@ -2,6 +2,9 @@ package com.learning.pestifyapp.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+val searchStroke = Color(0xFFD9D9D9)
+val base60 = Color(0xFFAAAAAA)
+val base80 = Color(0xFF555555)
 val iconLight = Color(0x80808080)
 val primaryLight = Color(0xFF0A6B59)
 val onPrimaryLight = Color(0xFFFFFFFF)

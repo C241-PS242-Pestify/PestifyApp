@@ -6,6 +6,7 @@ import android.os.Looper
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Email
@@ -37,6 +38,7 @@ import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.ui.components.CustomButton
 import com.learning.pestifyapp.ui.components.TextFieldValidation
 import com.learning.pestifyapp.ui.screen.navigation.Graph
+import com.learning.pestifyapp.ui.screen.navigation.Screen
 
 @Composable
 fun RegisterScreen(
@@ -58,23 +60,25 @@ fun RegisterScreen(
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             if (isEmailAndPasswordVisible) {
                 Text(
                     text = title,
                     textAlign = TextAlign.Start,
-                    fontSize = MaterialTheme.typography.headlineMedium.fontSize,
+                    fontSize = 36.sp,
                     color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold,
-                    lineHeight = 38.sp,
-                    modifier = Modifier.padding(start = 24.dp)
+                    fontWeight = FontWeight.ExtraBold,
+                    lineHeight = 50.sp,
+                    modifier = Modifier.padding(top = 120.dp, bottom = 30.dp)
                 )
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 30.dp),
                 ) {
                     TextFieldValidation(
                         value = viewModel.emailValue,
@@ -84,9 +88,8 @@ fun RegisterScreen(
                         icon = Icons.Rounded.Email,
                         errorMessage = viewModel.emailError,
                         keyboardType = KeyboardType.Email,
-                        modifier = Modifier.padding(horizontal = 22.dp)
                     )
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(15.dp))
                     TextFieldValidation(
                         value = viewModel.passwordValue,
                         onChange = viewModel::setPassword,
@@ -95,9 +98,8 @@ fun RegisterScreen(
                         icon = Icons.Rounded.Lock,
                         isPassword = true,
                         errorMessage = viewModel.passwordError,
-                        modifier = Modifier.padding(horizontal = 22.dp)
                     )
-                    Spacer(modifier = Modifier.height(20.dp))
+                    Spacer(modifier = Modifier.height(15.dp))
                     TextFieldValidation(
                         value = viewModel.confirmPasswordValue,
                         onChange = viewModel::setConfirmPassword,
@@ -106,43 +108,51 @@ fun RegisterScreen(
                         icon = Icons.Rounded.Lock,
                         isPassword = true,
                         errorMessage = viewModel.confirmPasswordError,
-                        modifier = Modifier.padding(horizontal = 22.dp)
                     )
                 }
                 CustomButton(
                     text = "Sign Up",
                     onClick = {
-                        viewModel.register(
-                            onSuccess = {
-                                Toast.makeText(
-                                    context,
-                                    "Registration Successful",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                                isEmailAndPasswordVisible = false
-                                isUsernameVisible = true
-                            },
-                            onError = { errorMessage ->
-                                handleRegistrationError(context, errorMessage)
-                            }
-                        )
+//                        viewModel.register(
+//                            onSuccess = {
+//                                Toast.makeText(
+//                                    context,
+//                                    "Registration Successful",
+//                                    Toast.LENGTH_SHORT
+//                                ).show()
+//                                isEmailAndPasswordVisible = false
+//                                isUsernameVisible = true
+//                            },
+//                            onError = { errorMessage ->
+//                                handleRegistrationError(context, errorMessage)
+//                            }
+//                        )
+                        navController.popBackStack()
+                        navController.navigate(Graph.USERNAME)
                     },
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 Row(
                     horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier.padding(top = 15.dp)
                 ) {
                     Text(
                         text = "Already have an account?",
+                        fontWeight = FontWeight.W500,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
                     )
                     Text(
                         text = " Login!",
+                        fontWeight = FontWeight.W600,
                         modifier = Modifier
-                            .clickable {
-                                navController.popBackStack()
-                                navController.navigate(Graph.LOGIN)
-                            },
+                            .clickable(
+                                onClick = {
+                                    navController.popBackStack()
+                                    navController.navigate(Graph.LOGIN)
+                                },
+                                indication = null,
+                                interactionSource = remember { MutableInteractionSource() }
+                            ),
                         color = MaterialTheme.colorScheme.primary,
                     )
                 }
@@ -169,6 +179,7 @@ fun RegisterScreen(
         }
     }
 }
+
 private fun handleRegistrationError(context: Context, errorMessage: String) {
     Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
     Handler(Looper.getMainLooper()).postDelayed({}, 2000)
