@@ -13,9 +13,11 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -59,9 +61,10 @@ fun NavigationGraph(
     val userRepository = UserRepository(context)
 
     NavHost(
+        modifier = Modifier.fillMaxSize(),
         navController = navController,
         startDestination = Graph.SPLASH,
-        modifier = Modifier,
+        contentAlignment = Alignment.TopStart,
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
     ) {
@@ -195,7 +198,38 @@ fun NavigationGraph(
         composable(
             route = Screen.Home.route,
             enterTransition = {
-                if (initialState.destination.route == Screen.Home.route && targetState.destination.route?.startsWith(
+                val isDetailToHome =
+                    initialState.destination.route?.startsWith("detail") == true && targetState.destination.route == Screen.Home.route
+                if (isDetailToHome) {
+                    fadeIn(animationSpec = tween(300, easing = LinearEasing))
+                } else {
+                    fadeIn(animationSpec = tween(300, easing = LinearEasing))
+                }
+            },
+            exitTransition = {
+                val isHomeToDetail =
+                    initialState.destination.route == Screen.Home.route && targetState.destination.route?.startsWith(
+                        "detail"
+                    ) == true
+                if (isHomeToDetail) {
+                    fadeOut(animationSpec = tween(500, easing = LinearEasing))
+                } else {
+                    fadeOut(animationSpec = tween(300, easing = LinearEasing))
+                }
+            }
+        ) {
+            HomeScreen(
+                navController = navController,
+                context = context,
+                viewModel = viewModel(factory = HomeFactory.getInstance(context)),
+                bottomBarState = bottomBarState
+            )
+        }
+
+        composable(
+            route = Screen.Ensiklopedia.route,
+            enterTransition = {
+                if (initialState.destination.route == Screen.Ensiklopedia.route && targetState.destination.route?.startsWith(
                         "detail"
                     ) == true
                 ) {
@@ -205,7 +239,7 @@ fun NavigationGraph(
                 }
             },
             exitTransition = {
-                if (initialState.destination.route == Screen.Home.route && targetState.destination.route?.startsWith(
+                if (initialState.destination.route == Screen.Ensiklopedia.route && targetState.destination.route?.startsWith(
                         "detail"
                     ) == true
                 ) {
@@ -215,26 +249,9 @@ fun NavigationGraph(
                 }
             }
         ) {
-            HomeScreen(
-                navController = navController,
-                context = context,
-                viewModel = viewModel(factory = HomeFactory.getInstance(MainActivity.CONTEXT)),
-                bottomBarState = bottomBarState
-            )
-        }
-
-        composable(
-            route = Screen.Ensiklopedia.route,
-            enterTransition = {
-                fadeIn(animationSpec = tween(300, easing = LinearEasing))
-            },
-            exitTransition = {
-                fadeOut(animationSpec = tween(300, easing = LinearEasing))
-            }
-        ) {
             EnsiklopediaScreen(
                 navController = navController,
-                viewModel = viewModel(factory = PespediaFactory.getInstance()),
+                viewModel = viewModel(factory = PespediaFactory.getInstance(context)),
                 bottomBarState = bottomBarState
             )
         }
@@ -242,10 +259,24 @@ fun NavigationGraph(
         composable(
             route = Screen.Pescan.route,
             enterTransition = {
-                fadeIn(animationSpec = tween(300, easing = LinearEasing))
+                if (initialState.destination.route == Screen.Pescan.route && targetState.destination.route?.startsWith(
+                        "detail"
+                    ) == true
+                ) {
+                    fadeIn(animationSpec = tween(300, easing = LinearEasing))
+                } else {
+                    null
+                }
             },
             exitTransition = {
-                fadeOut(animationSpec = tween(300, easing = LinearEasing))
+                if (initialState.destination.route == Screen.Pescan.route && targetState.destination.route?.startsWith(
+                        "detail"
+                    ) == true
+                ) {
+                    fadeOut(animationSpec = tween(300, easing = LinearEasing))
+                } else {
+                    null
+                }
             }
         ) {
             val pescanScreenViewModel: PescanScreenViewModel =
@@ -259,6 +290,26 @@ fun NavigationGraph(
 
         composable(
             route = Screen.History.route,
+            enterTransition = {
+                if (initialState.destination.route == Screen.History.route && targetState.destination.route?.startsWith(
+                        "detail"
+                    ) == true
+                ) {
+                    fadeIn(animationSpec = tween(300, easing = LinearEasing))
+                } else {
+                    null
+                }
+            },
+            exitTransition = {
+                if (initialState.destination.route == Screen.History.route && targetState.destination.route?.startsWith(
+                        "detail"
+                    ) == true
+                ) {
+                    fadeOut(animationSpec = tween(300, easing = LinearEasing))
+                } else {
+                    null
+                }
+            }
         ) {
             HistoryScreen(
             )
@@ -267,10 +318,24 @@ fun NavigationGraph(
         composable(
             route = Screen.Profile.route,
             enterTransition = {
-                fadeIn(animationSpec = tween(300, easing = LinearEasing))
+                if (initialState.destination.route == Screen.Profile.route && targetState.destination.route?.startsWith(
+                        "detail"
+                    ) == true
+                ) {
+                    fadeIn(animationSpec = tween(300, easing = LinearEasing))
+                } else {
+                    null
+                }
             },
             exitTransition = {
-                fadeOut(animationSpec = tween(300, easing = LinearEasing))
+                if (initialState.destination.route == Screen.Profile.route && targetState.destination.route?.startsWith(
+                        "detail"
+                    ) == true
+                ) {
+                    fadeOut(animationSpec = tween(300, easing = LinearEasing))
+                } else {
+                    null
+                }
             }
         ) {
             ProfileScreen(
@@ -315,7 +380,8 @@ fun NavigationGraph(
                 plantId = id,
                 navigateBack = {
                     navController.navigateUp()
-                }
+                },
+                context = context
             )
         }
 
@@ -352,7 +418,8 @@ fun NavigationGraph(
                 ensId = id,
                 navigateBack = {
                     navController.navigateUp()
-                }
+                },
+                context = context
             )
         }
 
@@ -389,7 +456,8 @@ fun NavigationGraph(
                 articleId = id,
                 navigateBack = {
                     navController.navigateUp()
-                }
+                },
+                context = context
             )
         }
 
@@ -403,21 +471,21 @@ fun NavigationGraph(
             enterTransition = {
                 fadeIn(
                     animationSpec = tween(
-                        300, easing = LinearEasing
+                        600, easing = LinearEasing
                     )
                 ) + slideIntoContainer(
-                    animationSpec = tween(300, easing = EaseIn),
-                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                    animationSpec = tween(600, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Up
                 )
             },
             exitTransition = {
                 fadeOut(
                     animationSpec = tween(
-                        300, easing = LinearEasing
+                        600, easing = LinearEasing
                     )
                 ) + slideOutOfContainer(
-                    animationSpec = tween(300, easing = EaseOut),
-                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                    animationSpec = tween(600, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Down
                 )
             }
         ) {
@@ -433,7 +501,8 @@ fun NavigationGraph(
                             articleId
                         )
                     )
-                }
+                },
+                context = context
             )
         }
 

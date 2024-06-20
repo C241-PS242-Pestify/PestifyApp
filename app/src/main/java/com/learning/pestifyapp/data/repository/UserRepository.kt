@@ -21,8 +21,8 @@ class UserRepository(context: Context) {
     private val authSharedPreferences: SharedPreferences by lazy {
         context.getSharedPreferences(PREF_AUTH, Context.MODE_PRIVATE)
     }
-    private val authService: AuthService = ApiConfig.getAuthService(MainActivity.CONTEXT)
-    private val accountService: AccountService = ApiConfig.getPageService(MainActivity.CONTEXT)
+    private val authService: AuthService = ApiConfig.getAuthService(context)
+    private val accountService: AccountService = ApiConfig.getPageService(context)
 
 
     suspend fun register(

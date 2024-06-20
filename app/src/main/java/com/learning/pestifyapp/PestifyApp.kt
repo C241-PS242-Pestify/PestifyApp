@@ -63,17 +63,12 @@ fun PestifyApp(
                 )
             }
         },
-        modifier = Modifier
     ) { innerPadding ->
-        Box(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            NavigationGraph(
-                navController = navController,
-                context = context,
-                bottomBarState = bottomBarState,
-            )
-        }
+        NavigationGraph(
+            navController = navController,
+            context = context,
+            bottomBarState = bottomBarState,
+        )
     }
 }
 
@@ -99,6 +94,7 @@ fun BottomBar(
     }
 
 }
+
 fun isBottomBarVisible(currentRoute: String, bottomBarState: State<Boolean>): Boolean {
     val routesWithBottomBar = listOf("home", "pespedia", "pescan", "bookmark", "profile")
     return currentRoute in routesWithBottomBar && bottomBarState.value

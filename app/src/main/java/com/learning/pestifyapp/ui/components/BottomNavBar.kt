@@ -83,7 +83,7 @@ fun BottomNavBar(
         contentAlignment = Alignment.Center
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.onPrimary),
+            modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -93,13 +93,15 @@ fun BottomNavBar(
                     item = item,
                     isSelected = selectedItem == item.screen.route,
                     onClick = {
-                        selectedItem = item.screen.route
-                        navController.navigate(item.screen.route) {
-                            popUpTo(Screen.Home.route) {
-                                saveState = true
+                        if (selectedItem != item.screen.route) {
+                            selectedItem = item.screen.route
+                            navController.navigate(item.screen.route) {
+                                popUpTo(Screen.Home.route) {
+                                    saveState = true
+                                }
+                                restoreState = true
+                                launchSingleTop = true
                             }
-                            restoreState = true
-                            launchSingleTop = true
                         }
                     }
                 )

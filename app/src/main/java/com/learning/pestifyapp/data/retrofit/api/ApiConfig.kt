@@ -6,6 +6,7 @@ import com.learning.pestifyapp.data.model.AuthInterceptor
 import com.learning.pestifyapp.data.retrofit.service.AccountService
 import com.learning.pestifyapp.data.retrofit.service.ArticleService
 import com.learning.pestifyapp.data.retrofit.service.AuthService
+import com.learning.pestifyapp.data.retrofit.service.PespediaService
 import com.learning.pestifyapp.data.retrofit.service.PlantService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -50,5 +51,10 @@ object ApiConfig {
     fun getArticleService(context: Context): ArticleService {
         return getApiClient(context).create(ArticleService::class.java)
     }
+
+    fun getPespediaService(context: Context): PespediaService {
+        return getApiClient(context).create(PespediaService::class.java)
+    }
+
 
 }

@@ -37,6 +37,7 @@ import com.learning.pestifyapp.ui.theme.searchStroke
 fun CustomSearchBar(
     query: String,
     onQueryChange: (String) -> Unit,
+    onSearch: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -48,7 +49,9 @@ fun CustomSearchBar(
         SearchBar(
             query = query,
             onQueryChange = onQueryChange,
-            onSearch = {},
+            onSearch = {
+                onSearch(it)
+            },
             active = false,
             onActiveChange = {},
             leadingIcon = {
@@ -83,6 +86,6 @@ val CustomSearchBarShape = RoundedCornerShape(12.dp)
 @Composable
 fun SearchBarPreview() {
     PestifyAppTheme {
-        CustomSearchBar(query = "Search", onQueryChange = {})
+        CustomSearchBar(query = "Search", onQueryChange = {}, onSearch = {})
     }
 }

@@ -21,7 +21,10 @@ object Injection {
         return HomeRepository.getInstance(plantService,articleService, plantTable, articleTable)
     }
 
-    fun providePespediaRepository(): EnsiklopediaRepository {
-        return EnsiklopediaRepository.getInstance()
+    fun providePespediaRepository(context: Context): EnsiklopediaRepository {
+        val pespediaService = ApiConfig.getPespediaService(context)
+        val pespediaTable = AppDatabase.getInstance(context).pespediaDao()
+
+        return EnsiklopediaRepository.getInstance(pespediaService, pespediaTable)
     }
 }

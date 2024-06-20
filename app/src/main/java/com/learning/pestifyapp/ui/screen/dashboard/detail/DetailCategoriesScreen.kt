@@ -1,5 +1,6 @@
 package com.learning.pestifyapp.ui.screen.dashboard.detail
 
+import android.content.Context
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -48,10 +49,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun DetailCategoriesScreen(
     modifier: Modifier = Modifier,
+    context: Context,
     selectedCategory: String,
     navigateBack: () -> Unit,
     navigateToDetail: (String) -> Unit,
-    viewModel: HomeViewModel = viewModel(factory = HomeFactory.getInstance(MainActivity.CONTEXT))
+    viewModel: HomeViewModel = viewModel(factory = HomeFactory.getInstance(context))
 ) {
     val uiListArticleState by
     viewModel.uiListArticleState.collectAsStateWithLifecycle(
@@ -146,7 +148,7 @@ fun DetalCategoryContent(
         }
 
         AnimatedVisibility(
-            visible = showButton && scrollDirection.value == ScrollDirection.DOWN,
+            visible = showButton && (scrollDirection.value == ScrollDirection.DOWN),
             enter = fadeIn() + slideInVertically(),
             exit = fadeOut() + slideOutVertically(),
             modifier = Modifier
@@ -156,7 +158,7 @@ fun DetalCategoryContent(
             ScrollToTopButton(
                 onClick = {
                     scope.launch {
-                        listState.animateScrollToItem(index = 0)
+                        listState.scrollToItem(0)
                     }
                 }
             )

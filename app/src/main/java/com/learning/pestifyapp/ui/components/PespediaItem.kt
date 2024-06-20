@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,15 +34,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.rememberAsyncImagePainter
 import com.learning.pestifyapp.R
 import com.learning.pestifyapp.data.model.ensdata.Ensiklopedia
+import com.learning.pestifyapp.data.model.local.entity.PespediaEntity
 import com.learning.pestifyapp.ui.common.loadingFx
 import com.learning.pestifyapp.ui.theme.PestifyAppTheme
 
 @Composable
 fun PestDiseaseItem(
     modifier: Modifier = Modifier,
-    item: Ensiklopedia,
+    item: PespediaEntity,
     navigateToDetail: (String) -> Unit
 ) {
     Box(
@@ -58,8 +61,14 @@ fun PestDiseaseItem(
             .padding(bottom = 20.dp)
             .background(Color.White, shape = RoundedCornerShape(10.dp))
     ) {
+        Column {
+
+        }
         Image(
-            painter = painterResource(id = item.image),
+            painter = rememberAsyncImagePainter(
+                model = item.picture,
+                placeholder = painterResource(id = R.drawable.placeholder)
+            ),
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier

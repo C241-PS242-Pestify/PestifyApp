@@ -8,9 +8,4 @@ import retrofit2.http.Header
 interface AccountService {
     @GET("profile")
     suspend fun fetchUserData(@Header("Authorization") token: String): Response<ProfileResponse>
-
-
-
-
-
 }

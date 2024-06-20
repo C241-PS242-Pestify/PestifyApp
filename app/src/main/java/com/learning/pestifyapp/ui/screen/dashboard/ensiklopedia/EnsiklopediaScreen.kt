@@ -9,10 +9,14 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -39,6 +43,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.focusModifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -51,11 +56,13 @@ import androidx.navigation.NavHostController
 import com.learning.pestifyapp.R
 import com.learning.pestifyapp.data.model.ensdata.Ensiklopedia
 import com.learning.pestifyapp.data.model.ensdata.EnsiklopediaData
+import com.learning.pestifyapp.data.model.local.entity.PespediaEntity
 import com.learning.pestifyapp.ui.common.RememberScrollDirection
 import com.learning.pestifyapp.ui.common.UiState
 import com.learning.pestifyapp.ui.components.BottomBarState
 import com.learning.pestifyapp.ui.components.CustomSearchBar
 import com.learning.pestifyapp.ui.components.ItemSection
+import com.learning.pestifyapp.ui.components.PespediaCategoryLoading
 import com.learning.pestifyapp.ui.components.PestDiseaseItem
 import com.learning.pestifyapp.ui.components.PlantCategory
 import com.learning.pestifyapp.ui.screen.navigation.Screen
@@ -88,6 +95,7 @@ fun EnsiklopediaScreen(
         query = query,
         uiState = uiState,
         isBottomBarVisible = isBottomBarVisible,
+        bottomBarState = bottomBarState,
         showButton = showButton,
         listState = listState,
         navController = navController
@@ -100,8 +108,9 @@ fun EnsiklopediaContent(
     scope: CoroutineScope,
     viewModel: EnsiklopediaViewModel,
     query: String,
-    uiState: UiState<List<Ensiklopedia>>,
+    uiState: UiState<List<PespediaEntity>>,
     isBottomBarVisible: State<Boolean>,
+    bottomBarState: BottomBarState,
     showButton: Boolean,
     listState: LazyListState,
     navController: NavHostController
@@ -112,46 +121,95 @@ fun EnsiklopediaContent(
             .padding(horizontal = 16.dp)
             .background(Color.White)
     ) {
-        LazyColumn(
-            state = listState,
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
         ) {
-            item {
-                Text(
-                    text = stringResource(R.string.ensiklopedia),
-                    fontSize = 24.sp,
-                    color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.padding(top = 16.dp)
-                )
-            }
-            item{
-                CustomSearchBar(
-                    query = query,
-                    onQueryChange = {
-                        viewModel.search(it)
-                    },
-                    modifier = Modifier.padding(top = 24.dp, bottom = 24.dp)
-                )
+
+            LaunchedEffect(true) {
+                bottomBarState.setBottomAppBarState(true)
+                listState.scrollToItem(0)
             }
 
             when (uiState) {
                 is UiState.Loading -> {
-                    viewModel.getAllEnsArticles()
+                    PespediaCategoryLoading()
+                    LaunchedEffect(true) {
+                        viewModel.getAllEnsArticles()
+                    }
                 }
 
                 is UiState.Success -> {
                     val ensList = uiState.data
-                    items(ensList, key = { it.id }) { ensiklopedia ->
-                        PestDiseaseItem(
-                            item = ensiklopedia,
-                            navigateToDetail = {pestId ->
-                                navController.navigate(
-                                    Screen.DetailEns.createRoute(pestId)
+
+                    LazyColumn(
+                        state = listState,
+                        contentPadding = PaddingValues(bottom = 80.dp)
+                    ) {
+                        item {
+                            Text(
+                                text = stringResource(R.string.ensiklopedia),
+                                fontSize = 24.sp,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(top = 16.dp)
+                            )
+
+                            CustomSearchBar(
+                                query = query,
+                                onQueryChange = {
+                                    viewModel.search(it)
+                                },
+                                onSearch = {
+                                    viewModel.onSearch(it)
+                                },
+                                modifier = Modifier.padding(top = 24.dp, bottom = 24.dp)
+                            )
+                        }
+
+                        if (ensList.isEmpty()) {
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Column(
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally,
+                                        modifier = modifier.padding(top = 200.dp),
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.onSearch),
+                                            fontSize = 24.sp,
+                                            color = MaterialTheme.colorScheme.primary,
+                                            fontWeight = FontWeight.Bold,
+                                        )
+                                        Spacer(modifier = Modifier.height(4.dp))
+                                        Text(
+                                            text = stringResource(R.string.onSearchDesc),
+                                            fontSize = 18.sp,
+                                            color = MaterialTheme.colorScheme.primary,
+                                            fontWeight = FontWeight.Normal,
+                                        )
+                                    }
+                                }
+                            }
+                        } else {
+                            items(ensList, key = { it.id }) { ensiklopedia ->
+                                PestDiseaseItem(
+                                    item = ensiklopedia,
+                                    navigateToDetail = { pestId ->
+                                        navController.navigate(
+                                            Screen.DetailEns.createRoute(pestId)
+                                        )
+                                    }
                                 )
                             }
-                        )
+                        }
                     }
                 }
+
 
                 is UiState.Error -> {
                     // Show error message
@@ -159,7 +217,6 @@ fun EnsiklopediaContent(
             }
 
         }
-
         AnimatedVisibility(
             visible = showButton && !isBottomBarVisible.value,
             enter = fadeIn() + slideInVertically(),
@@ -171,13 +228,14 @@ fun EnsiklopediaContent(
             ScrollToTopButton(
                 onClick = {
                     scope.launch {
-                        listState.animateScrollToItem(index = 0)
+                        listState.scrollToItem(index = 0)
                     }
                 }
             )
         }
     }
 }
+
 
 @Composable
 fun ScrollToTopButton(
@@ -190,7 +248,8 @@ fun ScrollToTopButton(
             .width(160.dp)
             .background(
                 color = Color.White,
-                shape = RoundedCornerShape(16.dp
+                shape = RoundedCornerShape(
+                    16.dp
                 )
             )
             .clickable(
@@ -202,7 +261,9 @@ fun ScrollToTopButton(
             )
     ) {
         Row(
-            modifier = Modifier.align(alignment = Alignment.Center).padding(8.dp)
+            modifier = Modifier
+                .align(alignment = Alignment.Center)
+                .padding(8.dp)
         ) {
             Text(
                 text = stringResource(R.string.backtop),

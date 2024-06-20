@@ -15,4 +15,6 @@
     <string name="backtop">Back to Top</string>
     <string name="ensiklopedia">Pespedia</string>
     <string name="detail">Details</string>
+    <string name="onSearch">No results found</string>
+    <string name="onSearchDesc">Please try again with another keyword</string>
 </resources>

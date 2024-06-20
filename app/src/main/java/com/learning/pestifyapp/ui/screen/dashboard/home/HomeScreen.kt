@@ -126,8 +126,9 @@ fun HomeContent(
         isScrolledStatusBarIconsDark = true,
         bottomBarState = bottomBarState,
     ) { listState ->
-        LaunchedEffect(key1 = navController.currentBackStackEntry) {
-            listState.animateScrollToItem(0)
+        LaunchedEffect(true) {
+            bottomBarState.setBottomAppBarState(true)
+            listState.scrollToItem(0)
         }
         Box(
             modifier = Modifier
@@ -336,10 +337,10 @@ fun TopSection(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-private fun TopSectionPreview() {
-    PestifyAppTheme {
-        TopSection(context = MainActivity.CONTEXT)
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//private fun TopSectionPreview() {
+//    PestifyAppTheme {
+//        TopSection(context = MainActivity.CONTEXT)
+//    }
+//}

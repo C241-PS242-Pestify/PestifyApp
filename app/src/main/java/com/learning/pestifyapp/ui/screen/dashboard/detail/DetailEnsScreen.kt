@@ -1,5 +1,6 @@
 package com.learning.pestifyapp.ui.screen.dashboard.detail
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -8,7 +9,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,14 +27,18 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberAsyncImagePainter
+import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.R
 import com.learning.pestifyapp.data.model.ensdata.Ensiklopedia
 import com.learning.pestifyapp.data.model.ensdata.EnsiklopediaData
+import com.learning.pestifyapp.data.model.local.entity.PespediaEntity
 import com.learning.pestifyapp.di.factory.PespediaFactory
 import com.learning.pestifyapp.ui.common.UiState
 import com.learning.pestifyapp.ui.components.CustomTopAppBar
@@ -45,8 +52,9 @@ import kotlinx.coroutines.launch
 fun DetailEnsScreen(
     modifier: Modifier = Modifier,
     ensId: String,
+    context : Context,
     navigateBack: () -> Unit,
-    viewModel: EnsiklopediaViewModel = viewModel(factory = PespediaFactory.getInstance())
+    viewModel: EnsiklopediaViewModel = viewModel(factory = PespediaFactory.getInstance(context))
 ) {
 
     val scope = rememberCoroutineScope()
@@ -71,7 +79,7 @@ fun DetailEnsScreen(
         }
 
         is UiState.Success -> {
-            val ensItem = (uiState as UiState.Success<Ensiklopedia>).data
+            val ensItem = (uiState as UiState.Success<PespediaEntity>).data
             DetailEnsScreenContent(
                 ensData = ensItem,
                 navigateBack = navigateBack,
@@ -87,7 +95,7 @@ fun DetailEnsScreen(
 
 @Composable
 fun DetailEnsScreenContent(
-    ensData: Ensiklopedia,
+    ensData: PespediaEntity,
     navigateBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -98,7 +106,8 @@ fun DetailEnsScreenContent(
     ) {
         Column(
             modifier.fillMaxSize()
-                .padding(horizontal = 16.dp),
+                .padding(horizontal = 16.dp)
+                .verticalScroll(rememberScrollState()),
         ) {
             CustomTopAppBar(
                 onBackClick = navigateBack,
@@ -107,7 +116,10 @@ fun DetailEnsScreenContent(
             )
             Spacer(modifier = Modifier.height(12.dp))
             Image(
-                painter = painterResource(id = ensData.image),
+                painter = rememberAsyncImagePainter(
+                    model = ensData.picture,
+                    placeholder = painterResource(id = R.drawable.placeholder)
+                ),
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
@@ -126,7 +138,25 @@ fun DetailEnsScreenContent(
                 text = ensData.description,
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
+                fontStyle = FontStyle.Italic,
             )
+            if (ensData.additionalDescription1 != null) {
+            Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = ensData.additionalDescription1,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Normal,
+                )
+            }
+            if (ensData.additionalDescription2 != null) {
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(
+                    text = ensData.additionalDescription2,
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Normal,
+                )
+            }
+
         }
     }
 }

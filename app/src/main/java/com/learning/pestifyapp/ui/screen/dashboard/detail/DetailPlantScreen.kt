@@ -1,5 +1,6 @@
 package com.learning.pestifyapp.ui.screen.dashboard.detail
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.scrollable
@@ -47,8 +48,9 @@ import kotlinx.coroutines.launch
 fun DetailPlantScreen(
     modifier: Modifier = Modifier,
     plantId: String,
+    context: Context,
     navigateBack: () -> Unit,
-    viewModel: HomeViewModel = viewModel(factory = HomeFactory.getInstance(MainActivity.CONTEXT))
+    viewModel: HomeViewModel = viewModel(factory = HomeFactory.getInstance(context))
 ) {
 
     val uiState by viewModel.uiPlantState.collectAsStateWithLifecycle(

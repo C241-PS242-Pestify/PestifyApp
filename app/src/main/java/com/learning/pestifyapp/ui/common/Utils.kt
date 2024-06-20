@@ -141,7 +141,7 @@ fun Modifier.loadingFx(): Modifier = composed {
         brush = Brush.linearGradient(
             colors = listOf(
                 Color(0xFFE0E0E0),
-                Color(0xFF9A9494),
+                Color(0xFFB9B2B2),
                 Color(0xFFE0E0E0),
             ),
             start = Offset(startOffsetX, 0f),
