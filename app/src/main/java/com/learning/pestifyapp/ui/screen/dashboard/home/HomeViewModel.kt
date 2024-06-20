@@ -1,15 +1,10 @@
 package com.learning.pestifyapp.ui.screen.dashboard.home
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.learning.pestifyapp.MainActivity
-import com.learning.pestifyapp.data.model.homeart.Article
-import com.learning.pestifyapp.data.model.homeart.FakeArtData
 import com.learning.pestifyapp.data.model.local.entity.ArticleEntity
 import com.learning.pestifyapp.data.model.local.entity.PlantEntity
-import com.learning.pestifyapp.data.model.plant.PlantData
 import com.learning.pestifyapp.data.model.user.UserData
 import com.learning.pestifyapp.data.repository.HomeRepository
 import com.learning.pestifyapp.data.repository.UserRepository
@@ -28,11 +23,11 @@ class HomeViewModel(
 
     private val userRepository = UserRepository.getInstance(MainActivity.CONTEXT)
 
-    private val _user = MutableLiveData<UserData?>()
-    val user: LiveData<UserData?> = _user
+    private val _user = MutableStateFlow<UserData?>(null)
+    val user: StateFlow<UserData?> = _user.asStateFlow()
 
-    private val _isLoggedIn = MutableLiveData<Boolean>()
-    val isLoggedIn: LiveData<Boolean> = _isLoggedIn
+    private val _isLoggedIn = MutableStateFlow<Boolean>(false)
+
 
     private val _uiListPlantState: MutableStateFlow<UiState<List<PlantEntity>>> =
         MutableStateFlow(UiState.Loading)

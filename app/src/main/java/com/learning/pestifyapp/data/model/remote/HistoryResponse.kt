@@ -1,7 +1,7 @@
 package com.learning.pestifyapp.data.model.remote
 
 import com.google.gson.annotations.SerializedName
-import com.learning.pestifyapp.data.model.HistoryData
+import com.learning.pestifyapp.data.model.historydata.HistoryData
 
 data class HistoryResponse(
     val status: String,

@@ -18,6 +18,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -54,7 +55,7 @@ fun ForgotPasswordScreen(
         append(" to Reset your password")
     }
     val focusManager = LocalFocusManager.current
-    val isLoading by viewModel.loading.observeAsState(initial = false)
+    val isLoading by viewModel.loading.collectAsState(initial = false)
     var showDialog by remember { mutableStateOf(false) }
 
 

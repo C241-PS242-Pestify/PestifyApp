@@ -28,6 +28,7 @@ import com.learning.pestifyapp.di.factory.HistoryFactory
 import com.learning.pestifyapp.di.factory.HomeFactory
 import com.learning.pestifyapp.di.factory.PespediaFactory
 import com.learning.pestifyapp.di.factory.PestFactory
+import com.learning.pestifyapp.di.factory.UserFactory
 import com.learning.pestifyapp.di.factory.ViewModelFactory
 import com.learning.pestifyapp.ui.components.BottomBarState
 import com.learning.pestifyapp.ui.screen.authentication.forgotpassword.ForgotPasswordScreen
@@ -50,7 +51,8 @@ import com.learning.pestifyapp.ui.screen.dashboard.pescan.CameraScreen
 import com.learning.pestifyapp.ui.screen.dashboard.pescan.PestResultScreen
 import com.learning.pestifyapp.ui.screen.dashboard.pescan.PestScreen
 import com.learning.pestifyapp.ui.screen.dashboard.pescan.PestViewModel
-import com.learning.pestifyapp.ui.screen.dashboard.profile.PrivacyScreen
+import com.learning.pestifyapp.ui.screen.dashboard.profile.ChangePasswordScreen
+import com.learning.pestifyapp.ui.screen.dashboard.profile.EditProfileScreen
 import com.learning.pestifyapp.ui.screen.dashboard.profile.ProfileScreen
 import com.learning.pestifyapp.ui.screen.onboarding.OnboardingScreen
 import com.learning.pestifyapp.ui.screen.splashscreen.SplashScreen
@@ -342,7 +344,7 @@ fun NavigationGraph(
             ProfileScreen(
                 navController = navController,
                 context = context,
-                viewModel = viewModel(factory = ViewModelFactory(userRepository))
+                viewModel = viewModel(factory = UserFactory.getInstance(context))
             )
         }
 
@@ -533,17 +535,22 @@ fun NavigationGraph(
                 imageUri = imageUri
             )
         }
-
-
-
-        composable(route = Graph.PRIVACY) {
-            PrivacyScreen(
+        composable(route = Graph.EDIT_PROFILE) {
+            EditProfileScreen(
                 navController = navController,
                 context = context,
-                viewModel = viewModel(factory = ViewModelFactory(userRepository))
-
+                viewModel = viewModel(factory = UserFactory.getInstance(context))
             )
         }
+
+        composable(route = Graph.CHANGE_PASSWORD) {
+            ChangePasswordScreen(
+                navController = navController,
+                context = context,
+                viewModel = viewModel(factory = UserFactory.getInstance(context))
+            )
+        }
+
 
 //        composable(route = Graph.DASHBOARD) {
 //            dashBoard(

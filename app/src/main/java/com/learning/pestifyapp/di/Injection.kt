@@ -10,10 +10,10 @@ import com.learning.pestifyapp.data.repository.UserRepository
 import com.learning.pestifyapp.data.retrofit.api.ApiConfig
 
 object Injection {
-    fun provideRepository(context: Context): UserRepository {
+
+    fun provideUserRepository(context: Context): UserRepository {
         return UserRepository.getInstance(context)
     }
-
     fun provideHomeRepository(context: Context): HomeRepository {
         val plantService = ApiConfig.getPlantService(context)
         val articleService = ApiConfig.getArticleService(context)
@@ -33,10 +33,10 @@ object Injection {
     fun providePestRepository(context: Context): PestRepository {
         return PestRepository.getInstance(context)
     }
+
     fun provideHistoryRepository(context: Context): HistoryRepository {
         val historyTable = AppDatabase.getInstance(context).historyImageDao()
         val historyService = ApiConfig.getHistoryServie(context)
-
         return HistoryRepository.getInstance(historyTable, historyService)
     }
 }

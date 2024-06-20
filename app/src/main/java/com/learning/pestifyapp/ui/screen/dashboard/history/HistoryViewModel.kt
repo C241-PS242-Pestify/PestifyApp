@@ -3,7 +3,7 @@ package com.learning.pestifyapp.ui.screen.dashboard.history
 import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.learning.pestifyapp.data.model.HistoryData
+import com.learning.pestifyapp.data.model.historydata.HistoryData
 import com.learning.pestifyapp.data.model.local.entity.HistoryImageEntity
 import com.learning.pestifyapp.data.repository.HistoryRepository
 import kotlinx.coroutines.flow.MutableStateFlow

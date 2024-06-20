@@ -41,11 +41,6 @@ object ApiConfig {
     fun getAuthService(context: Context): AuthService {
         return getApiClient(context).create(AuthService::class.java)
     }
-
-    fun getPageService(context: Context): AccountService {
-        return getApiClient(context).create(AccountService::class.java)
-    }
-
     fun getPlantService(context: Context): PlantService {
         return getApiClient(context).create(PlantService::class.java)
     }
@@ -65,6 +60,11 @@ object ApiConfig {
     fun getHistoryServie(context: Context): HistoryService {
         return getApiClient(context).create(HistoryService::class.java)
     }
+
+    fun getAccountService(context: Context): AccountService {
+        return getApiClient(context).create(AccountService::class.java)
+    }
+
 
 
 }

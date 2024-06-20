@@ -1,4 +1,4 @@
-package com.learning.pestifyapp.data.model
+package com.learning.pestifyapp.data.model.historydata
 
 import com.google.gson.annotations.SerializedName
 import com.learning.pestifyapp.data.model.pestdata.PestData

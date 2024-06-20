@@ -135,8 +135,9 @@ fun TopSection(
                 .size(34.dp)
         ) {
             Icon(
-                painter = painterResource(id = if (isSaved) R.drawable.baseline_bookmark_24 else R.drawable.baseline_bookmark_border_24),
-                contentDescription = "Bookmarks"
+                painter = painterResource(id = if (isSaved) R.drawable.saved_filled else R.drawable.saved_non),
+                contentDescription = "Bookmarks",
+                tint =  Color.Black
             )
         }
     }

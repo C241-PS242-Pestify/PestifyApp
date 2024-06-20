@@ -1,6 +1,7 @@
 package com.learning.pestifyapp.ui.screen.authentication.login
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -21,6 +22,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.remember
@@ -50,7 +52,7 @@ fun LoginScreen(
     context: MainActivity,
     viewModel: LoginScreenViewModel,
 ) {
-    val isLoading by viewModel.loading.observeAsState(initial = false)
+    val isLoading by viewModel.loading.collectAsState(initial = false)
     val focusManager = LocalFocusManager.current
     val title = buildAnnotatedString {
         withStyle(style = SpanStyle(color = Color(0xFFFFC107))) {
@@ -125,18 +127,16 @@ fun LoginScreen(
             CustomButton(
                 text = "Sign In",
                 onClick = {
-//                    focusManager.clearFocus()
-//                    viewModel.login(
-//                        onSuccess = {
-//                            navController.popBackStack()
-//                            navController.navigate(Screen.Home.route)
-//                        },
-//                        onError = { errorMessage ->
-//                            handleLoginError(context, errorMessage)
-//                        }
-//                    )
-                    navController.popBackStack()
-                    navController.navigate(Screen.Home.route)
+                    focusManager.clearFocus()
+                    viewModel.login(
+                        onSuccess = {
+                            navController.popBackStack()
+                            navController.navigate(Screen.Home.route)
+                        },
+                        onError = { errorMessage ->
+                            handleLoginError(context, errorMessage)
+                        }
+                    )
                 },
                 modifier = Modifier.padding(bottom = 8.dp)
             )

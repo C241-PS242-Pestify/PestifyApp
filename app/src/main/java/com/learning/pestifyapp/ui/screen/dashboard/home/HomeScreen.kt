@@ -31,6 +31,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -42,6 +43,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -53,12 +55,16 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import coil.compose.rememberAsyncImagePainter
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.R
 import com.learning.pestifyapp.data.model.homeart.Article
 import com.learning.pestifyapp.data.model.local.entity.ArticleEntity
 import com.learning.pestifyapp.data.model.local.entity.PlantEntity
 import com.learning.pestifyapp.data.model.plant.PlantData
+import com.learning.pestifyapp.data.model.user.UserData
 import com.learning.pestifyapp.ui.common.SetWindowBackground
 import com.learning.pestifyapp.ui.common.TopWithFooter
 import com.learning.pestifyapp.ui.common.UiState
@@ -115,6 +121,7 @@ fun HomeContent(
     bottomBarState: BottomBarState,
     navController: NavHostController,
 ) {
+    val userData by viewModel.user.collectAsState()
     val defaultStatusBarColor = Color.White
     val scrolledStatusBarColor = Color.White
 
@@ -142,7 +149,7 @@ fun HomeContent(
             ) {
 
                 item {
-                    TopSection(context = context)
+                    TopSection(context = context, userData)
                 }
                 item {
                     when (uiListPlantState) {
@@ -219,7 +226,8 @@ fun HomeContent(
 
 @Composable
 fun TopSection(
-    context: Context
+    context: Context,
+    userData: UserData?,
 ) {
     Box(
         modifier = Modifier
@@ -244,12 +252,23 @@ fun TopSection(
                 modifier = Modifier.padding(top = 20.dp, bottom = 20.dp)
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.sherlock_profile),
+                    painter = rememberAsyncImagePainter(
+                        ImageRequest.Builder(LocalContext.current)
+                            .data(data = userData?.profilePhoto)
+                            .apply(block = fun ImageRequest.Builder.() {
+                                crossfade(true)
+                                diskCachePolicy(CachePolicy.DISABLED)
+                                memoryCachePolicy(CachePolicy.DISABLED)
+                                fallback(R.drawable.sherlock_profile)
+                                placeholder(R.drawable.account_filled)
+                            }).build()
+                    ),
+                    contentScale = ContentScale.Crop,
                     contentDescription = "Profile Picture",
                     modifier = Modifier
-                        .size(60.dp)
+                        .size(50.dp)
                         .clip(CircleShape)
-                        .border(2.dp, color = MaterialTheme.colorScheme.primary, CircleShape)
+                        .border(2.dp, Color.White, CircleShape)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
@@ -259,12 +278,16 @@ fun TopSection(
                         fontWeight = FontWeight.ExtraBold,
                         color = Color.Black
                     )
-                    Text(
-                        text = "Sherlock!",
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color(0xFF006d5b)
-                    )
+                    if (userData != null) {
+                        userData.username?.let {
+                            Text(
+                                text = it,
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color(0xFF006d5b)
+                            )
+                        }
+                    }
                 }
             }
             Spacer(modifier = Modifier.height(16.dp))

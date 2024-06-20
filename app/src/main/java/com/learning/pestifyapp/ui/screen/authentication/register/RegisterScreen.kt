@@ -16,6 +16,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
@@ -46,7 +47,7 @@ fun RegisterScreen(
     context: MainActivity,
     viewModel: RegisterScreenViewModel,
 ) {
-    val isLoading by viewModel.loading.observeAsState(initial = false)
+    val isLoading by viewModel.loading.collectAsState(initial = false)
 
     var isEmailAndPasswordVisible by remember { mutableStateOf(true) }
     var isUsernameVisible by remember { mutableStateOf(false) }
@@ -113,22 +114,20 @@ fun RegisterScreen(
                 CustomButton(
                     text = "Sign Up",
                     onClick = {
-//                        viewModel.register(
-//                            onSuccess = {
-//                                Toast.makeText(
-//                                    context,
-//                                    "Registration Successful",
-//                                    Toast.LENGTH_SHORT
-//                                ).show()
-//                                isEmailAndPasswordVisible = false
-//                                isUsernameVisible = true
-//                            },
-//                            onError = { errorMessage ->
-//                                handleRegistrationError(context, errorMessage)
-//                            }
-//                        )
-                        navController.popBackStack()
-                        navController.navigate(Graph.USERNAME)
+                        viewModel.register(
+                            onSuccess = {
+                                Toast.makeText(
+                                    context,
+                                    "Registration Successful",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                isEmailAndPasswordVisible = false
+                                isUsernameVisible = true
+                            },
+                            onError = { errorMessage ->
+                                handleRegistrationError(context, errorMessage)
+                            }
+                        )
                     },
                     modifier = Modifier.padding(bottom = 8.dp)
                 )

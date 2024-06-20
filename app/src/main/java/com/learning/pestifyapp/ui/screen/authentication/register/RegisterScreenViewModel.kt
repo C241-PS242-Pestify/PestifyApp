@@ -13,23 +13,25 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.learning.pestifyapp.data.model.user.UserData
 import com.learning.pestifyapp.ui.common.ResultResponse
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class RegisterScreenViewModel(private val userRepository: UserRepository) : ViewModel() {
     private var email = ""
     private var password = ""
 
-    private val _loading = MutableLiveData(false)
-    val loading: LiveData<Boolean> = _loading
+    private val _loading = MutableStateFlow(false)
+    val loading: StateFlow<Boolean> = _loading
 
-    private val _user = MutableLiveData<UserData?>()
-    val user: LiveData<UserData?> = _user
+    private val _user = MutableStateFlow<UserData?>(null)
+    val user: StateFlow<UserData?> = _user
 
-    private val _errorMessage = MutableLiveData<String?>()
-    val errorMessage: LiveData<String?> = _errorMessage
+    private val _errorMessage = MutableStateFlow<String?>(null)
+    val errorMessage: StateFlow<String?> = _errorMessage
 
-    private val _isValid = MutableLiveData(false)
-    val isValid: LiveData<Boolean> = _isValid
+    private val _isValid = MutableStateFlow(false)
+    val isValid: StateFlow<Boolean> = _isValid
 
     var usernameValue by mutableStateOf("")
         private set

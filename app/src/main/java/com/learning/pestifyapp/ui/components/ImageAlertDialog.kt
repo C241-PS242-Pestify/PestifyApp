@@ -2,60 +2,66 @@ import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import coil.compose.rememberImagePainter
 
 @Composable
 fun ImageAlertDialog(
-    title: String,
-    message: String,
     imageUri: Uri,
-    onYesClick: () -> Unit,
+    onYesClick: (String) -> Unit,
     onNoClick: () -> Unit,
     onDismiss: () -> Unit,
 ) {
-    androidx.compose.material3.AlertDialog(
-        onDismissRequest = { onDismiss() },
-        title = {
-            Text(text = title)
-        },
-        text = {
+    var inputUri by remember { mutableStateOf(imageUri.toString()) }
+
+    Dialog(onDismissRequest = { onDismiss() }) {
+        Surface(
+            shape = MaterialTheme.shapes.medium,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
             Column(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Image(
-                    painter = rememberImagePainter(
-                        data = imageUri,
-                        builder = {
-                            // Konfigurasi placeholder dan error jika gambar gagal dimuat
-                        }
-                    ),
-                    contentDescription = "Selected Image",
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(200.dp)
+                Text(text = "Change Profile Picture", style = MaterialTheme.typography.titleMedium)
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = inputUri,
+                    onValueChange = { inputUri = it },
+                    label = { Text("Image URI") },
+                    modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                Text(text = message)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = { onNoClick() }) {
+                        Text("Cancel")
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Button(onClick = { onYesClick(inputUri) }) {
+                        Text("Update")
+                    }
+                }
             }
-        },
-        confirmButton = {
-            Button(onClick = { onYesClick() }) {
-                Text("Yes")
-            }
-        },
-        dismissButton = {
-            Button(onClick = { onNoClick() }) {
-                Text("No")
-            }
-        },
-        properties = DialogProperties(
-            dismissOnBackPress = true,
-            dismissOnClickOutside = true
-        )
-    )
+        }
+    }
 }

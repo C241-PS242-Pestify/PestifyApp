@@ -1,15 +1,11 @@
 package com.learning.pestifyapp.data.repository
 
-import android.content.Context
-import com.learning.pestifyapp.data.model.HistoryData
+import com.learning.pestifyapp.data.model.historydata.HistoryData
 import com.learning.pestifyapp.data.model.local.dao.HistoryImageDao
-import com.learning.pestifyapp.data.model.local.dao.PespediaDao
 import com.learning.pestifyapp.data.model.local.entity.HistoryImageEntity
 import com.learning.pestifyapp.data.model.remote.HistoryResponse
 import com.learning.pestifyapp.data.model.remote.ListHistoryResponse
-import com.learning.pestifyapp.data.retrofit.api.ApiConfig
 import com.learning.pestifyapp.data.retrofit.service.HistoryService
-import com.learning.pestifyapp.data.retrofit.service.PespediaService
 import retrofit2.Response
 
 class HistoryRepository(

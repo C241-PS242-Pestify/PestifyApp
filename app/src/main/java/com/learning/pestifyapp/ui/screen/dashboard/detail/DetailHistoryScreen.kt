@@ -17,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -27,7 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.learning.pestifyapp.R
-import com.learning.pestifyapp.data.model.HistoryData
+import com.learning.pestifyapp.data.model.historydata.HistoryData
 import com.learning.pestifyapp.data.model.local.entity.HistoryImageEntity
 import com.learning.pestifyapp.ui.common.converterStringToBitmap
 import com.learning.pestifyapp.ui.components.CustomAlertDialog
@@ -117,7 +116,8 @@ fun TopSection(data: HistoryData, viewModel: HistoryViewModel, navController: Na
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.delete_alt_2),
-                contentDescription = "Navigate Back"
+                contentDescription = "Navigate Back",
+                modifier = Modifier.size(24.dp)
             )
         }
     }
