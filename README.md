@@ -1,6 +1,6 @@
 # PestifyApp
 
-<img src="[https://drive.google.com/file/d/1Hzz8Qqo8ypdVKFq5YZXqHsc-gkZtbiyG/view](https://drive.usercontent.google.com/download?id=1Hzz8Qqo8ypdVKFq5YZXqHsc-gkZtbiyG&export=view&authuser=0)"  width="700" height="400">
+<img src="https://github.com/C241-PS242-Pestify/PestifyApp/blob/main/Mockup%2010%20(2).png"  width="700" height="400">
 
 # Mobile Development Path
 
