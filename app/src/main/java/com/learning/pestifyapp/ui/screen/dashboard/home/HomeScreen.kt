@@ -58,14 +58,10 @@ import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.CachePolicy
 import coil.request.ImageRequest
-import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.R
-import com.learning.pestifyapp.data.model.homeart.Article
 import com.learning.pestifyapp.data.model.local.entity.ArticleEntity
 import com.learning.pestifyapp.data.model.local.entity.PlantEntity
-import com.learning.pestifyapp.data.model.plant.PlantData
 import com.learning.pestifyapp.data.model.user.UserData
-import com.learning.pestifyapp.ui.common.SetWindowBackground
 import com.learning.pestifyapp.ui.common.TopWithFooter
 import com.learning.pestifyapp.ui.common.UiState
 import com.learning.pestifyapp.ui.components.AnimatedStatusBarColorOnScroll
@@ -75,10 +71,7 @@ import com.learning.pestifyapp.ui.components.BottomBarState
 import com.learning.pestifyapp.ui.components.ItemSection
 import com.learning.pestifyapp.ui.components.PlantCategory
 import com.learning.pestifyapp.ui.components.PlantCategoryLoading
-import com.learning.pestifyapp.ui.screen.navigation.Graph
 import com.learning.pestifyapp.ui.screen.navigation.Screen
-import com.learning.pestifyapp.ui.theme.PestifyAppTheme
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
@@ -122,8 +115,8 @@ fun HomeContent(
     navController: NavHostController,
 ) {
     val userData by viewModel.user.collectAsState()
-    val defaultStatusBarColor = Color.White
-    val scrolledStatusBarColor = Color.White
+    val defaultStatusBarColor = MaterialTheme.colorScheme.primary
+    val scrolledStatusBarColor = MaterialTheme.colorScheme.primary
 
     LaunchedEffect(true) {
         viewModel.fetchUser()
@@ -241,15 +234,6 @@ fun TopSection(
             .fillMaxWidth()
             .height(310.dp)
             .padding(top = 16.dp)
-//            .background(
-//                brush = Brush.verticalGradient(
-//                    colors = listOf(
-//                        Color(0xFFB2DFDB),
-//                        Color(0xFFB2DFDB),
-//                        Color.Transparent
-//                    )
-//                )
-//            )
     ) {
         Column(
             modifier = Modifier.padding(bottom = 16.dp)
@@ -381,11 +365,3 @@ fun TopSection(
         }
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//private fun TopSectionPreview() {
-//    PestifyAppTheme {
-//        TopSection(context = MainActivity.CONTEXT)
-//    }
-//}

@@ -1,21 +1,15 @@
 package com.learning.pestifyapp.data.repository
 
-import android.content.Context
 import android.util.Log
-import com.learning.pestifyapp.data.model.homeart.Article
-import com.learning.pestifyapp.data.model.homeart.FakeArtData
 import com.learning.pestifyapp.data.model.local.dao.ArticleDao
 import com.learning.pestifyapp.data.model.local.dao.PlantDao
 import com.learning.pestifyapp.data.model.local.entity.ArticleEntity
 import com.learning.pestifyapp.data.model.local.entity.PlantEntity
-import com.learning.pestifyapp.data.model.plant.FakePlantData
-import com.learning.pestifyapp.data.model.plant.PlantData
 import com.learning.pestifyapp.data.retrofit.service.ArticleService
 import com.learning.pestifyapp.data.retrofit.service.PlantService
 import com.learning.pestifyapp.ui.common.UiState
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
 
 class HomeRepository private constructor(
     private val plantService: PlantService,

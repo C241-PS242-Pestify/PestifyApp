@@ -16,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -28,17 +27,13 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
-import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.R
-import com.learning.pestifyapp.data.model.homeart.Article
-import com.learning.pestifyapp.data.model.homeart.FakeArtData
 import com.learning.pestifyapp.data.model.local.entity.ArticleEntity
 import com.learning.pestifyapp.di.factory.HomeFactory
 import com.learning.pestifyapp.ui.common.UiState
 import com.learning.pestifyapp.ui.common.formatDateToUSLongFormat
 import com.learning.pestifyapp.ui.components.CustomTopAppBar
 import com.learning.pestifyapp.ui.screen.dashboard.home.HomeViewModel
-import kotlinx.coroutines.launch
 
 @Composable
 fun DetailArticleScreen(
@@ -52,12 +47,6 @@ fun DetailArticleScreen(
     val uiState by viewModel.uiArticle.collectAsStateWithLifecycle(
         lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current,
     )
-
-//    DetailArticleScreenContent(
-//        articleData = FakeArtData.dummyArticles[0],
-//        navigateBack = navigateBack,
-//        modifier = Modifier
-//    )
 
     when (uiState) {
         is UiState.Loading -> {
@@ -76,7 +65,7 @@ fun DetailArticleScreen(
         }
 
         is UiState.Error -> {
-            // Show error message
+
         }
 
         UiState.Empty -> TODO()

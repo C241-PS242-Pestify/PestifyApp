@@ -5,9 +5,7 @@ import com.learning.pestifyapp.data.model.remote.LogoutResponse
 import com.learning.pestifyapp.data.model.remote.RegisterResponse
 import retrofit2.Response
 import retrofit2.http.Body
-import retrofit2.http.Header
 import retrofit2.http.POST
-import retrofit2.http.PUT
 
 interface AuthService {
     @POST("auth/register")

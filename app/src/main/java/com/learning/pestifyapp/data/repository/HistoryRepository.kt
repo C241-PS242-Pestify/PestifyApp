@@ -20,6 +20,7 @@ class HistoryRepository(
     suspend fun getHistoryImage(historyId: String): HistoryImageEntity {
         return historyImageDao.getHistoryImage(historyId)
     }
+
     suspend fun deleteHistoryImage(historyId: String) {
         historyImageDao.deleteHistoryImage(historyId)
     }

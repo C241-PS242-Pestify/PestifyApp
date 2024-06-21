@@ -2,10 +2,7 @@ package com.learning.pestifyapp.ui.screen.onboarding
 
 import android.app.Activity
 import android.content.Context
-import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,34 +14,24 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.unit.times
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
 import com.airbnb.lottie.compose.*
 import com.learning.pestifyapp.MainActivity
-import com.learning.pestifyapp.PestifyApp
 import com.learning.pestifyapp.R
 import com.learning.pestifyapp.ui.components.CustomButton
 import com.learning.pestifyapp.ui.screen.navigation.Graph
-import com.learning.pestifyapp.ui.screen.navigation.Screen
-import com.learning.pestifyapp.ui.theme.PestifyAppTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -54,17 +41,10 @@ fun OnboardingScreen(
     context: MainActivity
 ) {
 
-    LaunchedEffect(Unit) {
-        delay(300)
-        val window = (context as Activity).window
-        window.statusBarColor = Color.White.toArgb()
-        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = true
-    }
-
     val animations = listOf(
-        R.raw.lottie_onboarding_1,
-        R.raw.lottie_onboarding_1,
-        R.raw.lottie_onboarding_1
+        R.raw.db3,
+        R.raw.db3,
+        R.raw.db3
     )
     val titles = listOf(
         "Get Started with Your Aquaponic",
@@ -163,6 +143,7 @@ fun ButtonSection(
                     color = MaterialTheme.colorScheme.primary
                 )
             }
+
             1 -> {
                 Text(
                     text = stringResource(R.string.next_page),
@@ -175,14 +156,13 @@ fun ButtonSection(
                     color = MaterialTheme.colorScheme.primary
                 )
             }
+
             else -> {
                 CustomButton(
                     text = "Get Started",
                     onClick = {
-//                        onBoardingFinished(context = context)
                         navController.popBackStack()
-                        navController.navigate(Graph.REGISTER )
-//                        navController.navigate(Screen.Home.route)
+                        navController.navigate(Graph.REGISTER)
                     },
                     modifier = Modifier
                         .align(Alignment.Center)
@@ -254,18 +234,3 @@ fun HorizontalPagerIndicator(
         }
     }
 }
-
-private fun onBoardingFinished(context: MainActivity) {
-    val sharedPreferences = context.getSharedPreferences("onBoarding", Context.MODE_PRIVATE)
-    val editor = sharedPreferences.edit()
-    editor.putBoolean("Finished", true)
-    editor.apply()
-}
-
-//@Preview(showBackground = true)
-//@Composable
-//private fun Temp() {
-//    PestifyAppTheme {
-//        OnboardingScreen(navController = rememberNavController())
-//    }
-//}

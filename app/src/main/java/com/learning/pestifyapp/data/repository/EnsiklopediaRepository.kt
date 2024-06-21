@@ -107,11 +107,11 @@ class EnsiklopediaRepository(
         }
     }
 
-    fun onSearch(query: String) : Flow<UiState<List<PespediaEntity>>> = flow {
+    fun onSearch(query: String): Flow<UiState<List<PespediaEntity>>> = flow {
         try {
             val response = apiService.searchPespedia(query)
             val list = response.map {
-                PespediaEntity (
+                PespediaEntity(
                     id = it.id,
                     title = it.title,
                     description = it.description,

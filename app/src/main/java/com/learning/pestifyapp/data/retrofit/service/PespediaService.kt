@@ -14,7 +14,4 @@ interface PespediaService {
 
     @GET("search/ensiklopedia")
     suspend fun searchPespedia(@Query("title") title: String): List<PespediaResponseItem>
-
-
-
 }

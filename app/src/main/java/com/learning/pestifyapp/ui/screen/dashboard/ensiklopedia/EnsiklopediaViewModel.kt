@@ -5,12 +5,9 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.learning.pestifyapp.data.model.ensdata.Ensiklopedia
 import com.learning.pestifyapp.data.model.local.entity.PespediaEntity
-import com.learning.pestifyapp.data.model.plant.PlantData
 import com.learning.pestifyapp.data.repository.EnsiklopediaRepository
 import com.learning.pestifyapp.ui.common.UiState
-import com.learning.pestifyapp.ui.screen.navigation.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

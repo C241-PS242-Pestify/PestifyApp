@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName = "pespedia")
-data class PespediaEntity (
+data class PespediaEntity(
     @PrimaryKey
     @ColumnInfo(name = "id")
     val id: String,

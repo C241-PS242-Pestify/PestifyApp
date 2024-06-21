@@ -13,7 +13,11 @@ import com.learning.pestifyapp.data.model.local.entity.HistoryImageEntity
 import com.learning.pestifyapp.data.model.local.entity.PespediaEntity
 import com.learning.pestifyapp.data.model.local.entity.PlantEntity
 
-@Database(entities = [PlantEntity::class, ArticleEntity::class, PespediaEntity::class,HistoryImageEntity::class], version = 1, exportSchema = false)
+@Database(
+    entities = [PlantEntity::class, ArticleEntity::class, PespediaEntity::class, HistoryImageEntity::class],
+    version = 1,
+    exportSchema = false
+)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun plantDao(): PlantDao
 
@@ -22,7 +26,6 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun pespediaDao(): PespediaDao
 
     abstract fun historyImageDao(): HistoryImageDao
-
 
 
     companion object {

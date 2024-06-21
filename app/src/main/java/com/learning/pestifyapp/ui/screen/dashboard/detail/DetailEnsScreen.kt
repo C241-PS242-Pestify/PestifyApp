@@ -12,21 +12,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -34,18 +30,12 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
-import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.R
-import com.learning.pestifyapp.data.model.ensdata.Ensiklopedia
-import com.learning.pestifyapp.data.model.ensdata.EnsiklopediaData
 import com.learning.pestifyapp.data.model.local.entity.PespediaEntity
 import com.learning.pestifyapp.di.factory.PespediaFactory
 import com.learning.pestifyapp.ui.common.UiState
 import com.learning.pestifyapp.ui.components.CustomTopAppBar
-import com.learning.pestifyapp.ui.components.ItemSection
-import com.learning.pestifyapp.ui.components.PlantCategory
 import com.learning.pestifyapp.ui.screen.dashboard.ensiklopedia.EnsiklopediaViewModel
-import com.learning.pestifyapp.ui.screen.navigation.Screen
 import kotlinx.coroutines.launch
 
 @Composable
@@ -62,12 +52,6 @@ fun DetailEnsScreen(
     val uiState by viewModel.uiStateEns.collectAsStateWithLifecycle(
         lifecycleOwner = androidx.compose.ui.platform.LocalLifecycleOwner.current,
     )
-
-//    DetailEnsScreenContent(
-//        ensData = EnsiklopediaData.ensiklopediaList[0],
-//        navigateBack = navigateBack,
-//        modifier = modifier
-//    )
 
     when (uiState) {
         is UiState.Loading -> {

@@ -25,7 +25,6 @@ class UserRepository(context: Context) {
     private val accountService: AccountService = ApiConfig.getAccountService(context)
 
 
-    //AUTHENTICATION
     suspend fun register(
         name: String,
         email: String,
