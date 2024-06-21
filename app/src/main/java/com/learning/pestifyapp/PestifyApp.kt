@@ -38,7 +38,7 @@ fun PestifyApp(
 
     LaunchedEffect(currentRoute) {
         when (currentRoute) {
-            "home", "pespedia", "pescan", "bookmark", "profile" -> {
+            "home", "pespedia", "bookmark", "profile" -> {
                 scope.launch {
                     bottomBarState.setBottomAppBarState(true)
                 }
@@ -96,7 +96,7 @@ fun BottomBar(
 }
 
 fun isBottomBarVisible(currentRoute: String, bottomBarState: State<Boolean>): Boolean {
-    val routesWithBottomBar = listOf("home", "pespedia", "pescan", "bookmark", "profile")
+    val routesWithBottomBar = listOf("home", "pespedia", "bookmark", "profile")
     return currentRoute in routesWithBottomBar && bottomBarState.value
 }
 

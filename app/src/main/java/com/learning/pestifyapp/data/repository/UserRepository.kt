@@ -135,7 +135,6 @@ class UserRepository(context: Context) {
             ResultResponse.Error(e.message.toString())
         }
     }
-
     suspend fun updateAccount(
         name: String?,
         email: String?,

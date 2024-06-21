@@ -62,7 +62,11 @@ fun PestResultScreen(
     LaunchedEffect(true) {
         viewModel.loadPestDataFromPreferences()
     }
-    Box(modifier = modifier.fillMaxSize().background(Color.White)) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.White)
+    ) {
 
         LazyColumn {
             item {
@@ -77,6 +81,7 @@ fun PestResultScreen(
         }
     }
 }
+
 @Composable
 fun TopSection(
     response: PestResponse,
@@ -112,7 +117,7 @@ fun TopSection(
             )
         }
         Text(
-            text =  stringResource(R.string.result),
+            text = stringResource(R.string.result),
             fontSize = 24.sp,
             color = MaterialTheme.colorScheme.primary,
             fontWeight = FontWeight.Bold,
@@ -122,7 +127,8 @@ fun TopSection(
             onClick = {
                 imageUri?.let { uri ->
                     response.data?.id?.let { id ->
-                        val bitmap = BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri))
+                        val bitmap =
+                            BitmapFactory.decodeStream(context.contentResolver.openInputStream(uri))
                         val compressedBitmap = compressBitmap(bitmap, 20)
                         viewModel.savePrediction(id, compressedBitmap)
                         isSaved = true
@@ -135,9 +141,9 @@ fun TopSection(
                 .size(34.dp)
         ) {
             Icon(
-                painter = painterResource(id = if (isSaved) R.drawable.saved_filled else R.drawable.saved_non),
+                painter = painterResource(id = if (isSaved) R.drawable.bookmarks_fill else R.drawable.bookmarks),
                 contentDescription = "Bookmarks",
-                tint =  Color.Black
+                tint = Color.Black
             )
         }
     }
@@ -159,7 +165,9 @@ fun ImageSection(pestResponse: PestResponse, imageUri: Uri?, modifier: Modifier 
         ) {
             imageUri?.let {
                 Image(
-                    painter = rememberAsyncImagePainter(it),
+                    painter = rememberAsyncImagePainter(
+                        model = it, placeholder = painterResource(id = R.drawable.placeholder)
+                    ),
                     contentDescription = "Pest Image",
                     contentScale = ContentScale.Crop,
                     modifier = modifier
@@ -175,11 +183,13 @@ fun ImageSection(pestResponse: PestResponse, imageUri: Uri?, modifier: Modifier 
         pestResponse.data?.let { data ->
             Text(
                 text = data.pestName ?: "N/A",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.ExtraBold,
+                modifier = Modifier.fillMaxWidth(),
                 textAlign = TextAlign.Center,
-                modifier = modifier.fillMaxWidth()
-            )
+
+
+                )
             Text(
                 text = String.format("%.2f", data.confidenceScore),
                 style = MaterialTheme.typography.labelSmall,
@@ -191,6 +201,7 @@ fun ImageSection(pestResponse: PestResponse, imageUri: Uri?, modifier: Modifier 
         }
     }
 }
+
 @Composable
 fun ButtonSection(pestResponse: PestResponse) {
     Column(
@@ -233,8 +244,8 @@ fun ButtonSection(pestResponse: PestResponse) {
                         Text(
                             text = data.pestDescription ?: "N/A",
                             textAlign = TextAlign.Justify,
-                            fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                            fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Normal,
                         )
                     }
                 } ?: run {
@@ -253,8 +264,8 @@ fun ButtonSection(pestResponse: PestResponse) {
                         Text(
                             text = data.pestEffect ?: "N/A",
                             textAlign = TextAlign.Justify,
-                            fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                            fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Normal,
                         )
                     }
 
@@ -274,8 +285,8 @@ fun ButtonSection(pestResponse: PestResponse) {
                         Text(
                             text = data.solution ?: "N/A",
                             textAlign = TextAlign.Justify,
-                            fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                            fontWeight = MaterialTheme.typography.bodyLarge.fontWeight,
+                            fontSize = 14.sp,
+                            fontWeight = FontWeight.Normal,
                         )
                     }
 

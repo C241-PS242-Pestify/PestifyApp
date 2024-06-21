@@ -1,8 +1,10 @@
 package com.learning.pestifyapp.ui.screen.dashboard.profile
 
+import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -38,8 +40,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.CachePolicy
@@ -80,34 +84,34 @@ fun ProfileScreen(
         )
     }
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize().background(Color.White)
+        .padding(16.dp)) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp, vertical = 14.dp),
+                .fillMaxSize(),
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "My Profile",
-                style = MaterialTheme.typography.titleMedium,
-                fontSize = MaterialTheme.typography.bodyLarge.fontSize,
+                text = stringResource(R.string.menu_profile),
+                fontSize = 24.sp,
                 color = MaterialTheme.colorScheme.primary,
-                fontWeight = FontWeight.SemiBold,
+                fontWeight = FontWeight.Bold,
                 modifier = Modifier.align(Alignment.Start)
             )
             Spacer(modifier = Modifier.height(30.dp))
             Top(
                 userData = userData,
                 navController = navController,
+                context = context
             )
             Spacer(modifier = Modifier.height(18.dp))
             Text(
                 modifier = Modifier.align(Alignment.Start),
-                text = "General",
-                fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                color = Color.Black,
-                fontWeight = FontWeight.Medium
+                text = stringResource(id = R.string.general),
+                fontSize = 20.sp,
+                color = MaterialTheme.colorScheme.primary,
+                fontWeight = FontWeight.Bold,
             )
             Spacer(modifier = Modifier.height(20.dp))
             General(
@@ -117,11 +121,11 @@ fun ProfileScreen(
         }
     }
 }
-
 @Composable
 fun Top(
     userData: UserData?,
     navController: NavHostController,
+    context: Context
 ) {
     Box(
         modifier = Modifier
@@ -135,24 +139,24 @@ fun Top(
                 .padding(horizontal = 19.dp, vertical = 21.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             Image(
                 painter = rememberAsyncImagePainter(
-                    ImageRequest.Builder(LocalContext.current)
-                        .data(data = userData?.profilePhoto ?: R.drawable.sherlock_profile)
-                        .apply(block = fun ImageRequest.Builder.() {
+                    ImageRequest.Builder(context)
+                        .data(userData?.profilePhoto)
+                        .apply {
                             crossfade(true)
-                            diskCachePolicy(CachePolicy.DISABLED)
-                            memoryCachePolicy(CachePolicy.DISABLED)
+                            diskCachePolicy(CachePolicy.ENABLED) // Enable disk caching to reduce load times
+                            memoryCachePolicy(CachePolicy.ENABLED) // Enable memory caching to reduce load times
                             fallback(R.drawable.sherlock_profile)
-                            placeholder(R.drawable.account_filled)
-                        }).build()
+                            placeholder(R.drawable.placeholder)
+                        }.build()
                 ),
                 contentScale = ContentScale.Crop,
-                contentDescription = "Profile Image",
+                contentDescription = "Profile Picture",
                 modifier = Modifier
-                    .size(60.dp)
+                    .size(50.dp)
                     .clip(CircleShape)
+                    .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
             )
             Spacer(modifier = Modifier.width(20.dp))
             Column {
@@ -170,13 +174,14 @@ fun Top(
             }
             Spacer(modifier = Modifier.weight(1f))
             Icon(
-                painter = painterResource(id = R.drawable.edit_alt_2),
+                painter = painterResource(id = R.drawable.edit_24dp_fill1_wght300_grad0_opsz24),
                 contentDescription = "Arrow Icon",
                 tint = Color.Gray,
-                modifier = Modifier.size(24.dp)
+                modifier = Modifier
+                    .size(24.dp)
                     .clickable {
-                    navController.navigate(Graph.EDIT_PROFILE)
-                }
+                        navController.navigate(Graph.EDIT_PROFILE)
+                    }
             )
         }
     }
@@ -238,7 +243,7 @@ fun General(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.sign_out_alt_2),
+                    painter = painterResource(id = R.drawable.logout_24dp_fill1_wght300_grad0_opsz24),
                     contentDescription = "Arrow Icon",
                     tint = Color.Black
                 )

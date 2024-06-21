@@ -125,6 +125,9 @@ fun HomeContent(
     val defaultStatusBarColor = Color.White
     val scrolledStatusBarColor = Color.White
 
+    LaunchedEffect(true) {
+        viewModel.fetchUser()
+    }
     AnimatedStatusBarColorOnScroll(
         context = context,
         defaultStatusBarColor = defaultStatusBarColor,
@@ -133,9 +136,13 @@ fun HomeContent(
         isScrolledStatusBarIconsDark = true,
         bottomBarState = bottomBarState,
     ) { listState ->
+        val scope = rememberCoroutineScope()
+
         LaunchedEffect(true) {
-            bottomBarState.setBottomAppBarState(true)
-            listState.scrollToItem(0)
+            scope.launch {
+                bottomBarState.setBottomAppBarState(true)
+                listState.scrollToItem(0)
+            }
         }
         Box(
             modifier = Modifier
@@ -253,22 +260,22 @@ fun TopSection(
             ) {
                 Image(
                     painter = rememberAsyncImagePainter(
-                        ImageRequest.Builder(LocalContext.current)
-                            .data(data = userData?.profilePhoto)
-                            .apply(block = fun ImageRequest.Builder.() {
+                        ImageRequest.Builder(context)
+                            .data(userData?.profilePhoto)
+                            .apply {
                                 crossfade(true)
-                                diskCachePolicy(CachePolicy.DISABLED)
-                                memoryCachePolicy(CachePolicy.DISABLED)
+                                diskCachePolicy(CachePolicy.ENABLED) // Enable disk caching to reduce load times
+                                memoryCachePolicy(CachePolicy.ENABLED) // Enable memory caching to reduce load times
                                 fallback(R.drawable.sherlock_profile)
-                                placeholder(R.drawable.account_filled)
-                            }).build()
+                                placeholder(R.drawable.placeholder)
+                            }.build()
                     ),
                     contentScale = ContentScale.Crop,
                     contentDescription = "Profile Picture",
                     modifier = Modifier
-                        .size(50.dp)
+                        .size(65.dp)
                         .clip(CircleShape)
-                        .border(2.dp, Color.White, CircleShape)
+                        .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
                 )
                 Spacer(modifier = Modifier.width(12.dp))
                 Column {
@@ -298,11 +305,23 @@ fun TopSection(
                     .clip(RoundedCornerShape(10.dp))
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.aquaponics),
+                    painter = rememberAsyncImagePainter(
+                        ImageRequest.Builder(context)
+                            .data(R.drawable.aquaponics)
+                            .apply {
+                                crossfade(true)
+                                placeholder(R.drawable.placeholder) // Placeholder image while loading
+                                error(R.drawable.placeholder) // Error image if loading fails
+                                diskCachePolicy(CachePolicy.ENABLED)
+                                memoryCachePolicy(CachePolicy.ENABLED)
+                            }
+                            .build()
+                    ),
                     contentDescription = "Aquaponics",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier.matchParentSize()
                 )
+
                 Box(
                     modifier = Modifier
                         .matchParentSize()

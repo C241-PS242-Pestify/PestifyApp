@@ -1,5 +1,6 @@
 package com.learning.pestifyapp.ui.screen.dashboard.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.learning.pestifyapp.MainActivity
@@ -8,6 +9,7 @@ import com.learning.pestifyapp.data.model.local.entity.PlantEntity
 import com.learning.pestifyapp.data.model.user.UserData
 import com.learning.pestifyapp.data.repository.HomeRepository
 import com.learning.pestifyapp.data.repository.UserRepository
+import com.learning.pestifyapp.ui.common.ResultResponse
 import com.learning.pestifyapp.ui.common.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -60,7 +62,19 @@ class HomeViewModel(
             }
         }
     }
-
+    fun fetchUser() {
+        viewModelScope.launch {
+            when (val result = userRepository.fetchUserData()) {
+                is ResultResponse.Success -> {
+                    _user.value = result.data
+                }
+                is ResultResponse.Error -> {
+                    Log.e("ProfileViewModel", "fetchUser error: ${result.error}")
+                }
+                ResultResponse.Loading -> TODO()
+            }
+        }
+    }
     fun getAllArticles() {
         viewModelScope.launch {
             homeRepository.getAllArticles()

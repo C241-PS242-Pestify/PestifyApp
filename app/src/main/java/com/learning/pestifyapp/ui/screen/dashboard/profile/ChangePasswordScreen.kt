@@ -32,7 +32,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.R
@@ -74,13 +77,17 @@ fun ChangePasswordScreen(
                         contentDescription = "Navigate Back"
                     )
                 }
-                Spacer(modifier = Modifier.width(60.dp))
-                Text(
-                    text = "Change Password",
-                    style = MaterialTheme.typography.bodyMedium,
-                    fontSize = MaterialTheme.typography.bodyLarge.fontSize,
-                    fontWeight = MaterialTheme.typography.titleMedium.fontWeight,
-                )
+                Box(
+                    modifier = Modifier.weight(1f).padding(end = 24.dp),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = stringResource(R.string.changepas),
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
+                    )
+                }
             }
             FormSection(context, navController, viewModel)
         }
@@ -108,8 +115,13 @@ fun FormSection(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(20.dp))
-            Text(text = "New Password", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.align(
-                Alignment.Start))
+            Text(
+                text = "New Password",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.align(
+                    Alignment.Start
+                )
+            )
             TextFieldValidation(
                 value = password,
                 onChange = { password = it },
@@ -123,8 +135,13 @@ fun FormSection(
                     .padding(vertical = 8.dp)
             )
             Spacer(modifier = Modifier.height(20.dp))
-            Text(text = "Confirm New Password", style = MaterialTheme.typography.bodyMedium, modifier = Modifier.align(
-                Alignment.Start))
+            Text(
+                text = "Confirm New Password",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.align(
+                    Alignment.Start
+                )
+            )
             TextFieldValidation(
                 value = confirmPassword,
                 onChange = { confirmPassword = it },
@@ -139,7 +156,7 @@ fun FormSection(
             )
             Spacer(modifier = Modifier.height(20.dp))
             CustomButton(
-                text = "Update Account",
+                text = "Change Password",
                 onClick = {
                     focusManager.clearFocus()
                     if (password != confirmPassword) {
@@ -153,7 +170,6 @@ fun FormSection(
                             name = username,
                             email = email,
                             password = password,
-                            confirmPassword = confirmPassword,
                             onSuccess = {
                                 Toast.makeText(
                                     context,

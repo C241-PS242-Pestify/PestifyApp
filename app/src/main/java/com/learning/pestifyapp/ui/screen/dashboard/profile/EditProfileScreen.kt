@@ -1,10 +1,12 @@
 package com.learning.pestifyapp.ui.screen.dashboard.profile
 
 import ImageAlertDialog
+import android.content.Context
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,8 +44,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import coil.compose.rememberAsyncImagePainter
 import coil.request.CachePolicy
@@ -58,7 +63,7 @@ import com.learning.pestifyapp.ui.screen.navigation.Screen
 fun EditProfileScreen(
     viewModel: ProfileViewModel,
     navController: NavHostController,
-    context: MainActivity,
+    context: Context,
     modifier: Modifier = Modifier,
 ) {
     val userData by viewModel.userData.collectAsState()
@@ -68,19 +73,22 @@ fun EditProfileScreen(
     val focusManager = LocalFocusManager.current
     var showChangeProfilePictureDialog by remember { mutableStateOf(false) }
     val selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+
     LaunchedEffect(key1 = Unit) {
         viewModel.fetchUserData()
     }
+
     if (showChangeProfilePictureDialog) {
         ImageAlertDialog(
             imageUri = selectedImageUri ?: Uri.EMPTY,
             onYesClick = { uriString ->
                 viewModel.uploadProfilePhoto(
                     photoUrl = uriString,
+                    context = context, // Pass context here
                     onSuccess = {
                         Log.d("ProfileScreen", "Profile picture updated successfully")
-                        Toast.makeText(context, "Profile picture updated", Toast.LENGTH_SHORT)
-                            .show()
+                        Toast.makeText(context, "Profile picture updated", Toast.LENGTH_SHORT).show()
+                        viewModel.updateProfilePhoto(uriString) // Memperbarui foto profil di ViewModel
                         viewModel.saveProfilePhotoUri(uriString)
                         navController.navigate(Screen.Profile.route) {
                             popUpTo("edit_profile") { inclusive = true }
@@ -90,11 +98,7 @@ fun EditProfileScreen(
                     },
                     onError = { errorMessage ->
                         Log.e("ProfileScreen", "Failed to update profile picture: $errorMessage")
-                        Toast.makeText(
-                            context,
-                            "Failed to update profile picture",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(context, "Failed to update profile picture", Toast.LENGTH_SHORT).show()
                         showChangeProfilePictureDialog = false
                     }
                 )
@@ -107,6 +111,7 @@ fun EditProfileScreen(
             }
         )
     }
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -130,13 +135,14 @@ fun EditProfileScreen(
                     )
                 }
                 Box(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
-                        text = "Edit Profile",
-                        style = MaterialTheme.typography.titleMedium,
-                        modifier = Modifier.align(Alignment.Center),
-                        textAlign = TextAlign.Center
+                        text = stringResource(R.string.edtprofile),
+                        color = MaterialTheme.colorScheme.primary,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp,
                     )
                 }
                 Spacer(modifier = Modifier.width(48.dp))
@@ -148,23 +154,23 @@ fun EditProfileScreen(
                     .clip(CircleShape)
             ) {
                 Image(
-
                     painter = rememberAsyncImagePainter(
-                        ImageRequest.Builder(LocalContext.current)
-                            .data(data = userData?.profilePhoto)
-                            .apply(block = fun ImageRequest.Builder.() {
+                        ImageRequest.Builder(context)
+                            .data(userData?.profilePhoto)
+                            .apply {
                                 crossfade(true)
-                                diskCachePolicy(CachePolicy.DISABLED)
-                                memoryCachePolicy(CachePolicy.DISABLED)
+                                diskCachePolicy(CachePolicy.ENABLED) // Enable disk caching to reduce load times
+                                memoryCachePolicy(CachePolicy.ENABLED) // Enable memory caching to reduce load times
                                 fallback(R.drawable.sherlock_profile)
-                                placeholder(R.drawable.business_card)
-                            }).build()
+                                placeholder(R.drawable.placeholder)
+                            }.build()
                     ),
                     contentScale = ContentScale.Crop,
                     contentDescription = "Profile Picture",
                     modifier = Modifier
                         .size(100.dp)
-                        .clip(CircleShape),
+                        .clip(CircleShape)
+                        .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
                 )
                 IconButton(
                     onClick = {
@@ -173,13 +179,12 @@ fun EditProfileScreen(
                     modifier = Modifier.align(Alignment.BottomEnd)
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.edit_alt_2),
+                        painter = painterResource(id = R.drawable.edit_24dp_fill1_wght300_grad0_opsz24),
                         contentDescription = "Edit Icon",
                         tint = Color.White,
                     )
                 }
             }
-
             Column(
                 horizontalAlignment = Alignment.Start,
                 modifier = Modifier.fillMaxWidth()
@@ -196,7 +201,6 @@ fun EditProfileScreen(
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
                 )
-
                 Text(text = "Email", style = MaterialTheme.typography.bodyMedium)
                 TextFieldValidation(
                     value = email,
@@ -209,32 +213,32 @@ fun EditProfileScreen(
                         .fillMaxWidth()
                         .padding(vertical = 8.dp)
                 )
+                CustomButton(
+                    text = "Update Account",
+                    onClick = {
+                        Log.d("EditProfileScreen", "Update Account Clicked with username: $username, email: $email")
+                        viewModel.updateAccount(
+                            name = username,
+                            email = email,
+                            password = password,
+                            onSuccess = {
+                                Log.d("EditProfileScreen", "Account Update Successful")
+                                Toast.makeText(
+                                    context,
+                                    "Account Update Successfully",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                navController.navigate("profile")
+                            },
+                            onError = { errorMessage ->
+                                Log.e("EditProfileScreen", "Account Update Failed: $errorMessage")
+                                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                    },
+                    modifier = Modifier.padding(vertical = 8.dp)
+                )
             }
-
-            CustomButton(
-                text = "Update Account",
-                onClick = {
-                    focusManager.clearFocus()
-                    viewModel.updateAccount(
-                        name = username,
-                        email = email,
-                        password = password,
-                        confirmPassword = password,
-                        onSuccess = {
-                            Toast.makeText(
-                                context,
-                                "Account updated successfully",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            navController.navigate("profile")
-                        },
-                        onError = { errorMessage ->
-                            Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-                        }
-                    )
-                },
-                modifier = Modifier.padding(vertical = 8.dp)
-            )
         }
     }
 }

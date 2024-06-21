@@ -10,6 +10,10 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOut
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -22,7 +26,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.learning.pestifyapp.MainActivity
-import com.learning.pestifyapp.data.repository.HistoryRepository
 import com.learning.pestifyapp.data.repository.UserRepository
 import com.learning.pestifyapp.di.factory.HistoryFactory
 import com.learning.pestifyapp.di.factory.HomeFactory
@@ -49,8 +52,6 @@ import com.learning.pestifyapp.ui.screen.dashboard.history.HistoryViewModel
 import com.learning.pestifyapp.ui.screen.dashboard.home.HomeScreen
 import com.learning.pestifyapp.ui.screen.dashboard.pescan.CameraScreen
 import com.learning.pestifyapp.ui.screen.dashboard.pescan.PestResultScreen
-import com.learning.pestifyapp.ui.screen.dashboard.pescan.PestScreen
-import com.learning.pestifyapp.ui.screen.dashboard.pescan.PestViewModel
 import com.learning.pestifyapp.ui.screen.dashboard.profile.ChangePasswordScreen
 import com.learning.pestifyapp.ui.screen.dashboard.profile.EditProfileScreen
 import com.learning.pestifyapp.ui.screen.dashboard.profile.ProfileScreen
@@ -69,7 +70,7 @@ fun NavigationGraph(
         modifier = Modifier.fillMaxSize(),
         navController = navController,
         startDestination = Graph.SPLASH,
-        contentAlignment = Alignment.TopStart,
+        contentAlignment = Alignment.BottomEnd,
         enterTransition = { EnterTransition.None },
         exitTransition = { ExitTransition.None },
     ) {
@@ -166,8 +167,6 @@ fun NavigationGraph(
             )
         }
 
-
-
         composable(
             route = Graph.FORGOT_PASSWORD,
             enterTransition = {
@@ -186,18 +185,6 @@ fun NavigationGraph(
             )
         }
 
-        // |||||||||||||||||||||=== SCAN ===||||||||||||||||||||||||||||||||||
-
-        composable(route = Graph.CAMERA) {
-            val pestViewModel: PestViewModel =
-                viewModel(factory = PestFactory.getInstance(context))
-            CameraScreen(
-                navController = navController,
-                context = context,
-                viewModel = pestViewModel
-            )
-        }
-
         // |||||||||||||||||||||=== HOME DASHBOARD ===||||||||||||||||||||||||||||||||||
 
         composable(
@@ -207,9 +194,13 @@ fun NavigationGraph(
                     initialState.destination.route?.startsWith("detail") == true && targetState.destination.route == Screen.Home.route
                 if (isDetailToHome) {
                     fadeIn(animationSpec = tween(300, easing = LinearEasing))
+                } else if (initialState.destination.route == Screen.Home.route && targetState.destination.route == Screen.Pescan.route) {
+                    fadeIn(animationSpec = tween(500, easing = LinearEasing))
+
                 } else {
                     fadeIn(animationSpec = tween(300, easing = LinearEasing))
                 }
+
             },
             exitTransition = {
                 val isHomeToDetail =
@@ -218,6 +209,8 @@ fun NavigationGraph(
                     ) == true
                 if (isHomeToDetail) {
                     fadeOut(animationSpec = tween(500, easing = LinearEasing))
+                } else if (initialState.destination.route == Screen.Pescan.route && targetState.destination.route == Screen.Home.route) {
+                    fadeOut(animationSpec = tween(1000, easing = LinearEasing))
                 } else {
                     fadeOut(animationSpec = tween(300, easing = LinearEasing))
                 }
@@ -263,81 +256,76 @@ fun NavigationGraph(
 
         composable(
             route = Screen.Pescan.route,
-            enterTransition = {
-                if (initialState.destination.route == Screen.Pescan.route && targetState.destination.route?.startsWith(
-                        "detail"
-                    ) == true
-                ) {
-                    fadeIn(animationSpec = tween(300, easing = LinearEasing))
-                } else {
-                    null
-                }
-            },
             exitTransition = {
-                if (initialState.destination.route == Screen.Pescan.route && targetState.destination.route?.startsWith(
-                        "detail"
-                    ) == true
-                ) {
-                    fadeOut(animationSpec = tween(300, easing = LinearEasing))
-                } else {
-                    null
-                }
+                slideOutVertically(
+                    animationSpec = tween(1000, easing = LinearEasing),
+                    targetOffsetY = { it }
+                ) + slideOutOfContainer(
+                    animationSpec = tween(800, easing = LinearEasing),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Down
+                )
             }
         ) {
-            PestScreen(
+            CameraScreen(
                 navController = navController,
+                context = context,
+                viewModel = viewModel(factory = PestFactory.getInstance(context))
             )
         }
+
+
 
         composable(
             route = Screen.History.route,
             enterTransition = {
-                if (initialState.destination.route == Screen.History.route && targetState.destination.route?.startsWith(
-                        "detail"
-                    ) == true
-                ) {
+                val isDetailToHistory =
+                    initialState.destination.route?.startsWith("detail") == true && targetState.destination.route == Screen.History.route
+                if (isDetailToHistory) {
                     fadeIn(animationSpec = tween(300, easing = LinearEasing))
                 } else {
-                    null
+                    fadeIn(animationSpec = tween(300, easing = LinearEasing))
                 }
             },
             exitTransition = {
-                if (initialState.destination.route == Screen.History.route && targetState.destination.route?.startsWith(
+                val isHistoryToDetail =
+                    initialState.destination.route == Screen.History.route && targetState.destination.route?.startsWith(
                         "detail"
                     ) == true
-                ) {
-                    fadeOut(animationSpec = tween(300, easing = LinearEasing))
+                if (isHistoryToDetail) {
+                    fadeOut(animationSpec = tween(500, easing = LinearEasing))
                 } else {
-                    null
+                    fadeOut(animationSpec = tween(300, easing = LinearEasing))
                 }
             }
         ) {
             HistoryScreen(
                 navController = navController,
-                viewModel = viewModel(factory = HistoryFactory.getInstance(context))
+                viewModel = viewModel(factory = HistoryFactory.getInstance(context)),
+                bottomBarState = bottomBarState,
             )
         }
+
 
         composable(
             route = Screen.Profile.route,
             enterTransition = {
-                if (initialState.destination.route == Screen.Profile.route && targetState.destination.route?.startsWith(
-                        "detail"
-                    ) == true
-                ) {
+                val isDetailToProfile =
+                    initialState.destination.route?.startsWith("detail") == true && targetState.destination.route == Screen.Profile.route
+                if (isDetailToProfile) {
                     fadeIn(animationSpec = tween(300, easing = LinearEasing))
                 } else {
-                    null
+                    fadeIn(animationSpec = tween(300, easing = LinearEasing))
                 }
             },
             exitTransition = {
-                if (initialState.destination.route == Screen.Profile.route && targetState.destination.route?.startsWith(
+                val isProfileToDetail =
+                    initialState.destination.route == Screen.Profile.route && targetState.destination.route?.startsWith(
                         "detail"
                     ) == true
-                ) {
-                    fadeOut(animationSpec = tween(300, easing = LinearEasing))
+                if (isProfileToDetail) {
+                    fadeOut(animationSpec = tween(500, easing = LinearEasing))
                 } else {
-                    null
+                    fadeOut(animationSpec = tween(300, easing = LinearEasing))
                 }
             }
         ) {
@@ -347,6 +335,7 @@ fun NavigationGraph(
                 viewModel = viewModel(factory = UserFactory.getInstance(context))
             )
         }
+
 
         // |||||||||||||||||||||=== DETAIL ===||||||||||||||||||||||||||||||||||
 
@@ -509,7 +498,27 @@ fun NavigationGraph(
             )
         }
 
-        composable(route = "detail/{historyId}") { backStackEntry ->
+        composable(route = "detail/{historyId}",
+            enterTransition = {
+                fadeIn(
+                    animationSpec = tween(
+                        300, easing = LinearEasing
+                    )
+                ) + slideIntoContainer(
+                    animationSpec = tween(300, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                fadeOut(
+                    animationSpec = tween(
+                        300, easing = LinearEasing
+                    )
+                ) + slideOutOfContainer(
+                    animationSpec = tween(300, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }) { backStackEntry ->
             val historyId = backStackEntry.arguments?.getString("historyId")
             if (historyId != null) {
                 val historyViewModel: HistoryViewModel = viewModel(
@@ -518,14 +527,35 @@ fun NavigationGraph(
                 DetailHistoryScreen(
                     historyId = historyId,
                     viewModel = historyViewModel,
-                    navController = navController
+                    navController = navController,
+                    context = context
                 )
             }
         }
 
         composable(
             route = "result_screen/{imageUri}",
-            arguments = listOf(navArgument("imageUri") { type = NavType.StringType })
+            arguments = listOf(navArgument("imageUri") { type = NavType.StringType }),
+            enterTransition = {
+                fadeIn(
+                    animationSpec = tween(
+                        300, easing = LinearEasing
+                    )
+                ) + slideIntoContainer(
+                    animationSpec = tween(300, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Start
+                )
+            },
+            exitTransition = {
+                fadeOut(
+                    animationSpec = tween(
+                        300, easing = LinearEasing
+                    )
+                ) + slideOutOfContainer(
+                    animationSpec = tween(300, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.End
+                )
+            }
         ) { backStackEntry ->
             val imageUri = backStackEntry.arguments?.getString("imageUri")?.toUri()
             PestResultScreen(
@@ -535,29 +565,60 @@ fun NavigationGraph(
                 imageUri = imageUri
             )
         }
-        composable(route = Graph.EDIT_PROFILE) {
+        composable(route = Graph.EDIT_PROFILE,
+            enterTransition = {
+                fadeIn(
+                    animationSpec = tween(
+                        600, easing = LinearEasing
+                    )
+                ) + slideIntoContainer(
+                    animationSpec = tween(600, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Up
+                )
+            },
+            exitTransition = {
+                fadeOut(
+                    animationSpec = tween(
+                        600, easing = LinearEasing
+                    )
+                ) + slideOutOfContainer(
+                    animationSpec = tween(600, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Down
+                )
+            }) {
             EditProfileScreen(
                 navController = navController,
                 context = context,
                 viewModel = viewModel(factory = UserFactory.getInstance(context))
             )
         }
-
-        composable(route = Graph.CHANGE_PASSWORD) {
+        composable(route = Graph.CHANGE_PASSWORD,
+            enterTransition = {
+                fadeIn(
+                    animationSpec = tween(
+                        600, easing = LinearEasing
+                    )
+                ) + slideIntoContainer(
+                    animationSpec = tween(600, easing = EaseIn),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Up
+                )
+            },
+            exitTransition = {
+                fadeOut(
+                    animationSpec = tween(
+                        600, easing = LinearEasing
+                    )
+                ) + slideOutOfContainer(
+                    animationSpec = tween(600, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Down
+                )
+            }) {
             ChangePasswordScreen(
                 navController = navController,
                 context = context,
                 viewModel = viewModel(factory = UserFactory.getInstance(context))
             )
         }
-
-
-//        composable(route = Graph.DASHBOARD) {
-//            dashBoard(
-//                navController = navController,
-//                context = context,
-//            )
-//        }
 
     }
 }

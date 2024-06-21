@@ -1,5 +1,6 @@
 package com.learning.pestifyapp.ui.screen.dashboard.profile
 
+import android.content.Context
 import android.graphics.Bitmap
 import android.util.Log
 import android.util.Patterns
@@ -8,12 +9,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import coil.Coil
 import com.learning.pestifyapp.data.model.user.UserData
 import com.learning.pestifyapp.data.repository.UserRepository
 import com.learning.pestifyapp.ui.common.ResultResponse
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class ProfileViewModel(private val userRepository: UserRepository) : ViewModel() {
     private val _isLoading = MutableStateFlow(false)
@@ -47,13 +51,7 @@ class ProfileViewModel(private val userRepository: UserRepository) : ViewModel()
     var confirmPasswordError by mutableStateOf("")
         private set
 
-    fun setPassword(value: String) {
-        passwordValue = value
-    }
 
-    fun setConfirmPassword(value: String) {
-        confirmPasswordValue = value
-    }
 
     private fun validateUsername(): Boolean {
         val username = usernameValue.trim()
@@ -99,47 +97,19 @@ class ProfileViewModel(private val userRepository: UserRepository) : ViewModel()
             else -> true
         }
     }
-
-    private fun validateConfirmPassword(): Boolean {
-        val password = passwordValue.trim()
-        val containsLetter = password.any { it.isLetter() }
-        val containsDigit = password.any { it.isDigit() }
-
-        return when {
-            password.length < 6-> {
-                passwordError = "Password must be at least 6 characters long"
-                false
-            }
-
-            !containsLetter -> {
-                passwordError = "Password must contain at least one letter"
-                false
-            }
-
-            !containsDigit -> {
-                passwordError = "Password must contain at least one digit"
-                false
-            }
-
-            else -> true
-        }
-    }
-
     fun updateAccount(
         name: String,
         email: String,
         password: String,
-        confirmPassword: String,
         onSuccess: () -> Unit,
         onError: (String) -> Unit,
     ) {
         usernameValue = name
         emailValue = email
         passwordValue = password
-        confirmPasswordValue = confirmPassword
 
-        if (!validateUsername() || !validateEmail() || (!validatePassword() || !validateConfirmPassword())) {
-            return
+        if (!validateUsername() && !validateEmail() && !validatePassword()) {
+            return onError("Please fill in the required fields")
         }
         viewModelScope.launch {
             Log.d(
@@ -149,6 +119,8 @@ class ProfileViewModel(private val userRepository: UserRepository) : ViewModel()
             when (val result = userRepository.updateAccount(name, email, password)) {
                 is ResultResponse.Success -> {
                     _userData.value = result.data
+                    usernameValue = result.data.username ?: ""
+                    emailValue = result.data.email ?: ""
                     Log.d("TAG", "updateAccount: ${result.data}")
                     onSuccess()
                 }
@@ -166,19 +138,24 @@ class ProfileViewModel(private val userRepository: UserRepository) : ViewModel()
     }
 
 
+
     fun fetchUserData() {
         viewModelScope.launch {
             val userData = userRepository.getUserSession()
             _userData.value = userData
         }
     }
-    fun uploadProfilePhoto(photoUrl: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+    fun uploadProfilePhoto(photoUrl: String, context: Context, onSuccess: () -> Unit, onError: (String) -> Unit) {
         viewModelScope.launch {
             try {
                 Log.d("ProfileScreen", "Uploading photo URL: $photoUrl")
                 val response = userRepository.uploadProfilePhoto(photoUrl)
                 if (response.isSuccessful) {
                     Log.d("ProfileScreen", "Upload successful: ${response.body()?.message}")
+                    saveProfilePhotoUri(photoUrl)
+                    updateProfilePhoto(photoUrl)
+                    clearImageCache(context)
+                    userRepository.fetchUserData()
                     onSuccess()
                 } else {
                     Log.e("ProfileScreen", "Upload failed: ${response.message()}")
@@ -190,13 +167,26 @@ class ProfileViewModel(private val userRepository: UserRepository) : ViewModel()
             }
         }
     }
+
     fun saveProfilePhotoUri(uri: String) {
         viewModelScope.launch {
             userRepository.saveProfilePhotoUri(uri)
         }
     }
 
-
+    fun updateProfilePhoto(photoUrl: String) {
+        viewModelScope.launch {
+            val updatedUserData = _userData.value?.copy(profilePhoto = photoUrl)
+            _userData.value = updatedUserData
+        }
+    }
+    fun clearImageCache(context: Context) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                Coil.imageLoader(context).diskCache?.clear()
+            }
+        }
+    }
     fun logout() {
         viewModelScope.launch {
             when (val result = userRepository.logout()) {

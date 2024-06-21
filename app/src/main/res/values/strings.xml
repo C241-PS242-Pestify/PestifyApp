@@ -4,7 +4,7 @@
     <string name="menu_ens">Pespedia</string>
     <string name="menu_pescan">Pescan</string>
     <string name="menu_bookmark">Bookmark</string>
-    <string name="menu_profile">Profile</string>
+    <string name="menu_profile">My Profile</string>
     <string name="next_page">Skip</string>
     <string name="back_page">Back</string>
     <string name="plants">Plants</string>
@@ -19,7 +19,7 @@
     <string name="onSearchDesc">Please try again with another keyword</string>
     <string name="pestscan">Pest Scan</string>
     <string name="result">Result</string>
-
-
-
+    <string name="general">General</string>
+    <string name="changepas">Change Password</string>
+    <string name="edtprofile">Edit Profile</string>">
 </resources>

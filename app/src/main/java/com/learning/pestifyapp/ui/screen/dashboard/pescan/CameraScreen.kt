@@ -1,6 +1,7 @@
 package com.learning.pestifyapp.ui.screen.dashboard.pescan
 
-import android.app.Activity
+import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.provider.MediaStore
@@ -12,7 +13,6 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -25,6 +25,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -33,23 +34,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.navigation.NavHostController
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import com.google.accompanist.permissions.PermissionState
+import com.google.accompanist.permissions.rememberPermissionState
 import com.learning.pestifyapp.MainActivity
 import com.learning.pestifyapp.R
 import com.learning.pestifyapp.ui.components.CaptureButton
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun CameraScreen(
     modifier: Modifier = Modifier,
     viewModel: PestViewModel,
     navController: NavHostController,
-    context: MainActivity,
+    context: Context,
 ) {
     val lensFacing by viewModel.lensFacing.collectAsState(CameraSelector.LENS_FACING_BACK)
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
@@ -59,13 +63,16 @@ fun CameraScreen(
     val imageCapture = remember { ImageCapture.Builder().build() }
     val isLoading by viewModel.isLoading.collectAsState()
 
+    val cameraPermissionState = rememberPermissionState(Manifest.permission.CAMERA)
+    val galleryPermissionState = rememberPermissionState(Manifest.permission.READ_EXTERNAL_STORAGE)
+
     val galleryLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == android.app.Activity.RESULT_OK) {
                 val selectedImageUri = result.data?.data
                 selectedImageUri?.let {
                     viewModel.updateImageUri(it)
-                    viewModel.predictPest(context, onSuccess = { response ->
+                    viewModel.predictPest(context as MainActivity, onSuccess = { response ->
                         viewModel.updatePestResponse(response)
                         navController.navigate("result_screen/${Uri.encode(it.toString())}")
                     }, onError = {
@@ -86,7 +93,12 @@ fun CameraScreen(
         preview.setSurfaceProvider(previewView.surfaceProvider)
     }
 
-    Box(contentAlignment = Alignment.BottomCenter, modifier = modifier.fillMaxSize()) {
+    Box(
+        contentAlignment = Alignment.BottomCenter,
+        modifier = modifier
+            .fillMaxSize()
+            .background(Color.Transparent)
+    ) {
         AndroidView(factory = { previewView }, modifier = Modifier.fillMaxSize())
         if (isLoading) {
             Box(
@@ -94,9 +106,8 @@ fun CameraScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color.Black.copy(alpha = 0.5f))
-                    .pointerInput(Unit) { detectTapGestures {} }
             ) {
-                CircularProgressIndicator(color = Color.White)
+                CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
             }
         }
         Box(
@@ -119,26 +130,34 @@ fun CameraScreen(
             context = context,
             navController = navController,
             openGallery = {
-                val intent =
-                    Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                galleryLauncher.launch(intent)
+                if (galleryPermissionState.hasPermission) {
+                    val intent =
+                        Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                    galleryLauncher.launch(intent)
+                } else {
+                    galleryPermissionState.launchPermissionRequest()
+                }
             },
             isLoading = isLoading,
-            modifier = Modifier
-                .fillMaxWidth()
+            cameraPermissionState = cameraPermissionState,
+            galleryPermissionState = galleryPermissionState,
+            modifier = Modifier.fillMaxWidth()
         )
     }
 }
 
+@OptIn(ExperimentalPermissionsApi::class)
 @Composable
 fun BottomSection(
     modifier: Modifier = Modifier,
     imageCapture: ImageCapture,
     viewModel: PestViewModel,
-    context: MainActivity,
+    context: Context,
     navController: NavHostController,
     openGallery: () -> Unit,
     isLoading: Boolean,
+    cameraPermissionState: PermissionState,
+    galleryPermissionState: PermissionState,
 ) {
     Box(
         modifier = modifier
@@ -171,12 +190,14 @@ fun BottomSection(
                 contentAlignment = Alignment.Center
             ) {
                 CaptureButton {
-                    if (!isLoading) {
+                    if (!isLoading && cameraPermissionState.hasPermission) {
                         viewModel.captureImage(
                             imageCapture,
-                            context,
+                            context as MainActivity,
                             navController,
                         )
+                    } else if (!cameraPermissionState.hasPermission) {
+                        cameraPermissionState.launchPermissionRequest()
                     }
                 }
             }

@@ -35,6 +35,7 @@ import com.learning.pestifyapp.data.model.homeart.FakeArtData
 import com.learning.pestifyapp.data.model.local.entity.ArticleEntity
 import com.learning.pestifyapp.di.factory.HomeFactory
 import com.learning.pestifyapp.ui.common.UiState
+import com.learning.pestifyapp.ui.common.formatDateToUSLongFormat
 import com.learning.pestifyapp.ui.components.CustomTopAppBar
 import com.learning.pestifyapp.ui.screen.dashboard.home.HomeViewModel
 import kotlinx.coroutines.launch
@@ -113,7 +114,7 @@ fun DetailArticleScreenContent(
                 fontWeight = FontWeight.ExtraBold,
             )
             Text(
-                text = articleData.createdAt,
+                text = formatDateToUSLongFormat(articleData.createdAt),
                 fontSize = 14.sp,
                 fontWeight = FontWeight.Normal,
             )
