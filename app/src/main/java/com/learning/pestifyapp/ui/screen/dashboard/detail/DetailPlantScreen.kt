@@ -82,6 +82,8 @@ fun DetailPlantScreen(
         is UiState.Error -> {
             // Show error message
         }
+
+        UiState.Empty -> TODO()
     }
 }
 

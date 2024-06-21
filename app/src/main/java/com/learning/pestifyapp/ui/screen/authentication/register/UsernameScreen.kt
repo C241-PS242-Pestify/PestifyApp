@@ -15,6 +15,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -43,7 +44,7 @@ fun UsernameScreen(
     viewModel: RegisterScreenViewModel,
 ) {
     val focusManager = LocalFocusManager.current
-    val isLoading by viewModel.loading.observeAsState(initial = false)
+    val isLoading by viewModel.loading.collectAsState(initial = false)
     val title = buildAnnotatedString {
         withStyle(style = SpanStyle(color = Color(0xFFFFC107))) {
             append("Account Created!")
@@ -93,19 +94,17 @@ fun UsernameScreen(
             CustomButton(
                 text = "Done",
                 onClick = {
-//                    focusManager.clearFocus()
-//                    viewModel.saveUsername(
-//                        onSuccess = {
-//                            navController.popBackStack()
-//                            navController.navigate(Graph.LOGIN)
-//                            Toast.makeText(context, "Account Created!", Toast.LENGTH_SHORT).show()
-//                        },
-//                        onError = { errorMessage ->
-//                            handleLoginError(context, errorMessage)
-//                        }
-//                    )
-                    navController.popBackStack()
-                    navController.navigate(Graph.LOGIN)
+                    focusManager.clearFocus()
+                    viewModel.saveUsername(
+                        onSuccess = {
+                            navController.popBackStack()
+                            navController.navigate(Graph.LOGIN)
+                            Toast.makeText(context, "Account Created!", Toast.LENGTH_SHORT).show()
+                        },
+                        onError = { errorMessage ->
+                            handleLoginError(context, errorMessage)
+                        }
+                    )
                 },
                 modifier = Modifier.padding(bottom = 8.dp)
             )

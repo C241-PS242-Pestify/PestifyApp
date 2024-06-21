@@ -87,6 +87,7 @@ dependencies {
 
     implementation("com.google.accompanist:accompanist-pager:0.35.1-alpha")
     implementation("com.google.accompanist:accompanist-pager-indicators:0.35.1-alpha")
+    implementation ("com.google.accompanist:accompanist-permissions:0.21.1-beta")
 
     implementation("androidx.compose.runtime:runtime-livedata:1.6.7")
 

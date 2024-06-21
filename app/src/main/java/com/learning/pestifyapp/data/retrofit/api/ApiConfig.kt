@@ -6,7 +6,9 @@ import com.learning.pestifyapp.data.model.AuthInterceptor
 import com.learning.pestifyapp.data.retrofit.service.AccountService
 import com.learning.pestifyapp.data.retrofit.service.ArticleService
 import com.learning.pestifyapp.data.retrofit.service.AuthService
+import com.learning.pestifyapp.data.retrofit.service.HistoryService
 import com.learning.pestifyapp.data.retrofit.service.PespediaService
+import com.learning.pestifyapp.data.retrofit.service.PestService
 import com.learning.pestifyapp.data.retrofit.service.PlantService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -39,11 +41,6 @@ object ApiConfig {
     fun getAuthService(context: Context): AuthService {
         return getApiClient(context).create(AuthService::class.java)
     }
-
-    fun getPageService(context: Context): AccountService {
-        return getApiClient(context).create(AccountService::class.java)
-    }
-
     fun getPlantService(context: Context): PlantService {
         return getApiClient(context).create(PlantService::class.java)
     }
@@ -55,6 +52,19 @@ object ApiConfig {
     fun getPespediaService(context: Context): PespediaService {
         return getApiClient(context).create(PespediaService::class.java)
     }
+
+    fun getPestService(context: Context): PestService {
+        return getApiClient(context).create(PestService::class.java)
+    }
+
+    fun getHistoryServie(context: Context): HistoryService {
+        return getApiClient(context).create(HistoryService::class.java)
+    }
+
+    fun getAccountService(context: Context): AccountService {
+        return getApiClient(context).create(AccountService::class.java)
+    }
+
 
 
 }

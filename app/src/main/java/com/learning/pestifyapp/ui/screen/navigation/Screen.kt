@@ -33,5 +33,6 @@ object Graph {
     const val REGISTER = "register"
     const val FORGOT_PASSWORD = "forgot-password"
     const val CAMERA = "camera"
-    const val PRIVACY = "privacy"
+    const val EDIT_PROFILE = "edit-profile"
+    const val CHANGE_PASSWORD = "change-password"
 }

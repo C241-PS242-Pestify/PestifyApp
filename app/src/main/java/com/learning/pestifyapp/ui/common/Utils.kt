@@ -1,7 +1,11 @@
 package com.learning.pestifyapp.ui.common
 
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Matrix
 import android.os.Build
+import android.util.Base64
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.animateFloat
@@ -10,9 +14,11 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -28,7 +34,9 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.IntSize
 import com.learning.pestifyapp.ui.components.BottomBarState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.io.ByteArrayOutputStream
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.time.ZonedDateTime
@@ -50,38 +58,84 @@ fun RememberScrollDirection(
     bottomBarState: BottomBarState,
     scope: CoroutineScope
 ) {
-    var previousScrollOffset by remember { mutableIntStateOf(0) }
-    var previousFirstVisibleItemIndex by remember { mutableIntStateOf(0) }
+    val previousScrollOffset by remember { derivedStateOf { mutableIntStateOf(0) } }
+    val previousFirstVisibleItemIndex by remember { derivedStateOf { mutableIntStateOf(0) } }
     var lastScrollDirection by remember { mutableStateOf(ScrollDirection.NONE) }
 
     LaunchedEffect(listState) {
-        snapshotFlow {
-            listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset
-        }.collect { (index, offset) ->
-            Log.e("ScrollDirection", "index: $index, offset: $offset")
-            Log.e(
-                "ScrollDirection",
-                "previousScrollOffset: $previousScrollOffset, previousFirstVisibleItemIndex: $previousFirstVisibleItemIndex"
-            )
-            Log.e("ScrollDirection", "lastScrollDirection: $lastScrollDirection")
+        scope.launch {
+            snapshotFlow {
+                listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset
+            }.collect { (index, offset) ->
+                Log.e("ScrollDirection", "index: $index, offset: $offset")
+                Log.e(
+                    "ScrollDirection",
+                    "previousScrollOffset: $previousScrollOffset, previousFirstVisibleItemIndex: $previousFirstVisibleItemIndex"
+                )
+                Log.e("ScrollDirection", "lastScrollDirection: $lastScrollDirection")
 
-            val currentScrollDirection = when {
-                index > previousFirstVisibleItemIndex -> ScrollDirection.DOWN
-                index < previousFirstVisibleItemIndex -> ScrollDirection.UP
-                offset > previousScrollOffset -> ScrollDirection.DOWN
-                offset < previousScrollOffset -> ScrollDirection.UP
-                else -> ScrollDirection.NONE
-            }
-
-            if (currentScrollDirection != lastScrollDirection && currentScrollDirection != ScrollDirection.NONE) {
-                scope.launch {
-                    bottomBarState.setBottomAppBarState(currentScrollDirection == ScrollDirection.UP)
+                val currentScrollDirection = when {
+                    index > previousFirstVisibleItemIndex.intValue -> ScrollDirection.DOWN
+                    index < previousFirstVisibleItemIndex.intValue -> ScrollDirection.UP
+                    offset > previousScrollOffset.intValue -> ScrollDirection.DOWN
+                    offset < previousScrollOffset.intValue -> ScrollDirection.UP
+                    else -> ScrollDirection.NONE
                 }
-            }
 
-            previousFirstVisibleItemIndex = index
-            previousScrollOffset = offset
-            lastScrollDirection = currentScrollDirection
+                if (currentScrollDirection != lastScrollDirection && currentScrollDirection != ScrollDirection.NONE) {
+                    scope.launch {
+                        bottomBarState.setBottomAppBarState(currentScrollDirection == ScrollDirection.UP)
+                    }
+                }
+
+                previousFirstVisibleItemIndex.intValue = index
+                previousScrollOffset.intValue = offset
+                lastScrollDirection = currentScrollDirection
+            }
+        }
+    }
+}
+
+@Composable
+fun RememberScrollDirection(
+    listState: LazyGridState,
+    bottomBarState: BottomBarState,
+    scope: CoroutineScope
+) {
+    val previousScrollOffset by remember { derivedStateOf { mutableIntStateOf(0) } }
+    val previousFirstVisibleItemIndex by remember { derivedStateOf { mutableIntStateOf(0) } }
+    var lastScrollDirection by remember { mutableStateOf(ScrollDirection.NONE) }
+
+    LaunchedEffect(listState) {
+        scope.launch {
+            snapshotFlow {
+                listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset
+            }.collect { (index, offset) ->
+                Log.e("ScrollDirection", "index: $index, offset: $offset")
+                Log.e(
+                    "ScrollDirection",
+                    "previousScrollOffset: $previousScrollOffset, previousFirstVisibleItemIndex: $previousFirstVisibleItemIndex"
+                )
+                Log.e("ScrollDirection", "lastScrollDirection: $lastScrollDirection")
+
+                val currentScrollDirection = when {
+                    index > previousFirstVisibleItemIndex.intValue -> ScrollDirection.DOWN
+                    index < previousFirstVisibleItemIndex.intValue -> ScrollDirection.UP
+                    offset > previousScrollOffset.intValue -> ScrollDirection.DOWN
+                    offset < previousScrollOffset.intValue -> ScrollDirection.UP
+                    else -> ScrollDirection.NONE
+                }
+
+                if (currentScrollDirection != lastScrollDirection && currentScrollDirection != ScrollDirection.NONE) {
+                    scope.launch {
+                        bottomBarState.setBottomAppBarState(currentScrollDirection == ScrollDirection.UP)
+                    }
+                }
+
+                previousFirstVisibleItemIndex.intValue = index
+                previousScrollOffset.intValue = offset
+                lastScrollDirection = currentScrollDirection
+            }
         }
     }
 }
@@ -96,29 +150,31 @@ fun rememberScrollOffset(
     val scrollDirection = remember { mutableStateOf(ScrollDirection.NONE) }
 
     LaunchedEffect(listState) {
-        snapshotFlow {
-            listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset
-        }.collect { (index, offset) ->
-            Log.e("ScrollDirection", "index: $index, offset: $offset")
-            Log.e(
-                "ScrollDirection",
-                "previousScrollOffset: ${previousScrollOffset.intValue}, previousFirstVisibleItemIndex: ${previousFirstVisibleItemIndex.value}"
-            )
-            Log.e("ScrollDirection", "lastScrollDirection: ${scrollDirection.value}")
+        scope.launch {
+            snapshotFlow {
+                listState.firstVisibleItemIndex to listState.firstVisibleItemScrollOffset
+            }.collect { (index, offset) ->
+                Log.e("ScrollDirection", "index: $index, offset: $offset")
+                Log.e(
+                    "ScrollDirection",
+                    "previousScrollOffset: ${previousScrollOffset.intValue}, previousFirstVisibleItemIndex: ${previousFirstVisibleItemIndex.value}"
+                )
+                Log.e("ScrollDirection", "lastScrollDirection: ${scrollDirection.value}")
 
-            scrollDirection.value = when {
-                index > previousFirstVisibleItemIndex.intValue -> ScrollDirection.DOWN
-                index < previousFirstVisibleItemIndex.intValue -> ScrollDirection.UP
-                offset > previousScrollOffset.intValue -> ScrollDirection.DOWN
-                offset < previousScrollOffset.intValue -> ScrollDirection.UP
-                else -> ScrollDirection.NONE
+                scrollDirection.value = when {
+                    index > previousFirstVisibleItemIndex.intValue -> ScrollDirection.DOWN
+                    index < previousFirstVisibleItemIndex.intValue -> ScrollDirection.UP
+                    offset > previousScrollOffset.intValue -> ScrollDirection.DOWN
+                    offset < previousScrollOffset.intValue -> ScrollDirection.UP
+                    else -> ScrollDirection.NONE
+                }
+
+                previousFirstVisibleItemIndex.intValue = index
+                previousScrollOffset.intValue = offset
             }
-
-            previousFirstVisibleItemIndex.intValue = index
-            previousScrollOffset.intValue = offset
         }
-    }
 
+    }
     return scrollDirection
 }
 
@@ -171,5 +227,36 @@ fun formatDateToUSLongFormat(isoDate: String): String {
             ""
         }
     }
+}
+
+
+
+//BITMAPS UTILS
+fun converterBitmapToString(bitmap: Bitmap): String {
+    val baos = ByteArrayOutputStream()
+    bitmap.compress(Bitmap.CompressFormat.JPEG, 70, baos)
+    val byteArray = baos.toByteArray()
+    return Base64.encodeToString(byteArray, Base64.DEFAULT)
+}
+fun converterStringToBitmap(encodedString: String, degrees: Float): Bitmap? {
+    return try {
+        val encodeByte = Base64.decode(encodedString, Base64.DEFAULT)
+        val bitmap = BitmapFactory.decodeByteArray(encodeByte, 0, encodeByte.size)
+        rotateBitmapManually(bitmap, degrees)
+    } catch (e: Exception) {
+        e.printStackTrace()
+        null
+    }
+}
+fun compressBitmap(bitmap: Bitmap, quality: Int): Bitmap {
+    val stream = ByteArrayOutputStream()
+    bitmap.compress(Bitmap.CompressFormat.JPEG, quality, stream)
+    val byteArray = stream.toByteArray()
+    return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+}
+fun rotateBitmapManually(bitmap: Bitmap, degrees: Float): Bitmap {
+    val matrix = Matrix()
+    matrix.postRotate(degrees)
+    return Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
 }
 

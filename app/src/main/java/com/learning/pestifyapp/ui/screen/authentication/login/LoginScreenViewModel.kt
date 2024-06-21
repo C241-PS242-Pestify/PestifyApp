@@ -5,19 +5,20 @@ import android.util.Patterns
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.learning.pestifyapp.data.model.user.UserData
 import com.learning.pestifyapp.ui.common.ResultResponse
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 class LoginScreenViewModel(private val userRepository: UserRepository) : ViewModel() {
-    private val _loading = MutableLiveData(false)
-    val loading: LiveData<Boolean> = _loading
-    private val _isValid = MutableLiveData(false)
-    val isValid: LiveData<Boolean> = _isValid
+    private val _loading = MutableStateFlow(false)
+    val loading: StateFlow<Boolean> = _loading
+
+    private val _isValid = MutableStateFlow(false)
+    val isValid: StateFlow<Boolean> = _isValid
 
     var emailValue by mutableStateOf("")
         private set
@@ -73,17 +74,13 @@ class LoginScreenViewModel(private val userRepository: UserRepository) : ViewMod
                 when (result) {
                     is ResultResponse.Success -> {
                         _isValid.value = true
-                        userRepository.saveToken(result.data.token!!)
-                        userRepository.saveLoginStatus(true)
-                        userRepository.saveEmail(emailValue)
-                        val userSession = UserData(result.data.token, emailValue, "", isLogin = true)
-                        userRepository.saveUserSession(userSession)
+                        userRepository.fetchUserData()
                         onSuccess()
                     }
 
                     is ResultResponse.Error -> {
                         _isValid.value = false
-                        val errorMessage = result.error ?: "Unknown error occurred"
+                        val errorMessage = result.error
                         onError(errorMessage)
                     }
 
@@ -95,5 +92,4 @@ class LoginScreenViewModel(private val userRepository: UserRepository) : ViewMod
             onError("Invalid email or password")
         }
     }
-
 }
